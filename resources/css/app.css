@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/*
+ * Theme control center: change --brand-hue (0-360) / --brand-chroma to
+ * recolor the whole storefront. 27 = crimson (logo), 128 = olive green,
+ * 250 = blue, 330 = pink. --ink-* is the dark/black surface (header bar,
+ * footer). Components only use the accent-*, cream-* and ink tokens below.
+ */
+:root {
+    --brand-hue: 27;
+    --brand-chroma: 0.22;
+    --ink-lightness: 0.17;
+}
+
+@theme {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --color-accent-50: oklch(
+        0.97 calc(var(--brand-chroma) * 0.16) var(--brand-hue)
+    );
+    --color-accent-100: oklch(
+        0.93 calc(var(--brand-chroma) * 0.37) var(--brand-hue)
+    );
+    --color-accent-500: oklch(0.6 var(--brand-chroma) var(--brand-hue));
+    --color-accent-600: oklch(0.52 var(--brand-chroma) var(--brand-hue));
+    --color-accent-700: oklch(
+        0.45 calc(var(--brand-chroma) * 0.9) var(--brand-hue)
+    );
+
+    --color-cream-50: oklch(
+        0.985 calc(var(--brand-chroma) * 0.02) var(--brand-hue)
+    );
+    --color-cream-100: oklch(
+        0.955 calc(var(--brand-chroma) * 0.05) var(--brand-hue)
+    );
+
+    --color-ink: oklch(var(--ink-lightness) 0 0);
+    --color-ink-soft: oklch(calc(var(--ink-lightness) + 0.1) 0 0);
+
+    --radius-control: 0.625rem;
+    --radius-card: 1rem;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.06);
+}

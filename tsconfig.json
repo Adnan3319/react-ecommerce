@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "allowJs": true,
+        "noEmit": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "skipLibCheck": true,
+        "paths": {
+            "@/*": ["./resources/js/*"],
+            "@admin/*": ["./resources/js/admin/*"],
+            "@/admin/*": ["./resources/js/admin/*"],
+            "@/storefront/*": ["./resources/js/storefront/*"],
+            "@/shared/*": ["./resources/js/shared/*"]
+        },
+        "jsx": "react-jsx"
+    },
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.d.ts",
+        "resources/js/**/*.tsx"
+    ]
+}

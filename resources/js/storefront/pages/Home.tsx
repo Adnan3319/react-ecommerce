@@ -1,12 +1,11 @@
 import { Seo } from '@/shared/components';
 import type { Seo as SeoData } from '@/shared/types';
 import {
+    CategoryProducts,
     CategoryShowcase,
-    FeaturedProducts,
     HeroSlider,
     PromoBanner,
     Testimonials,
-    ValueProps,
 } from '@/storefront/features/home';
 
 type HomeProps = {
@@ -15,14 +14,13 @@ type HomeProps = {
 
 export default function Home({ seo }: HomeProps) {
     return (
-        <>
+        <div className="bg-neutral-50">
             <Seo seo={seo} />
             <HeroSlider />
-            <ValueProps />
             <CategoryShowcase />
-            <FeaturedProducts />
+            <CategoryProducts />
             <PromoBanner />
             <Testimonials />
-        </>
+        </div>
     );
 }

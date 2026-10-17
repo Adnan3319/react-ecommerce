@@ -16,7 +16,7 @@ export default function EmptyCart() {
             </p>
             <Link
                 href={home()}
-                className="inline-flex h-11 items-center rounded-control bg-accent-600 px-6 text-sm font-semibold text-white hover:bg-accent-700"
+                className="inline-flex h-11 items-center rounded-control btn-accent px-6 text-sm font-semibold text-white"
             >
                 Continue shopping
             </Link>

@@ -22,7 +22,7 @@ export default function MobileOrderBar({
             {addToCart}
             <a
                 href={`#${ORDER_FORM_ID}`}
-                className="inline-flex h-11 items-center gap-2 rounded-control bg-accent-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-accent-700"
+                className="inline-flex h-11 items-center gap-2 rounded-control btn-accent px-5 text-sm font-semibold text-white"
             >
                 <Icon name="bolt" size={16} />
                 Order Now

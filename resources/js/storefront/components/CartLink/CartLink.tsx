@@ -61,7 +61,7 @@ export default function CartLink() {
                 aria-expanded={isOpen}
                 aria-controls="mini-cart"
                 onClick={() => setIsOpen((open) => !open)}
-                className="relative flex size-11 items-center justify-center rounded-xl bg-linear-to-b from-accent-500 to-accent-700 text-white shadow-[0_4px_0_0_var(--color-accent-700),0_8px_14px_-4px_rgb(0_0_0/0.35),inset_0_1px_0_0_rgb(255_255_255/0.35)] transition-[transform,box-shadow] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_0_var(--color-accent-700),inset_0_1px_0_0_rgb(255_255_255/0.35)]"
+                className="relative flex size-11 items-center justify-center rounded-xl btn-accent"
             >
                 <Icon
                     name="cart"

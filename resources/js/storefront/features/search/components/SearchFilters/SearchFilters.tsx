@@ -43,7 +43,7 @@ export default function SearchFilters({ params }: SearchFiltersProps) {
                                     className={cn(
                                         CHIP_BASE,
                                         isActive
-                                            ? 'border-accent-600 bg-accent-600 text-white'
+                                            ? 'border-transparent btn-accent'
                                             : 'border-neutral-300 bg-white text-neutral-700 hover:border-accent-600 hover:text-accent-600',
                                     )}
                                 >

@@ -29,23 +29,23 @@ export default function SearchBar() {
             action={search().url}
             method="get"
             onSubmit={handleSubmit}
-            className="flex w-full overflow-hidden rounded-control border border-neutral-300 bg-white focus-within:border-accent-600 focus-within:ring-2 focus-within:ring-accent-100"
+            className="flex w-full overflow-hidden rounded-full border border-white/20 bg-white/10 text-white backdrop-blur focus-within:border-white/50"
         >
             <input
                 type="search"
                 name="q"
                 defaultValue={currentQuery}
-                placeholder="Search products"
+                placeholder="Search for products..."
                 aria-label="Search products"
                 autoComplete="off"
-                className="h-11 min-w-0 flex-1 bg-transparent px-4 text-base outline-none placeholder:text-neutral-500"
+                className="h-10 min-w-0 flex-1 bg-transparent pl-4 text-sm outline-none placeholder:text-white/60"
             />
             <button
                 type="submit"
                 aria-label="Search"
-                className="flex h-11 w-12 items-center justify-center bg-accent-600 text-white transition-colors hover:bg-accent-700"
+                className="flex h-10 w-11 items-center justify-center text-white/80 transition-colors hover:text-white"
             >
-                <Icon name="search" size={20} />
+                <Icon name="search" size={18} />
             </button>
         </form>
     );

@@ -94,7 +94,7 @@ export default function CartPopover({
                     <Link
                         href={cart()}
                         onClick={onNavigate}
-                        className="flex h-11 flex-1 items-center justify-center rounded-control bg-accent-600 text-base font-semibold text-white transition-colors hover:bg-accent-700"
+                        className="flex h-11 flex-1 items-center justify-center rounded-control btn-accent text-base font-semibold text-white"
                     >
                         View cart
                     </Link>

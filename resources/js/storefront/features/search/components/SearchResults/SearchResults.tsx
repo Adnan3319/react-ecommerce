@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
 import { findCategory } from '@/storefront/config/site';
-import { AddToCartButton } from '@/storefront/features/cart';
+import { ProductCardAddToCart } from '@/storefront/features/cart';
 import { ProductGrid } from '@/storefront/features/product';
 import type { ProductDetail } from '@/storefront/features/product';
 import type { SearchParams } from '../../query';
@@ -39,12 +39,7 @@ export default function SearchResults({
                 <ProductGrid
                     products={products}
                     renderAction={(product) => (
-                        <AddToCartButton
-                            product={product}
-                            size="sm"
-                            fullWidth
-                            className="mt-auto"
-                        />
+                        <ProductCardAddToCart product={product} />
                     )}
                 />
             ) : (
@@ -57,7 +52,7 @@ export default function SearchResults({
                     </p>
                     <Link
                         href={home()}
-                        className="mt-5 inline-flex h-11 items-center rounded-control bg-accent-600 px-5 text-sm font-semibold text-white hover:bg-accent-700"
+                        className="mt-5 inline-flex h-11 items-center rounded-control btn-accent px-5 text-sm font-semibold text-white"
                     >
                         Back to home
                     </Link>

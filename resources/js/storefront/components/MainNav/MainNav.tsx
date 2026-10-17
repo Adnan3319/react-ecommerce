@@ -24,7 +24,7 @@ type MainNavProps = {
 };
 
 const LINK_BASE =
-    'relative flex items-center px-5 py-3.5 text-sm font-semibold tracking-wide whitespace-nowrap uppercase transition-colors md:h-12 md:px-4 md:py-0';
+    'relative flex items-center px-5 py-3.5 text-sm font-medium whitespace-nowrap transition-colors md:h-11 md:px-3 md:py-0';
 
 export default function MainNav({ isOpen, onNavigate }: MainNavProps) {
     const { url } = usePage();
@@ -34,9 +34,12 @@ export default function MainNav({ isOpen, onNavigate }: MainNavProps) {
         <nav
             id={MAIN_NAV_ID}
             aria-label="Primary"
-            className={cn('bg-ink md:block', isOpen ? 'block' : 'hidden')}
+            className={cn(
+                'order-4 col-span-2 md:order-none md:col-span-1 md:block',
+                isOpen ? 'block' : 'hidden',
+            )}
         >
-            <ul className="mx-auto flex max-w-7xl flex-col divide-y divide-white/10 md:flex-row md:justify-center md:gap-1 md:divide-y-0 md:px-4">
+            <ul className="flex flex-col divide-y divide-white/10 md:flex-row md:justify-center md:gap-1 md:divide-y-0">
                 {MAIN_NAV_ITEMS.map((item) => {
                     const isActive = isItemActive(item, url, category);
 

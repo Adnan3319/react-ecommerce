@@ -18,7 +18,7 @@ export default function AboutIntro() {
             </p>
             <Link
                 href={search()}
-                className="mt-7 inline-flex h-11 items-center gap-2 rounded-control bg-accent-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-accent-700"
+                className="mt-7 inline-flex h-11 items-center gap-2 rounded-control btn-accent px-6 text-sm font-semibold text-white"
             >
                 Start shopping
                 <Icon name="arrowRight" size={16} />

@@ -9,18 +9,21 @@ type AddToCartButtonProps = Pick<
 > & {
     product: CartProduct;
     label?: string;
+    /** Idle look; the added state is always the dark variant. */
+    variant?: 'soft' | 'primary';
 };
 
 export default function AddToCartButton({
     product,
     label = 'Add to Cart',
+    variant = 'primary',
     ...buttonProps
 }: AddToCartButtonProps) {
     const { isAdded, add } = useAddToCart(product);
 
     return (
         <Button
-            variant={isAdded ? 'secondary' : 'soft'}
+            variant={isAdded ? 'secondary' : variant}
             onClick={add}
             {...buttonProps}
         >

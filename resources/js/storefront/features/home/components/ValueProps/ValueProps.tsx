@@ -1,32 +1,29 @@
 import { Icon } from '@/shared/ui';
 import { VALUE_PROPS } from '../../static-data';
 
+/** Glass feature strip; sits on top of the hero image. */
 export default function ValueProps() {
     return (
-        <section
+        <ul
             aria-label="Why shop with us"
-            className="mx-auto mt-6 max-w-7xl px-4 sm:px-6"
+            className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-5 border-t border-white/10 px-4 pt-6 pb-14 sm:px-6 lg:grid-cols-4"
         >
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-6 border-y border-neutral-200 py-6 lg:grid-cols-4">
-                {VALUE_PROPS.map((item) => (
-                    <li
-                        key={item.title}
-                        className="flex items-center gap-3 lg:justify-center"
-                    >
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600">
-                            <Icon name={item.icon} size={22} />
-                        </span>
-                        <div>
-                            <p className="text-sm font-semibold text-neutral-900">
-                                {item.title}
-                            </p>
-                            <p className="text-xs text-neutral-600">
-                                {item.description}
-                            </p>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </section>
+            {VALUE_PROPS.map((item) => (
+                <li
+                    key={item.title}
+                    className="flex items-center gap-3 lg:justify-center"
+                >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur">
+                        <Icon name={item.icon} size={20} />
+                    </span>
+                    <div>
+                        <p className="text-sm font-semibold">{item.title}</p>
+                        <p className="text-xs text-white/60">
+                            {item.description}
+                        </p>
+                    </div>
+                </li>
+            ))}
+        </ul>
     );
 }

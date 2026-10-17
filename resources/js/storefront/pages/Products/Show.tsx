@@ -81,6 +81,7 @@ export default function Show({ slug }: ShowProps) {
 
                         <AddToCartButton
                             product={product}
+                            variant="soft"
                             size="lg"
                             fullWidth
                             className="hidden md:inline-flex"
@@ -99,7 +100,13 @@ export default function Show({ slug }: ShowProps) {
 
             <MobileOrderBar
                 price={product.price}
-                addToCart={<AddToCartButton product={product} label="Add" />}
+                addToCart={
+                    <AddToCartButton
+                        product={product}
+                        variant="soft"
+                        label="Add"
+                    />
+                }
             />
         </>
     );

@@ -1,54 +1,84 @@
 import { Link } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
+import { Icon, Image } from '@/shared/ui';
 import type { RouteDefinition } from '@/wayfinder';
 import { CategoryIcon } from '../CategoryIcon';
 
 type CategoryCardProps = {
     slug: string;
     label: string;
+    headline: string | null;
+    description: string | null;
+    /** Photo from the backend; null shows the category illustration. */
+    image: string | null;
     href: RouteDefinition<'get'>;
 };
 
-// Category illustration palette; one place to recolor the tiles.
+// Pastel tile backgrounds sampled from the design; one place to recolor.
 const SURFACES: Record<string, string> = {
-    kitchenware: 'bg-orange-500',
-    fashion: 'bg-gradient-to-br from-pink-500 to-pink-600',
+    kitchenware: 'from-[#fdf9f6] via-[#f6e4d5] to-[#f3d4bd]',
+    fashion: 'from-[#fff0f0] via-[#f9d3d5] to-[#f2bebf]',
 };
 
-const DEFAULT_SURFACE = 'bg-neutral-800';
-const ICON_SIZE = 96;
+const DEFAULT_SURFACE = 'from-neutral-50 to-neutral-200';
+const IMAGE_SIZE = 480;
+const ICON_SIZE = 160;
 
-/** Colored category tile with a white icon and a bold centered label. */
-export default function CategoryCard({ slug, label, href }: CategoryCardProps) {
+/** Wide pastel tile: category image on the left, text on the right. */
+export default function CategoryCard({
+    slug,
+    label,
+    headline,
+    description,
+    image,
+    href,
+}: CategoryCardProps) {
     return (
         <Link
             href={href}
             className={cn(
-                'group relative flex aspect-6/5 flex-col items-center justify-between overflow-hidden rounded-card px-4 pt-5 pb-4 text-white shadow-card transition-all duration-300',
+                'group relative flex min-h-48 items-center overflow-hidden rounded-card bg-linear-to-br p-6 shadow-card transition-all duration-300 sm:min-h-56 sm:p-8',
                 'hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600',
                 SURFACES[slug] ?? DEFAULT_SURFACE,
             )}
         >
-            <span
-                aria-hidden="true"
-                className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/15 transition-transform duration-500 group-hover:scale-125 sm:h-40 sm:w-40"
-            />
-            <span
-                aria-hidden="true"
-                className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-white/30 transition-transform duration-500 group-hover:scale-125 sm:h-24 sm:w-24"
-            />
+            <div className="absolute inset-y-0 left-0 flex w-1/2 items-center justify-center">
+                {image ? (
+                    <Image
+                        src={image}
+                        alt=""
+                        width={IMAGE_SIZE}
+                        height={IMAGE_SIZE}
+                        className="h-full w-full object-contain p-3 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+                    />
+                ) : (
+                    <CategoryIcon
+                        slug={slug}
+                        size={ICON_SIZE}
+                        className="h-auto w-32 drop-shadow-lg transition-transform duration-500 group-hover:scale-110 sm:w-44"
+                    />
+                )}
+            </div>
 
-            <span className="relative flex flex-1 items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <CategoryIcon
-                    slug={slug}
-                    size={ICON_SIZE}
-                    className="h-auto w-16 drop-shadow-md sm:w-24"
-                />
-            </span>
-
-            <span className="relative text-base font-extrabold tracking-tight sm:text-xl">
-                {label}
-            </span>
+            <div className="relative ml-auto flex w-[46%] flex-col items-start gap-2">
+                {headline && (
+                    <span className="text-[0.7rem] font-semibold tracking-[0.2em] text-neutral-600 uppercase">
+                        {label}
+                    </span>
+                )}
+                <h3 className="text-2xl leading-tight font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
+                    {headline ?? label}
+                </h3>
+                {description && (
+                    <p className="text-sm text-neutral-700">{description}</p>
+                )}
+                <span
+                    aria-hidden="true"
+                    className="mt-3 flex size-9 items-center justify-center rounded-full btn-accent group-hover:translate-x-1"
+                >
+                    <Icon name="arrowRight" size={16} />
+                </span>
+            </div>
         </Link>
     );
 }

@@ -19,20 +19,20 @@ export default function Footer() {
     const { name } = usePage<SharedProps>().props;
 
     return (
-        <footer className="bg-ink">
+        <footer className="border-t border-white/10 bg-shaded">
             <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
                 <div>
                     <Link
                         href={home()}
                         aria-label={name}
-                        className="inline-block rounded-control bg-white p-2"
+                        className="inline-block"
                     >
                         <Image
-                            src={LOGO.src}
+                            src={LOGO.lightSrc}
                             alt={name}
                             width={LOGO.width}
                             height={LOGO.height}
-                            className="h-12 w-auto"
+                            className="h-14 w-auto"
                         />
                     </Link>
                     <p className="mt-3 max-w-xs text-sm text-neutral-300">
@@ -84,9 +84,10 @@ export default function Footer() {
             </div>
 
             <div className="border-t border-white/10">
-                <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-neutral-400 sm:px-6">
-                    &copy; {name}. All rights reserved.
-                </p>
+                <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-neutral-400 sm:px-6">
+                    <p>&copy; {name}. All rights reserved.</p>
+                    <p>Better Home &middot; Better You</p>
+                </div>
             </div>
         </footer>
     );

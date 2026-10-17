@@ -8,6 +8,12 @@ export type ValueProp = {
     description: string;
 };
 
+export type PromoPerk = {
+    icon: IconName;
+    title: string;
+    description: string;
+};
+
 export type Testimonial = {
     id: number;
     quote: string;
@@ -35,6 +41,16 @@ export const VALUE_PROPS: ValueProp[] = [
         title: 'Customer Support',
         description: 'Here to help you',
     },
+];
+
+export const PROMO_PERKS: PromoPerk[] = [
+    {
+        icon: 'shield',
+        title: 'Premium Quality',
+        description: 'Trusted products',
+    },
+    { icon: 'truck', title: 'Fast Delivery', description: 'To your door' },
+    { icon: 'refresh', title: 'Easy Returns', description: 'Hassle-free' },
 ];
 
 export const TESTIMONIALS: Testimonial[] = [

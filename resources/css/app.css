@@ -5,12 +5,12 @@
 
 /*
  * Theme control center: change --brand-hue (0-360) / --brand-chroma to
- * recolor the whole storefront. 27 = crimson (logo), 128 = olive green,
+ * recolor the whole storefront. 22 = logo red, 128 = olive green,
  * 250 = blue, 330 = pink. --ink-* is the dark/black surface (header bar,
  * footer). Components only use the accent-*, cream-* and ink tokens below.
  */
 :root {
-    --brand-hue: 27;
+    --brand-hue: 22;
     --brand-chroma: 0.22;
     --ink-lightness: 0.17;
 }
@@ -46,4 +46,46 @@
     --radius-control: 0.625rem;
     --radius-card: 1rem;
     --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.06);
+}
+
+/* Dark surface with soft colored glows; used by the testimonials and footer. */
+@utility bg-shaded {
+    background-color: var(--color-ink);
+    background-image:
+        radial-gradient(
+            60% 80% at 0% 100%,
+            oklch(0.45 0.2 var(--brand-hue) / 0.4),
+            transparent 70%
+        ),
+        radial-gradient(
+            50% 70% at 100% 100%,
+            oklch(0.4 0.18 300 / 0.4),
+            transparent 70%
+        ),
+        radial-gradient(
+            45% 50% at 50% 0%,
+            oklch(0.32 0.05 260 / 0.5),
+            transparent 70%
+        );
+}
+
+/* Light multi-tone accent button: soft coral-to-rose gradient, flat with a gentle glow. */
+@utility btn-accent {
+    color: white;
+    background-image: linear-gradient(
+        135deg,
+        oklch(0.72 calc(var(--brand-chroma) * 0.85) var(--brand-hue)),
+        oklch(0.62 calc(var(--brand-chroma) * 1.12) var(--brand-hue))
+    );
+    box-shadow: 0 6px 14px -6px
+        oklch(0.65 var(--brand-chroma) var(--brand-hue) / 0.45);
+    transition:
+        filter 0.15s,
+        box-shadow 0.15s;
+
+    &:hover:not(:disabled) {
+        filter: brightness(1.06);
+        box-shadow: 0 8px 18px -6px
+            oklch(0.65 var(--brand-chroma) var(--brand-hue) / 0.55);
+    }
 }

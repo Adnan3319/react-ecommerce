@@ -1,28 +1,47 @@
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { formatMoney } from '@/shared/lib';
-import { Button, Input, Textarea } from '@/shared/ui';
-import { validateOrder } from '../../schemas';
+import { Button, Icon, Input, QuantityStepper, Textarea } from '@/shared/ui';
+import { MAX_QUANTITY, MIN_QUANTITY, validateOrder } from '../../schemas';
 import type { OrderValues } from '../../schemas';
-import { QuantityStepper } from '../QuantityStepper';
+import { OrderTotals } from '../OrderTotals';
 
 export const ORDER_FORM_ID = 'order-form';
 
 type OrderFormProps = {
-    productName: string;
     /** Integer minor units. */
-    unitPrice: number;
-};
+    deliveryCharge: number;
+} & (
+    | {
+          source: 'buy_now';
+          productId: number;
+          productName: string;
+          /** Integer minor units. */
+          unitPrice: number;
+      }
+    | {
+          source: 'cart';
+          /** Integer minor units. */
+          subtotal: number;
+      }
+);
 
-export default function OrderForm({ productName, unitPrice }: OrderFormProps) {
+/** One form for both flows: single product (`buy_now`) and the whole cart. */
+export default function OrderForm(props: OrderFormProps) {
+    const isBuyNow = props.source === 'buy_now';
     const form = useForm<OrderValues>({
+        source: props.source,
+        productId: isBuyNow ? props.productId : null,
         name: '',
         phone: '',
         address: '',
-        quantity: 1,
+        quantity: MIN_QUANTITY,
     });
     const [isPreviewShown, setIsPreviewShown] = useState(false);
+
+    const subtotal = isBuyNow
+        ? props.unitPrice * form.data.quantity
+        : props.subtotal;
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -46,11 +65,11 @@ export default function OrderForm({ productName, unitPrice }: OrderFormProps) {
             id={ORDER_FORM_ID}
             onSubmit={handleSubmit}
             noValidate
-            aria-label={`Order ${productName}`}
+            aria-label={isBuyNow ? `Order ${props.productName}` : 'Place order'}
             className="flex scroll-mt-40 flex-col gap-4 rounded-card border border-neutral-200 bg-white p-5 shadow-card"
         >
             <h2 className="text-lg font-bold tracking-tight text-neutral-900">
-                Order now
+                {isBuyNow ? 'Order now' : 'Delivery details'}
             </h2>
 
             <Input
@@ -83,25 +102,28 @@ export default function OrderForm({ productName, unitPrice }: OrderFormProps) {
                 }
             />
 
-            <QuantityStepper
-                value={form.data.quantity}
-                onChange={(quantity) => form.setData('quantity', quantity)}
+            {isBuyNow && (
+                <QuantityStepper
+                    label="Quantity"
+                    value={form.data.quantity}
+                    min={MIN_QUANTITY}
+                    max={MAX_QUANTITY}
+                    onChange={(quantity) => form.setData('quantity', quantity)}
+                />
+            )}
+
+            <OrderTotals
+                subtotal={subtotal}
+                deliveryCharge={props.deliveryCharge}
             />
 
-            <dl className="flex items-center justify-between border-t border-neutral-200 pt-4 text-sm">
-                <dt className="text-neutral-600">Subtotal</dt>
-                <dd className="text-lg font-bold text-neutral-900">
-                    {formatMoney(unitPrice * form.data.quantity)}
-                </dd>
-            </dl>
-            <p className="-mt-2 text-xs text-neutral-500">
-                Delivery charge is added when your order is confirmed. Payment
-                is Cash on Delivery.
-            </p>
-
             <Button type="submit" size="lg" fullWidth>
+                <Icon name="bolt" size={18} />
                 Confirm Order
             </Button>
+            <p className="-mt-1 text-center text-xs text-neutral-500">
+                Payment is Cash on Delivery.
+            </p>
 
             {isPreviewShown && (
                 <p

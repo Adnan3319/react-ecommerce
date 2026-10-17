@@ -26,3 +26,6 @@ export const CONTACT_INFO = {
     address: 'Dhaka, Bangladesh',
     hours: 'Saturday to Thursday, 10:00 AM to 8:00 PM',
 } as const;
+
+// Placeholder (minor units) until the delivery charge is configured in admin.
+export const DEFAULT_DELIVERY_CHARGE = 6000;

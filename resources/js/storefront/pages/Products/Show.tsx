@@ -3,7 +3,11 @@ import { home } from '@/routes';
 import { formatMoney } from '@/shared/lib';
 import { Badge } from '@/shared/ui';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
-import { findCategory } from '@/storefront/config/site';
+import {
+    DEFAULT_DELIVERY_CHARGE,
+    findCategory,
+} from '@/storefront/config/site';
+import { AddToCartButton } from '@/storefront/features/cart';
 import { MobileOrderBar, OrderForm } from '@/storefront/features/order';
 import {
     ProductGallery,
@@ -75,15 +79,28 @@ export default function Show({ slug }: ShowProps) {
                             </p>
                         </header>
 
+                        <AddToCartButton
+                            product={product}
+                            size="lg"
+                            fullWidth
+                            className="hidden md:inline-flex"
+                        />
+
                         <OrderForm
+                            source="buy_now"
+                            productId={product.id}
                             productName={product.name}
                             unitPrice={product.price}
+                            deliveryCharge={DEFAULT_DELIVERY_CHARGE}
                         />
                     </div>
                 </div>
             </div>
 
-            <MobileOrderBar price={product.price} />
+            <MobileOrderBar
+                price={product.price}
+                addToCart={<AddToCartButton product={product} label="Add" />}
+            />
         </>
     );
 }

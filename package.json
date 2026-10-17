@@ -33,6 +33,7 @@
         "jsvectormap": "^1.7.0",
         "jvectormap": "^2.0.4",
         "laravel-vite-plugin": "^3.1",
+        "lucide-react": "^1.58.0",
         "react": "^19.2.0",
         "react-apexcharts": "^2.1.1",
         "react-dnd": "^16.0.1",

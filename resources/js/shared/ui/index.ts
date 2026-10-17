@@ -4,6 +4,7 @@ export * from './Icon';
 export * from './Image';
 export * from './ImagePlaceholder';
 export * from './Input';
+export * from './QuantityStepper';
 export * from './SectionHeader';
 export * from './Skeleton';
 export * from './Textarea';

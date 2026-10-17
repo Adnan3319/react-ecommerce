@@ -1,6 +1,11 @@
 import { isBangladeshiMobile } from '@/shared/lib';
 
+export type OrderSource = 'buy_now' | 'cart';
+
+/** Payload sent to the order endpoint; `productId` is set only for `buy_now`. */
 export type OrderValues = {
+    source: OrderSource;
+    productId: number | null;
     name: string;
     phone: string;
     address: string;
@@ -31,11 +36,12 @@ export function validateOrder(values: OrderValues): OrderErrors {
         errors.address = 'Please enter your full delivery address.';
     }
 
-    if (
+    const isQuantityInvalid =
         !Number.isInteger(values.quantity) ||
         values.quantity < MIN_QUANTITY ||
-        values.quantity > MAX_QUANTITY
-    ) {
+        values.quantity > MAX_QUANTITY;
+
+    if (values.source === 'buy_now' && isQuantityInvalid) {
         errors.quantity = `Quantity must be between ${MIN_QUANTITY} and ${MAX_QUANTITY}.`;
     }
 

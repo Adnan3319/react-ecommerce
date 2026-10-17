@@ -6,6 +6,7 @@ const VARIANTS = {
     secondary: 'bg-neutral-900 text-white hover:bg-neutral-800',
     outline:
         'border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50',
+    soft: 'bg-accent-50 text-accent-700 hover:bg-accent-100',
     ghost: 'text-neutral-700 hover:bg-neutral-100',
 } as const;
 
@@ -39,7 +40,7 @@ export default function Button({
             disabled={disabled || loading}
             aria-busy={loading || undefined}
             className={cn(
-                'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-colors',
+                'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-[color,background-color,transform] active:scale-[0.98]',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600',
                 'disabled:cursor-not-allowed disabled:opacity-60',
                 VARIANTS[variant],

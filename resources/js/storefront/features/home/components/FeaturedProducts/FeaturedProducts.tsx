@@ -1,5 +1,6 @@
 import { search } from '@/routes';
 import { SectionHeader } from '@/shared/ui';
+import { AddToCartButton } from '@/storefront/features/cart';
 import { ProductGrid, SAMPLE_PRODUCTS } from '@/storefront/features/product';
 
 export default function FeaturedProducts() {
@@ -9,7 +10,17 @@ export default function FeaturedProducts() {
                 title="Our Products"
                 viewAll={{ label: 'View All Products', href: search() }}
             />
-            <ProductGrid products={SAMPLE_PRODUCTS} />
+            <ProductGrid
+                products={SAMPLE_PRODUCTS}
+                renderAction={(product) => (
+                    <AddToCartButton
+                        product={product}
+                        size="sm"
+                        fullWidth
+                        className="mt-auto"
+                    />
+                )}
+            />
         </section>
     );
 }

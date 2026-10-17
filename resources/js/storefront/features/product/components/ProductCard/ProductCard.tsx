@@ -1,17 +1,20 @@
 import { Link } from '@inertiajs/react';
+import type { ReactNode } from 'react';
 import { show } from '@/routes/products';
 import { formatMoney } from '@/shared/lib';
-import { Button, Icon, Image, ImagePlaceholder } from '@/shared/ui';
+import { Image, ImagePlaceholder } from '@/shared/ui';
 import type { ProductSummary } from '../../types';
 import { RatingStars } from '../RatingStars';
 
 type ProductCardProps = {
     product: ProductSummary;
+    /** Slot for the add-to-cart control, so product does not depend on cart. */
+    action?: ReactNode;
 };
 
 const IMAGE_SIZE = 400;
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, action }: ProductCardProps) {
     const { slug, name, price, comparePrice, rating, reviewCount, image } =
         product;
     const hasDiscount = comparePrice !== null && comparePrice > price;
@@ -55,10 +58,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                         </span>
                     )}
                 </p>
-                <Button size="sm" fullWidth className="mt-auto">
-                    <Icon name="cart" size={16} />
-                    Add to Cart
-                </Button>
+                {action}
             </div>
         </article>
     );

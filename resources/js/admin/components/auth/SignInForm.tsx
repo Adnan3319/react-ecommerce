@@ -89,7 +89,7 @@ export default function SignInForm() {
             </div>
 
             <div>
-              <Button className="w-full" size="sm" disabled={processing}>
+              <Button type="submit" className="w-full" size="sm" disabled={processing}>
                 {processing ? "Signing in..." : "Sign in"}
               </Button>
             </div>

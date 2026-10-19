@@ -1,4 +1,4 @@
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { TESTIMONIALS } from '../../static-data';
 
 const STAR_COUNT = 5;

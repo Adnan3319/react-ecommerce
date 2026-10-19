@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { home } from '@/routes';
 import { formatMoney } from '@/shared/lib';
-import { Badge } from '@/shared/ui';
+import { Badge } from '@/storefront/components/ui';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
 import {
     DEFAULT_DELIVERY_CHARGE,

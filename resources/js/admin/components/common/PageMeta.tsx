@@ -1,4 +1,4 @@
-import { HelmetProvider, Helmet } from "react-helmet-async";
+import { Head } from "@inertiajs/react";
 
 const PageMeta = ({
   title,
@@ -7,14 +7,9 @@ const PageMeta = ({
   title: string;
   description: string;
 }) => (
-  <Helmet>
-    <title>{title}</title>
+  <Head title={title}>
     <meta name="description" content={description} />
-  </Helmet>
-);
-
-export const AppWrapper = ({ children }: { children: React.ReactNode }) => (
-  <HelmetProvider>{children}</HelmetProvider>
+  </Head>
 );
 
 export default PageMeta;

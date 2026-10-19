@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Concerns\HasAuditFields;
+use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    use HasFactory, HasAuditFields;
+    use HasFactory;
 
     protected $table = 'settings';
 

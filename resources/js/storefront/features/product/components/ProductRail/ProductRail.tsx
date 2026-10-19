@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
-import { Icon, SectionHeader } from '@/shared/ui';
+import { Icon, SectionHeader } from '@/storefront/components/ui';
 import type { ProductSummary } from '../../types';
 import { ProductCard } from '../ProductCard';
 

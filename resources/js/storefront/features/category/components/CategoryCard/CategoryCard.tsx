@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
-import { Icon, Image } from '@/shared/ui';
+import { Icon, Image } from '@/storefront/components/ui';
 import type { RouteDefinition } from '@/wayfinder';
 import { CategoryIcon } from '../CategoryIcon';
 

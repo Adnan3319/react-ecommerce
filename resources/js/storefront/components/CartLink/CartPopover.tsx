@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { cart } from '@/routes';
 import { formatMoney } from '@/shared/lib';
-import { Button, Icon, Image, ImagePlaceholder } from '@/shared/ui';
+import { Button, Icon, Image, ImagePlaceholder } from '@/storefront/components/ui';
 import type { CartLine } from '@/storefront/features/cart';
 
 type CartPopoverProps = {

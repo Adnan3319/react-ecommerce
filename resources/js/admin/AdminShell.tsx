@@ -6,7 +6,6 @@ import 'swiper/swiper-bundle.css';
 import './i18n';
 
 import type { ReactNode } from 'react';
-import { AppWrapper } from '@admin/components/common/PageMeta';
 import { ScrollToTop } from '@admin/components/common/ScrollToTop';
 import { LanguageProvider } from '@admin/context/LanguageContext';
 import { ThemeProvider } from '@admin/context/ThemeContext';
@@ -22,10 +21,8 @@ export default function AdminShell({
     return (
         <ThemeProvider>
             <LanguageProvider>
-                <AppWrapper>
-                    <ScrollToTop />
-                    {withLayout ? <AppLayout>{children}</AppLayout> : children}
-                </AppWrapper>
+                <ScrollToTop />
+                {withLayout ? <AppLayout>{children}</AppLayout> : children}
             </LanguageProvider>
         </ThemeProvider>
     );

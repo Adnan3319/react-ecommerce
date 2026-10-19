@@ -1,4 +1,4 @@
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 
 const MAX_STARS = 5;
 

@@ -1,4 +1,4 @@
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { ABOUT_VALUES } from '../../static-data';
 
 export default function AboutValues() {

@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Button, Input, Textarea } from '@/shared/ui';
+import { Button, Input, Textarea } from '@/storefront/components/ui';
 import { validateContact } from '../../schemas';
 import type { ContactValues } from '../../schemas';
 

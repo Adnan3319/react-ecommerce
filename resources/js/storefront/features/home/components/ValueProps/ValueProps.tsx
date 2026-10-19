@@ -1,4 +1,4 @@
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { VALUE_PROPS } from '../../static-data';
 
 /** Glass feature strip; sits on top of the hero image. */

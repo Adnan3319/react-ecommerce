@@ -1,4 +1,4 @@
-import type { IconName } from '@/shared/ui';
+import type { IconName } from '@/storefront/components/ui';
 
 // Sample content for the static design phase; replaced by Inertia props later.
 

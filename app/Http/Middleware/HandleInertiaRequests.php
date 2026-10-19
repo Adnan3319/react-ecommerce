@@ -2,12 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Category;
+use App\Services\Category\CategoryService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(private readonly CategoryService $categories) {}
+
     /**
      * Pick the root template per route group: admin panel vs storefront.
      *
@@ -48,20 +50,7 @@ class HandleInertiaRequests extends Middleware
             // Active categories for the storefront (navbar, home, search, footer).
             'categories' => fn () => $request->is('admin', 'admin/*')
                 ? []
-                : Category::query()
-                    ->where('status', 'Active')
-                    ->orderBy('sort_order')
-                    ->orderBy('name')
-                    ->get(['name', 'slug', 'headline', 'description', 'image'])
-                    ->map(fn (Category $category) => [
-                        'slug' => $category->slug,
-                        'label' => $category->name,
-                        'headline' => $category->headline,
-                        'description' => $category->description,
-                        'image' => $category->image,
-                    ])
-                    ->values()
-                    ->all(),
+                : $this->categories->activeForStorefront(),
         ];
     }
 }

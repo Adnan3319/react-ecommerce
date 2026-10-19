@@ -1,7 +1,7 @@
 import { router, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import { search } from '@/routes';
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 
 function readQuery(url: string): string {
     const queryString = url.split('?')[1] ?? '';

@@ -187,7 +187,13 @@ export default function UserMetaCard() {
               Update your details to keep your profile up-to-date.
             </p>
           </div>
-          <form className="flex flex-col">
+          <form
+            className="flex flex-col"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSave();
+            }}
+          >
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h4 className="mb-6 text-lg font-medium text-gray-800 dark:text-white/90">
@@ -312,7 +318,7 @@ export default function UserMetaCard() {
               <Button size="sm" variant="outline" onClick={closeModal}>
                 Close
               </Button>
-              <Button size="sm" onClick={handleSave}>
+              <Button type="submit" size="sm">
                 Save Changes
               </Button>
             </div>

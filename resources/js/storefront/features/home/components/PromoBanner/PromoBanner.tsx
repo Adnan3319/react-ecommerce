@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { search } from '@/routes';
-import { Icon, ImagePlaceholder } from '@/shared/ui';
+import { Icon, ImagePlaceholder } from '@/storefront/components/ui';
 import { PROMO_PERKS } from '../../static-data';
 
 export default function PromoBanner() {

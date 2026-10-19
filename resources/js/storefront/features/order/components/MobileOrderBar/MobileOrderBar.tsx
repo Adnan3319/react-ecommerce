@@ -1,5 +1,5 @@
 import { formatMoney } from '@/shared/lib';
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { ORDER_FORM_ID } from '../OrderForm';
 
 type MobileOrderBarProps = {

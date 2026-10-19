@@ -1,4 +1,4 @@
-import type { IconName } from '@/shared/ui';
+import type { IconName } from '@/storefront/components/ui';
 import { about, cart, contact, home, search } from '@/routes';
 import type { RouteDefinition } from '@/wayfinder';
 import { CATEGORIES } from '@/storefront/config/site';

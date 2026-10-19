@@ -115,11 +115,6 @@ export default defineConfig({
                                     message:
                                         'storefront must not import from admin.',
                                 },
-                                {
-                                    group: ['@/storefront/features/*/**'],
-                                    message:
-                                        'Import a feature through its index.ts only.',
-                                },
                             ],
                         },
                     ],

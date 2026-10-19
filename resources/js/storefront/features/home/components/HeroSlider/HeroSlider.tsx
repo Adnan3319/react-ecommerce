@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/shared/lib';
-import { Icon, Image } from '@/shared/ui';
+import { Icon, Image } from '@/storefront/components/ui';
 import { HERO_SLIDES, toHeroSlide } from '../../hero-slides';
 import type { ApiSlider } from '../../hero-slides';
 import { ValueProps } from '../ValueProps';

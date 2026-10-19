@@ -1,5 +1,5 @@
-import { Button, Icon } from '@/shared/ui';
-import type { ButtonProps } from '@/shared/ui';
+import { Button, Icon } from '@/storefront/components/ui';
+import type { ButtonProps } from '@/storefront/components/ui';
 import { useAddToCart } from '../../hooks/useAddToCart';
 import type { CartProduct } from '../../types';
 

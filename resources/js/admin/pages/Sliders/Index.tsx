@@ -88,7 +88,7 @@ export default function SliderIndex() {
   }, []);
 
   useEffect(() => {
-    loadSliders();
+    void loadSliders();
   }, [loadSliders]);
 
   function openCreate() {

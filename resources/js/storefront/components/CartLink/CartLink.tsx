@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { useCart } from '@/storefront/features/cart';
 import CartPopover from './CartPopover';
 

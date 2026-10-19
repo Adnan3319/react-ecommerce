@@ -1,4 +1,4 @@
-import type { IconName } from '@/shared/ui';
+import type { IconName } from '@/storefront/components/ui';
 
 export type AboutValue = {
     icon: IconName;

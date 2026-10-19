@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { about, cart, contact, home, search } from '@/routes';
 import type { SharedProps } from '@/shared/types';
-import { Image } from '@/shared/ui';
+import { Image } from '@/storefront/components/ui';
 import { LOGO } from '@/storefront/config/site';
 import { CATEGORY_LINKS } from '../navigation';
 

@@ -2,7 +2,7 @@ import { Link } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { show } from '@/routes/products';
 import { formatMoney } from '@/shared/lib';
-import { Image, ImagePlaceholder } from '@/shared/ui';
+import { Image, ImagePlaceholder } from '@/storefront/components/ui';
 import type { ProductSummary } from '../../types';
 import { RatingStars } from '../RatingStars';
 

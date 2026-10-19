@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
 import type { SharedProps } from '@/shared/types';
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 import { MOBILE_NAV_ITEMS, isActivePath } from '../navigation';
 
 export default function MobileNav() {

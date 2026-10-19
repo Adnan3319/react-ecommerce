@@ -1,4 +1,4 @@
-import { SectionHeader } from '@/shared/ui';
+import { SectionHeader } from '@/storefront/components/ui';
 import { CATEGORIES } from '@/storefront/config/site';
 import { CategoryCard } from '@/storefront/features/category';
 import { categoryHref } from '@/storefront/lib/category-href';

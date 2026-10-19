@@ -66,7 +66,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [language, dir]);
 
   const setLanguage = (code: LanguageCode) => {
-    i18n.changeLanguage(code);
+    void i18n.changeLanguage(code);
     setLanguageState(code);
   };
 

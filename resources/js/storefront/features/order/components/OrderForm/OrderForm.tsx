@@ -2,7 +2,7 @@ import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { formatMoney } from '@/shared/lib';
-import { Button, Icon, Input, QuantityStepper, Textarea } from '@/shared/ui';
+import { Button, Icon, Input, QuantityStepper, Textarea } from '@/storefront/components/ui';
 import { MAX_QUANTITY, MIN_QUANTITY, validateOrder } from '../../schemas';
 import type { OrderValues } from '../../schemas';
 import { OrderTotals } from '../OrderTotals';

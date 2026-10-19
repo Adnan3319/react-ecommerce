@@ -24,7 +24,7 @@ const initialLng =
   savedLng ||
   (resources[browserLng as keyof typeof resources] ? browserLng : fallbackLng);
 
-i18n.use(initReactI18next).init({
+void i18n.use(initReactI18next).init({
   resources,
   lng: initialLng,
   fallbackLng,

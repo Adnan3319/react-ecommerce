@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
-import { Icon } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
 
 export default function EmptyCart() {
     return (

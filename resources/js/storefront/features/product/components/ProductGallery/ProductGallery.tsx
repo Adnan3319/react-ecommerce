@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/shared/lib';
-import { Image, ImagePlaceholder } from '@/shared/ui';
+import { Image, ImagePlaceholder } from '@/storefront/components/ui';
 
 type ProductGalleryProps = {
     name: string;

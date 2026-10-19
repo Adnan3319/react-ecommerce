@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import FlashMessage from '@admin/components/common/FlashMessage';
 import { SidebarProvider, useSidebar } from '@admin/context/SidebarContext';
 import { cn } from '@admin/utils';
 import AppHeader from './AppHeader';
@@ -22,6 +23,7 @@ const LayoutContent = ({ children }: { children: ReactNode }) => {
             >
                 <AppHeader />
                 <main className="w-full p-4 md:p-6">
+                    <FlashMessage />
                     {children}
                 </main>
             </div>

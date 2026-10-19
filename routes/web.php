@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,7 +24,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/sliders', fn () => Inertia::render('Admin/Sliders/Index'));
-        Route::get('/categories', fn () => Inertia::render('Admin/Categories/Index'));
+        Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::get('/services', fn () => Inertia::render('Admin/Services/Index'));
         Route::get('/portfolio', fn () => Inertia::render('Admin/Portfolio/Index'));
         Route::get('/team', fn () => Inertia::render('Admin/Team/Index'));
@@ -39,10 +40,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/blank', fn () => Inertia::render('Admin/OtherPage/Blank'));
 
         Route::get('/form-elements', fn () => Inertia::render('Admin/Forms/FormElements'));
-        Route::get('/basic-tables', fn () => Inertia::render('Admin/Tables/BasicTables'));
 
-        Route::get('/badge', fn () => Inertia::render('Admin/UiElements/Badges'));
-        Route::get('/buttons', fn () => Inertia::render('Admin/UiElements/Buttons'));
 
     });
 });

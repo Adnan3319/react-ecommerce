@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { home } from '@/routes';
 import { cn } from '@/shared/lib';
 import type { SharedProps } from '@/shared/types';
-import { Icon, Image } from '@/shared/ui';
+import { Icon, Image } from '@/storefront/components/ui';
 import { LOGO } from '@/storefront/config/site';
 import { CartLink } from '../CartLink';
 import { MAIN_NAV_ID, MainNav } from '../MainNav';

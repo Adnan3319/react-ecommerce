@@ -1,5 +1,5 @@
-import { Icon } from '@/shared/ui';
-import type { IconName } from '@/shared/ui';
+import { Icon } from '@/storefront/components/ui';
+import type { IconName } from '@/storefront/components/ui';
 import { CONTACT_INFO } from '@/storefront/config/site';
 
 type Detail = {

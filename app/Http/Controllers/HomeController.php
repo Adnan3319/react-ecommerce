@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SliderResource;
+use App\Models\Slider;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,7 +13,14 @@ class HomeController extends Controller
     {
         $name = config('app.name');
 
+        $sliders = Slider::query()
+            ->where('status', 'Active')
+            ->orderBy('sort_order')
+            ->latest()
+            ->get();
+
         return Inertia::render('Home', [
+            'sliders' => SliderResource::collection($sliders)->resolve(),
             'seo' => [
                 'title' => $name,
                 'description' => "Shop online at {$name}.",

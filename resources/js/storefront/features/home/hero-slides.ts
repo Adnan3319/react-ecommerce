@@ -1,4 +1,4 @@
-/** Shape the backend sends for each hero slide (managed in admin). */
+/** Shape the hero slider renders for each slide. */
 export type HeroSlide = {
     id: number;
     title: string;
@@ -16,7 +16,36 @@ export type HeroSlide = {
     } | null;
 };
 
-// Sample content for the static design phase.
+/** Shape the backend sends for each slider (managed in admin). */
+export type ApiSlider = {
+    id: number;
+    title: string;
+    /** Optional second title line, shown in the accent color. */
+    highlight?: string | null;
+    subtitle: string | null;
+    image: string;
+    button_text: string | null;
+    button_link: string | null;
+};
+
+/** Backend slider -> hero slide. The button shows only when both text and link are set. */
+export function toHeroSlide(slider: ApiSlider): HeroSlide {
+    return {
+        id: slider.id,
+        title: slider.title,
+        highlight: slider.highlight ?? null,
+        subtitle: slider.subtitle ?? '',
+        image: slider.image,
+        imageAlt: slider.title,
+        imageWidth: 1000,
+        imageHeight: 1000,
+        cta: slider.button_link
+            ? { label: slider.button_text || 'Shop Now', href: slider.button_link }
+            : null,
+    };
+}
+
+// Sample content, used only while the database has no active sliders.
 // Photos live in public/images/sliders/{n}.jpg.
 export const HERO_SLIDES: HeroSlide[] = [
     {

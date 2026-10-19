@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SliderController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\AboutController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\PortfolioController;
@@ -14,6 +15,9 @@ use App\Http\Controllers\Api\SettingController;
 
 // Protected Auth & XSS Protected API Routes
 Route::middleware(['auth:sanctum', \App\Http\Middleware\RejectXss::class])->group(function () {
+    Route::post('categories/upload', [CategoryController::class, 'upload']);
+    Route::apiResource('categories', CategoryController::class);
+    Route::post('sliders/upload', [SliderController::class, 'upload']);
     Route::apiResource('sliders', SliderController::class);
     Route::apiResource('about', AboutController::class);
     Route::apiResource('services', ServiceController::class);

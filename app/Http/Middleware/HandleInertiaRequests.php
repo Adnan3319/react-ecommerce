@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +45,23 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // Active categories for the storefront (navbar, home, search, footer).
+            'categories' => fn () => $request->is('admin', 'admin/*')
+                ? []
+                : Category::query()
+                    ->where('status', 'Active')
+                    ->orderBy('sort_order')
+                    ->orderBy('name')
+                    ->get(['name', 'slug', 'headline', 'description', 'image'])
+                    ->map(fn (Category $category) => [
+                        'slug' => $category->slug,
+                        'label' => $category->name,
+                        'headline' => $category->headline,
+                        'description' => $category->description,
+                        'image' => $category->image,
+                    ])
+                    ->values()
+                    ->all(),
         ];
     }
 }

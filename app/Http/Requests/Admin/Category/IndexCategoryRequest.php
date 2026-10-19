@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin\Category;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,20 +24,20 @@ class IndexCategoryRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:100'],
-            'status' => ['nullable', Rule::enum(CategoryStatus::class)],
+            'status' => ['nullable', Rule::enum(ActiveStatus::class)],
             'per_page' => ['nullable', 'integer'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 
     /**
-     * @return array{search: ?string, status: ?CategoryStatus, per_page: int}
+     * @return array{search: ?string, status: ?ActiveStatus, per_page: int}
      */
     public function filters(): array
     {
         return [
             'search' => $this->validated('search'),
-            'status' => $this->enum('status', CategoryStatus::class),
+            'status' => $this->enum('status', ActiveStatus::class),
             'per_page' => $this->perPage(),
         ];
     }

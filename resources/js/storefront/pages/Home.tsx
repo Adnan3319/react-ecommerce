@@ -7,16 +7,18 @@ import {
     PromoBanner,
     Testimonials,
 } from '@/storefront/features/home';
+import type { ApiSlider } from '@/storefront/features/home';
 
 type HomeProps = {
     seo: SeoData;
+    sliders: ApiSlider[];
 };
 
-export default function Home({ seo }: HomeProps) {
+export default function Home({ seo, sliders }: HomeProps) {
     return (
         <div className="bg-neutral-50">
             <Seo seo={seo} />
-            <HeroSlider />
+            <HeroSlider sliders={sliders} />
             <CategoryShowcase />
             <CategoryProducts />
             <PromoBanner />

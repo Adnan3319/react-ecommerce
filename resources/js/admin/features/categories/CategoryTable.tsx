@@ -1,6 +1,6 @@
 import StatusToggle from '@admin/components/common/StatusToggle';
 import DataTable from '@admin/components/DataTable';
-import { STATUS_ACTIVE } from './constants';
+import { STATUS_ACTIVE } from '@/shared/constants/status';
 import type { Category } from './types';
 
 type CategoryTableProps = {

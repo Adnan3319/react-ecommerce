@@ -1,0 +1,6 @@
+# Uploaded images never change (new uploads get new uuid names), so cache them for a year.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(webp|jpe?g|png|gif|avif)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>

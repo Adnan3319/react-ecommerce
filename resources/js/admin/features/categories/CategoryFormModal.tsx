@@ -10,8 +10,9 @@ import Select from '@admin/components/form/Select';
 import Button from '@admin/components/ui/button/Button';
 import { Modal } from '@admin/components/ui/modal';
 import { store, update } from '@/routes/admin/categories';
-import { STATUS_ACTIVE } from './constants';
-import type { Category, CategoryStatus, StatusOption } from './types';
+import { STATUS_ACTIVE } from '@/shared/constants/status';
+import type { ActiveStatus, StatusOption } from '@/shared/types';
+import type { Category } from './types';
 
 type CategoryFormModalProps = {
     category: Category | null;
@@ -26,7 +27,7 @@ type CategoryFormData = {
     headline: string;
     description: string;
     sort_order: string;
-    status: CategoryStatus;
+    status: ActiveStatus;
     image: File | null;
     remove_image: boolean;
 };
@@ -124,7 +125,9 @@ export default function CategoryFormModal({
                                 aria-label="Category image"
                                 onChange={handleImageChange}
                             />
-                            <p className="text-xs text-gray-500">JPG, PNG or WEBP, up to 4 MB.</p>
+                            <p className="text-xs text-gray-500">
+                                Square logo, 300–1000px, max 512KB
+                            </p>
                             {isEdit && category.image_url && !form.data.image && (
                                 <Checkbox
                                     label="Remove current image"
@@ -209,7 +212,7 @@ export default function CategoryFormModal({
                             options={statuses}
                             defaultValue={form.data.status}
                             placeholder="Select status"
-                            onChange={(value) => form.setData('status', value as CategoryStatus)}
+                            onChange={(value) => form.setData('status', value as ActiveStatus)}
                         />
                         {form.errors.status && (
                             <p className="mt-1.5 text-xs text-error-500">{form.errors.status}</p>

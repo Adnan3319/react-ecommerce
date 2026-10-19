@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -23,12 +23,12 @@ class CategoryFactory extends Factory
             'description' => fake()->sentence(),
             'image' => null,
             'sort_order' => fake()->numberBetween(0, 100),
-            'status' => CategoryStatus::Active,
+            'status' => ActiveStatus::Active,
         ];
     }
 
     public function inactive(): static
     {
-        return $this->state(fn () => ['status' => CategoryStatus::Inactive]);
+        return $this->state(fn () => ['status' => ActiveStatus::Inactive]);
     }
 }

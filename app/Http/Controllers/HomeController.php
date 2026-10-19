@@ -2,25 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\SliderResource;
-use App\Models\Slider;
+use App\Services\Home\HomeService;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
+    public function __construct(private readonly HomeService $home) {}
+
     public function __invoke(): Response
     {
         $name = config('app.name');
 
-        $sliders = Slider::query()
-            ->where('status', 'Active')
-            ->orderBy('sort_order')
-            ->latest()
-            ->get();
-
         return Inertia::render('Home', [
-            'sliders' => SliderResource::collection($sliders)->resolve(),
+            ...$this->home->data(),
             'seo' => [
                 'title' => $name,
                 'description' => "Shop online at {$name}.",

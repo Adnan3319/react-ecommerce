@@ -2,7 +2,7 @@
 
 namespace App\Services\Category;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Models\Category;
 use App\Services\Media\FileUploadService;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +22,7 @@ class CategoryService
     public function __construct(private readonly FileUploadService $uploads) {}
 
     /**
-     * @param  array{search?: ?string, status?: ?CategoryStatus, per_page: int}  $filters
+     * @param  array{search?: ?string, status?: ?ActiveStatus, per_page: int}  $filters
      * @return LengthAwarePaginator<int, Category>
      */
     public function paginate(array $filters): LengthAwarePaginator

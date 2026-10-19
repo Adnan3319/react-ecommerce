@@ -9,10 +9,14 @@ use Intervention\Image\Encoders\PngEncoder;
 use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\EncoderInterface;
+use Intervention\Image\Interfaces\ImageInterface;
 use InvalidArgumentException;
 
 final class ImageResizeService
 {
+    /** Padding colour for `contain` (keeps transparency in webp/png). */
+    private const TRANSPARENT = 'rgba(0,0,0,0)';
+
     private readonly ImageManager $manager;
 
     public function __construct()
@@ -30,13 +34,7 @@ final class ImageResizeService
     {
         $config = $this->presetConfig($preset);
 
-        $image = $this->manager->decodePath($file->getRealPath());
-
-        if ($config['fit'] === 'cover') {
-            $image->cover($config['width'], $config['height']);
-        } else {
-            $image->scaleDown($config['width'], $config['height']);
-        }
+        $image = $this->fit($this->manager->decodePath($file->getRealPath()), $config);
 
         return (string) $image->encode($this->encoderFor($config['format'], $config['quality']));
     }
@@ -47,6 +45,29 @@ final class ImageResizeService
     public function extensionFor(string $preset): string
     {
         return $this->presetConfig($preset)['format'];
+    }
+
+    /**
+     * Width of the file a preset produces (used to build srcset descriptors).
+     *
+     * @throws InvalidArgumentException when the preset does not exist
+     */
+    public function widthFor(string $preset): int
+    {
+        return $this->presetConfig($preset)['width'];
+    }
+
+    /**
+     * @param  array{width: int, height: int, fit: string}  $config
+     */
+    private function fit(ImageInterface $image, array $config): ImageInterface
+    {
+        return match ($config['fit']) {
+            'cover' => $image->cover($config['width'], $config['height']),
+            'contain' => $image->contain($config['width'], $config['height'], self::TRANSPARENT),
+            'scale_down' => $image->scaleDown($config['width'], $config['height']),
+            default => throw new InvalidArgumentException("Unknown image fit [{$config['fit']}]."),
+        };
     }
 
     /**

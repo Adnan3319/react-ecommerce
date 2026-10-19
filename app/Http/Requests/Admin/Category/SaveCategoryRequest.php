@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin\Category;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -52,8 +52,12 @@ class SaveCategoryRequest extends FormRequest
             'headline' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:500'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
-            'status' => [$required, Rule::enum(CategoryStatus::class)],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:max_width=5000,max_height=5000'],
+            'status' => [$required, Rule::enum(ActiveStatus::class)],
+            // Square logo: stored as 300x300 (config/media.php `category` preset).
+            'image' => [
+                'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:512',
+                'dimensions:min_width=300,min_height=300,max_width=1000,max_height=1000',
+            ],
             'remove_image' => ['nullable', 'boolean'],
         ];
     }

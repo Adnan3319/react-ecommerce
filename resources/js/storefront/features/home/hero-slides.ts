@@ -6,6 +6,8 @@ export type HeroSlide = {
     highlight: string | null;
     subtitle: string;
     image: string;
+    /** `<url> 960w, <url> 1920w` for uploaded banners; null for static sample photos. */
+    imageSrcSet: string | null;
     imageAlt: string;
     imageWidth: number;
     imageHeight: number;
@@ -24,9 +26,14 @@ export type ApiSlider = {
     highlight?: string | null;
     subtitle: string | null;
     image: string;
+    image_srcset?: string | null;
     button_text: string | null;
     button_link: string | null;
 };
+
+/** Uploaded banners are stored at this size (config/media.php, `slider` preset). */
+const BACKEND_SLIDE_WIDTH = 1920;
+const BACKEND_SLIDE_HEIGHT = 800;
 
 /** Backend slider -> hero slide. The button shows only when both text and link are set. */
 export function toHeroSlide(slider: ApiSlider): HeroSlide {
@@ -36,9 +43,10 @@ export function toHeroSlide(slider: ApiSlider): HeroSlide {
         highlight: slider.highlight ?? null,
         subtitle: slider.subtitle ?? '',
         image: slider.image,
+        imageSrcSet: slider.image_srcset ?? null,
         imageAlt: slider.title,
-        imageWidth: 1000,
-        imageHeight: 1000,
+        imageWidth: BACKEND_SLIDE_WIDTH,
+        imageHeight: BACKEND_SLIDE_HEIGHT,
         cta: slider.button_link
             ? { label: slider.button_text || 'Shop Now', href: slider.button_link }
             : null,
@@ -55,6 +63,7 @@ export const HERO_SLIDES: HeroSlide[] = [
         subtitle:
             'From electric kettles to fruit presses, everyday tools that make cooking easier.',
         image: '/images/sliders/1.jpg',
+        imageSrcSet: null,
         imageAlt: 'Electric glass kettle boiling water in a kitchen',
         imageWidth: 750,
         imageHeight: 1000,
@@ -67,6 +76,7 @@ export const HERO_SLIDES: HeroSlide[] = [
         subtitle:
             'Rotating grain dispensers and egg storage that keep your counter tidy.',
         image: '/images/sliders/2.jpg',
+        imageSrcSet: null,
         imageAlt: 'Rotating grain dispenser with transparent compartments',
         imageWidth: 1000,
         imageHeight: 1000,
@@ -79,6 +89,7 @@ export const HERO_SLIDES: HeroSlide[] = [
         subtitle:
             'Gold-finish stands that dry and display your glasses beautifully.',
         image: '/images/sliders/3.jpg',
+        imageSrcSet: null,
         imageAlt: 'Gold glass holder stand with a crystal ball top',
         imageWidth: 1000,
         imageHeight: 1000,

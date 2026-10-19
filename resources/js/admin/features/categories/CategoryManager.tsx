@@ -7,7 +7,7 @@ import { destroy, update } from '@/routes/admin/categories';
 import CategoryFilters from './CategoryFilters';
 import CategoryFormModal from './CategoryFormModal';
 import CategoryTable from './CategoryTable';
-import { STATUS_ACTIVE, STATUS_INACTIVE } from './constants';
+import { STATUS_ACTIVE, STATUS_INACTIVE } from '@/shared/constants/status';
 import type { Category, CategoryIndexProps } from './types';
 import { useCategoryFilters } from './useCategoryFilters';
 

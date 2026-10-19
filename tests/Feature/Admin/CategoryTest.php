@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Models\Category;
 use App\Models\User;
 use App\Services\Category\CategoryService;
@@ -138,7 +138,7 @@ describe('create', function () {
 
         $category = Category::where('slug', 'kitchenware')->sole();
 
-        expect($category->status)->toBe(CategoryStatus::Active)
+        expect($category->status)->toBe(ActiveStatus::Active)
             ->and($category->image)->toBeNull()
             ->and($category->created_by)->toBe($this->admin->id);
     });
@@ -152,27 +152,27 @@ describe('create', function () {
 
     it('resizes the uploaded image to the category preset', function () {
         $this->post(route('admin.categories.store'), validCategory([
-            'image' => UploadedFile::fake()->image('photo.png', 1600, 900),
+            'image' => UploadedFile::fake()->image('photo.png', 900, 500),
         ]))->assertSessionHasNoErrors();
 
         $path = Category::sole()->image;
 
         expect($path)->toStartWith('categories/')->toEndWith('.webp')
             ->and(Storage::disk('uploads')->exists($path))->toBeTrue()
-            ->and(storedImageSize($path))->toBe([800, 800]);
+            ->and(storedImageSize($path))->toBe([300, 300]);
     });
 
     it('stores the original image when resizing is disabled', function () {
         config(['media.resize_enabled' => false]);
 
         $this->post(route('admin.categories.store'), validCategory([
-            'image' => UploadedFile::fake()->image('photo.jpg', 1200, 700),
+            'image' => UploadedFile::fake()->image('photo.jpg', 900, 600),
         ]))->assertSessionHasNoErrors();
 
         $path = Category::sole()->image;
 
         expect($path)->toStartWith('categories/')->toEndWith('.jpg')
-            ->and(storedImageSize($path))->toBe([1200, 700]);
+            ->and(storedImageSize($path))->toBe([900, 600]);
     });
 
     it('rejects files that are not valid images and raw image paths', function (mixed $image) {
@@ -183,8 +183,11 @@ describe('create', function () {
     })->with([
         'text file' => fn () => UploadedFile::fake()->create('notes.txt', 10, 'text/plain'),
         'gif image' => fn () => UploadedFile::fake()->image('anim.gif'),
-        'oversized file' => fn () => UploadedFile::fake()->image('big.jpg')->size(5000),
-        'too many pixels' => fn () => UploadedFile::fake()->image('huge.png', 5001, 10),
+        'over 512KB' => fn () => UploadedFile::fake()->image('big.jpg', 400, 400)->size(513),
+        'too small (299px)' => fn () => UploadedFile::fake()->image('small.png', 299, 299),
+        'too narrow' => fn () => UploadedFile::fake()->image('narrow.png', 299, 600),
+        'too large (1001px)' => fn () => UploadedFile::fake()->image('large.png', 1001, 1001),
+        'too wide' => fn () => UploadedFile::fake()->image('wide.png', 1001, 400),
         'raw path string' => '/images/categories/evil.jpg',
     ]);
 
@@ -237,7 +240,7 @@ describe('update', function () {
 
         expect($category->name)->toBe('Renamed')
             ->and($category->slug)->toBe('renamed')
-            ->and($category->status)->toBe(CategoryStatus::Inactive)
+            ->and($category->status)->toBe(ActiveStatus::Inactive)
             ->and($category->updated_by)->toBe($this->admin->id);
     });
 
@@ -247,7 +250,7 @@ describe('update', function () {
         updateRequest($category, ['status' => 'inactive'])->assertSessionHasNoErrors();
 
         expect($category->fresh())
-            ->status->toBe(CategoryStatus::Inactive)
+            ->status->toBe(ActiveStatus::Inactive)
             ->name->toBe('Keep')
             ->slug->toBe('keep');
     });
@@ -285,7 +288,7 @@ describe('update', function () {
     it('never deletes static seed images when replacing them', function () {
         $category = Category::factory()->create(['image' => '/images/categories/fashion.jpg']);
 
-        updateRequest($category, validCategory(['image' => UploadedFile::fake()->image('new.jpg')]))
+        updateRequest($category, validCategory(['image' => UploadedFile::fake()->image('new.jpg', 400, 400)]))
             ->assertSessionHasNoErrors();
 
         expect($category->fresh()->image)->toStartWith('categories/');
@@ -298,7 +301,7 @@ describe('update', function () {
 
         $this->withoutExceptionHandling();
 
-        expect(fn () => updateRequest($category, validCategory(['image' => UploadedFile::fake()->image('new.jpg')])))
+        expect(fn () => updateRequest($category, validCategory(['image' => UploadedFile::fake()->image('new.jpg', 400, 400)])))
             ->toThrow(RuntimeException::class, 'boom');
 
         expect(Storage::disk('uploads')->allFiles())->toBe(['categories/old.webp'])

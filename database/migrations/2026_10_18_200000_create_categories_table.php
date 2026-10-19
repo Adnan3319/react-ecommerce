@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug')->index();
+            // Unique across soft-deleted rows too, so old URLs are never reused.
+            $table->string('slug')->unique();
             $table->string('headline')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->integer('sort_order')->default(0);
-            $table->string('status')->default('Active');
+            $table->integer('sort_order')->default(0)->index();
+            $table->string('status')->default('active')->index();
             $table->softDeletes();
 
             // Audit fields

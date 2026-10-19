@@ -1,7 +1,7 @@
 import Input from '@admin/components/form/input/InputField';
 import Select from '@admin/components/form/Select';
 import { STATUS_FILTER_ALL } from './constants';
-import type { StatusOption } from './types';
+import type { StatusOption } from '@/shared/types';
 
 type CategoryFiltersProps = {
     search: string;

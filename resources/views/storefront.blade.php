@@ -6,6 +6,8 @@
     $canonical = $seo['canonical'] ?? null;
     $image = $seo['image'] ?? null;
     $robots = ($seo['noindex'] ?? false) ? 'noindex,follow' : 'index,follow';
+    // First Home hero slide: start downloading its image before the JS bundle runs (LCP).
+    $heroSlide = ($page['component'] ?? null) === 'Home' ? ($page['props']['sliders'][0] ?? null) : null;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -18,6 +20,10 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @fonts
+
+        @if (! empty($heroSlide['image']))
+            <link rel="preload" as="image" href="{{ $heroSlide['image'] }}" @if (! empty($heroSlide['image_srcset'])) imagesrcset="{{ $heroSlide['image_srcset'] }}" imagesizes="100vw" @endif fetchpriority="high">
+        @endif
 
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/storefront/app.tsx'])

@@ -1,17 +1,14 @@
 import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { index } from '@/routes/admin/categories';
-import {
-    SEARCH_DEBOUNCE_MS,
-    STATUS_ACTIVE,
-    STATUS_FILTER_ALL,
-    STATUS_INACTIVE,
-} from './constants';
-import type { CategoryFilters, CategoryStatus } from './types';
+import { STATUS_ACTIVE, STATUS_INACTIVE } from '@/shared/constants/status';
+import type { ActiveStatus } from '@/shared/types';
+import { SEARCH_DEBOUNCE_MS, STATUS_FILTER_ALL } from './constants';
+import type { CategoryFilters } from './types';
 
 type Query = {
     search?: string;
-    status?: CategoryStatus;
+    status?: ActiveStatus;
     page?: number;
 };
 
@@ -25,7 +22,7 @@ function visit(query: Query, setProcessing: (processing: boolean) => void): void
     });
 }
 
-function toStatus(value: string): CategoryStatus | undefined {
+function toStatus(value: string): ActiveStatus | undefined {
     return value === STATUS_ACTIVE || value === STATUS_INACTIVE ? value : undefined;
 }
 

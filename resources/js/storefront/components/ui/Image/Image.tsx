@@ -1,8 +1,8 @@
-import type { ImgHTMLAttributes } from 'react';
+import type { ComponentProps } from 'react';
 import { cn } from '@/shared/lib';
 
 export type ImageProps = Omit<
-    ImgHTMLAttributes<HTMLImageElement>,
+    ComponentProps<'img'>,
     'width' | 'height' | 'alt' | 'loading' | 'fetchPriority'
 > & {
     src: string;

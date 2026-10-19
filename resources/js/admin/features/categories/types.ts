@@ -1,6 +1,4 @@
-import type { Paginated } from '@/shared/types';
-
-export type CategoryStatus = 'active' | 'inactive';
+import type { ActiveStatus, Paginated, StatusOption } from '@/shared/types';
 
 export type Category = {
     id: number;
@@ -10,19 +8,14 @@ export type Category = {
     description: string | null;
     image_url: string | null;
     sort_order: number;
-    status: CategoryStatus;
+    status: ActiveStatus;
     created_at: string | null;
     updated_at: string | null;
 };
 
-export type StatusOption = {
-    value: CategoryStatus;
-    label: string;
-};
-
 export type CategoryFilters = {
     search: string | null;
-    status: CategoryStatus | null;
+    status: ActiveStatus | null;
     per_page: number;
 };
 

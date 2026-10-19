@@ -27,10 +27,10 @@ it('derives the extension from the file content, not the client filename', funct
 });
 
 it('re-encodes to the preset format when resizing is enabled', function () {
-    $path = $this->uploads->upload(UploadedFile::fake()->image('a.png', 2000, 1000), 'categories', 'category');
+    $path = $this->uploads->upload(UploadedFile::fake()->image('a.png', 900, 500), 'categories', 'category');
 
     expect($path)->toEndWith('.webp')
-        ->and(array_slice(getimagesizefromstring(Storage::disk('uploads')->get($path)), 0, 2))->toBe([800, 800]);
+        ->and(array_slice(getimagesizefromstring(Storage::disk('uploads')->get($path)), 0, 2))->toBe([300, 300]);
 });
 
 it('only shrinks (never enlarges) with a scale_down preset', function () {

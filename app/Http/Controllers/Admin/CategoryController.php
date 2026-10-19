@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Category\IndexCategoryRequest;
 use App\Http\Requests\Admin\Category\SaveCategoryRequest;
@@ -29,8 +29,8 @@ class CategoryController extends Controller
                 'per_page' => $filters['per_page'],
             ],
             'statuses' => array_map(
-                fn (CategoryStatus $status) => ['value' => $status->value, 'label' => $status->label()],
-                CategoryStatus::cases(),
+                fn (ActiveStatus $status) => ['value' => $status->value, 'label' => $status->label()],
+                ActiveStatus::cases(),
             ),
         ]);
     }

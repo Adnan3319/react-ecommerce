@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\CategoryStatus;
+use App\Enums\ActiveStatus;
 use App\Models\Concerns\HasAuditFields;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +29,7 @@ class Category extends Model
     protected function casts(): array
     {
         return [
-            'status' => CategoryStatus::class,
+            'status' => ActiveStatus::class,
             'sort_order' => 'integer',
         ];
     }
@@ -40,14 +40,14 @@ class Category extends Model
     #[Scope]
     protected function active(Builder $query): void
     {
-        $query->where('status', CategoryStatus::Active);
+        $query->where('status', ActiveStatus::Active);
     }
 
     /**
      * @param  Builder<Category>  $query
      */
     #[Scope]
-    protected function withStatus(Builder $query, ?CategoryStatus $status): void
+    protected function withStatus(Builder $query, ?ActiveStatus $status): void
     {
         $query->when($status, fn (Builder $q) => $q->where('status', $status));
     }

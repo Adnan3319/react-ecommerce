@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\ActiveStatus;
+use App\Models\Concerns\HasAuditFields;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Concerns\HasAuditFields;
 
 class Slider extends Model
 {
-    use HasFactory, SoftDeletes, HasAuditFields;
+    use HasAuditFields, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -20,4 +23,30 @@ class Slider extends Model
         'sort_order',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => ActiveStatus::class,
+            'sort_order' => 'integer',
+        ];
+    }
+
+    /**
+     * @param  Builder<Slider>  $query
+     */
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->where('status', ActiveStatus::Active);
+    }
+
+    /**
+     * @param  Builder<Slider>  $query
+     */
+    #[Scope]
+    protected function ordered(Builder $query): void
+    {
+        $query->orderBy('sort_order')->orderBy('id');
+    }
 }

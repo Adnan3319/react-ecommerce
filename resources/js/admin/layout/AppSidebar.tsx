@@ -2,16 +2,7 @@ import { useSidebar } from "@admin/context/SidebarContext";
 import { usePage } from "@inertiajs/react";
 import { useCallback, useEffect } from "react";
 import { Link, useLocation } from "@admin/lib/router";
-import {
-  BoxCubeIcon,
-  GridIcon,
-  HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PlugInIcon,
-  TableIcon,
-  UserCircleIcon,
-} from "../icons";
+import { GridIcon, HorizontaLDots, ListIcon } from "../icons";
 import { cn } from "../utils";
 
 type NavItem = {
@@ -20,24 +11,9 @@ type NavItem = {
   path: string;
 };
 
-const mainItems: NavItem[] = [
+const navItems: NavItem[] = [
   { name: "Dashboard", icon: <GridIcon fontSize={24} />, path: "/admin/dashboard" },
-  { name: "Sliders", icon: <TableIcon fontSize={24} />, path: "/admin/sliders" },
   { name: "Categories", icon: <ListIcon fontSize={24} />, path: "/admin/categories" },
-  { name: "Services", icon: <BoxCubeIcon fontSize={24} />, path: "/admin/services" },
-  { name: "Portfolio", icon: <PageIcon fontSize={24} />, path: "/admin/portfolio" },
-  { name: "Team", icon: <UserCircleIcon fontSize={24} />, path: "/admin/team" },
-  { name: "Clients", icon: <ListIcon fontSize={24} />, path: "/admin/clients" },
-  { name: "Blog", icon: <PageIcon fontSize={24} />, path: "/admin/blog" },
-  { name: "Career", icon: <TableIcon fontSize={24} />, path: "/admin/career" },
-  { name: "Contact", icon: <PageIcon fontSize={24} />, path: "/admin/contact" },
-  { name: "About Us", icon: <PageIcon fontSize={24} />, path: "/admin/about" },
-];
-
-const manageItems: NavItem[] = [
-  { name: "Messages", icon: <PageIcon fontSize={24} />, path: "/admin/messages" },
-  { name: "Users", icon: <UserCircleIcon fontSize={24} />, path: "/admin/users" },
-  { name: "Settings", icon: <PlugInIcon fontSize={24} />, path: "/admin/settings" },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -132,12 +108,8 @@ const AppSidebar: React.FC = () => {
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
-              {groupTitle("Content")}
-              {renderItems(mainItems)}
-            </div>
-            <div>
-              {groupTitle("Management")}
-              {renderItems(manageItems)}
+              {groupTitle("Menu")}
+              {renderItems(navItems)}
             </div>
           </div>
         </nav>

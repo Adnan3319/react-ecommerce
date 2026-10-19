@@ -23,24 +23,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-        Route::get('/sliders', fn () => Inertia::render('Admin/Sliders/Index'));
         Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
-        Route::get('/services', fn () => Inertia::render('Admin/Services/Index'));
-        Route::get('/portfolio', fn () => Inertia::render('Admin/Portfolio/Index'));
-        Route::get('/team', fn () => Inertia::render('Admin/Team/Index'));
-        Route::get('/clients', fn () => Inertia::render('Admin/Clients/Index'));
-        Route::get('/blog', fn () => Inertia::render('Admin/Blog/Index'));
-        Route::get('/career', fn () => Inertia::render('Admin/Career/Index'));
-        Route::get('/contact', fn () => Inertia::render('Admin/Contact/Index'));
-        Route::get('/about', fn () => Inertia::render('Admin/About/Index'));
 
         Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard/Ecommerce'))->name('dashboard');
-
-        Route::get('/profile', fn () => Inertia::render('Admin/UserProfiles'));
-        Route::get('/blank', fn () => Inertia::render('Admin/OtherPage/Blank'));
-
-        Route::get('/form-elements', fn () => Inertia::render('Admin/Forms/FormElements'));
-
-
     });
 });

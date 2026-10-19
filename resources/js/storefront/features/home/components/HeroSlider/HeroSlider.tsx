@@ -1,39 +1,53 @@
 import { Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/shared/lib';
 import { Icon, Image } from '@/shared/ui';
-import { HERO_SLIDES } from '../../hero-slides';
+import { HERO_SLIDES, toHeroSlide } from '../../hero-slides';
+import type { ApiSlider } from '../../hero-slides';
 import { ValueProps } from '../ValueProps';
 
 const AUTOPLAY_MS = 6000;
-const SLIDE_COUNT = HERO_SLIDES.length;
 
 const PAGER_BUTTON_CLASS =
     'flex size-8 items-center justify-center rounded-full transition-colors hover:bg-white/15';
 
-export default function HeroSlider() {
+type HeroSliderProps = {
+    /** Active sliders from the backend. Sample slides show when this is empty. */
+    sliders?: ApiSlider[];
+};
+
+export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
+    const slides = useMemo(
+        () => (sliders.length > 0 ? sliders.map(toHeroSlide) : HERO_SLIDES),
+        [sliders],
+    );
+    const slideCount = slides.length;
+
     const [index, setIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+
+    // Keep the index valid if the slide list gets shorter.
+    const currentIndex = index < slideCount ? index : 0;
 
     useEffect(() => {
         const prefersReducedMotion = window.matchMedia(
             '(prefers-reduced-motion: reduce)',
         ).matches;
 
-        if (isPaused || prefersReducedMotion) {
+        if (isPaused || prefersReducedMotion || slideCount < 2) {
             return;
         }
 
         const timer = window.setInterval(
-            () => setIndex((current) => (current + 1) % SLIDE_COUNT),
+            () => setIndex((current) => (current + 1) % slideCount),
             AUTOPLAY_MS,
         );
 
         return () => window.clearInterval(timer);
-    }, [isPaused]);
+    }, [isPaused, slideCount]);
 
     const goTo = (target: number) =>
-        setIndex((target + SLIDE_COUNT) % SLIDE_COUNT);
+        setIndex((target + slideCount) % slideCount);
 
     return (
         <section
@@ -48,13 +62,15 @@ export default function HeroSlider() {
             <h1 className="sr-only">Kitchenware and fashion store</h1>
 
             {/* Photo fills the right side edge to edge and fades into the dark left. */}
-            {HERO_SLIDES.map((slide, slideIndex) => (
+            {slides.map((slide, slideIndex) => (
                 <div
                     key={slide.id}
                     aria-hidden="true"
                     className={cn(
                         'absolute inset-y-0 right-0 w-full transition-opacity duration-700 md:w-[58%] md:mask-[linear-gradient(to_right,transparent,black_30%)]',
-                        slideIndex === index ? 'opacity-100' : 'opacity-0',
+                        slideIndex === currentIndex
+                            ? 'opacity-100'
+                            : 'opacity-0',
                     )}
                 >
                     <Image
@@ -78,15 +94,15 @@ export default function HeroSlider() {
 
             <div className="relative md:pt-[4.5rem]">
                 <div className="grid">
-                    {HERO_SLIDES.map((slide, slideIndex) => {
-                        const isActive = slideIndex === index;
+                    {slides.map((slide, slideIndex) => {
+                        const isActive = slideIndex === currentIndex;
 
                         return (
                             <div
                                 key={slide.id}
                                 role="group"
                                 aria-roledescription="slide"
-                                aria-label={`${slideIndex + 1} of ${SLIDE_COUNT}. ${slide.imageAlt}`}
+                                aria-label={`${slideIndex + 1} of ${slideCount}. ${slide.imageAlt}`}
                                 inert={!isActive}
                                 className={cn(
                                     'col-start-1 row-start-1 mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-14 transition-opacity duration-700 sm:px-6 md:min-h-[27rem]',
@@ -103,9 +119,11 @@ export default function HeroSlider() {
                                         </span>
                                     )}
                                 </h2>
-                                <p className="mt-4 max-w-sm text-base text-white/85">
-                                    {slide.subtitle}
-                                </p>
+                                {slide.subtitle && (
+                                    <p className="mt-4 max-w-sm text-base text-white/85">
+                                        {slide.subtitle}
+                                    </p>
+                                )}
                                 {slide.cta && (
                                     <Link
                                         href={slide.cta.href}
@@ -120,57 +138,61 @@ export default function HeroSlider() {
                     })}
                 </div>
 
-                <div className="absolute top-1/3 right-4 hidden flex-col items-center gap-1 rounded-full bg-ink/80 px-1 py-2 text-xs text-white shadow-lg ring-1 ring-white/30 backdrop-blur-md lg:flex">
-                    <button
-                        type="button"
-                        aria-label="Previous slide"
-                        onClick={() => goTo(index - 1)}
-                        className={PAGER_BUTTON_CLASS}
-                    >
-                        <Icon
-                            name="arrowRight"
-                            size={14}
-                            className="-rotate-90"
-                        />
-                    </button>
-                    <span aria-hidden="true">
-                        {index + 1} / {SLIDE_COUNT}
-                    </span>
-                    <button
-                        type="button"
-                        aria-label="Next slide"
-                        onClick={() => goTo(index + 1)}
-                        className={PAGER_BUTTON_CLASS}
-                    >
-                        <Icon
-                            name="arrowRight"
-                            size={14}
-                            className="rotate-90"
-                        />
-                    </button>
-                </div>
-
-                <div className="flex justify-center gap-1 lg:hidden">
-                    {HERO_SLIDES.map((slide, slideIndex) => (
+                {slideCount > 1 && (
+                    <div className="absolute top-1/3 right-4 hidden flex-col items-center gap-1 rounded-full bg-ink/80 px-1 py-2 text-xs text-white shadow-lg ring-1 ring-white/30 backdrop-blur-md lg:flex">
                         <button
-                            key={slide.id}
                             type="button"
-                            aria-label={`Go to slide ${slideIndex + 1}`}
-                            aria-current={slideIndex === index}
-                            onClick={() => goTo(slideIndex)}
-                            className="flex size-6 items-center justify-center"
+                            aria-label="Previous slide"
+                            onClick={() => goTo(currentIndex - 1)}
+                            className={PAGER_BUTTON_CLASS}
                         >
-                            <span
-                                className={cn(
-                                    'h-2 rounded-full transition-all',
-                                    slideIndex === index
-                                        ? 'w-6 bg-accent-500'
-                                        : 'w-2 bg-white/40',
-                                )}
+                            <Icon
+                                name="arrowRight"
+                                size={14}
+                                className="-rotate-90"
                             />
                         </button>
-                    ))}
-                </div>
+                        <span aria-hidden="true">
+                            {currentIndex + 1} / {slideCount}
+                        </span>
+                        <button
+                            type="button"
+                            aria-label="Next slide"
+                            onClick={() => goTo(currentIndex + 1)}
+                            className={PAGER_BUTTON_CLASS}
+                        >
+                            <Icon
+                                name="arrowRight"
+                                size={14}
+                                className="rotate-90"
+                            />
+                        </button>
+                    </div>
+                )}
+
+                {slideCount > 1 && (
+                    <div className="flex justify-center gap-1 lg:hidden">
+                        {slides.map((slide, slideIndex) => (
+                            <button
+                                key={slide.id}
+                                type="button"
+                                aria-label={`Go to slide ${slideIndex + 1}`}
+                                aria-current={slideIndex === currentIndex}
+                                onClick={() => goTo(slideIndex)}
+                                className="flex size-6 items-center justify-center"
+                            >
+                                <span
+                                    className={cn(
+                                        'h-2 rounded-full transition-all',
+                                        slideIndex === currentIndex
+                                            ? 'w-6 bg-accent-500'
+                                            : 'w-2 bg-white/40',
+                                    )}
+                                />
+                            </button>
+                        ))}
+                    </div>
+                )}
 
                 <ValueProps />
             </div>

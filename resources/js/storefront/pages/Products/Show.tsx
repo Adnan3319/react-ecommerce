@@ -15,6 +15,9 @@ import {
 } from '@/storefront/features/product';
 import { categoryHref } from '@/storefront/lib/category-href';
 
+/** Integer minor units. Placeholder: set your real Outside Dhaka charge. */
+const OUTSIDE_DHAKA_DELIVERY_CHARGE = 12000;
+
 type ShowProps = {
     slug: string;
 };
@@ -57,44 +60,51 @@ export default function Show({ slug }: ShowProps) {
                     ]}
                 />
 
-                <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
+                <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start lg:gap-10">
+                    {/* Left: main image + product info, thumbnails below */}
                     <ProductGallery
                         name={product.name}
                         images={product.images}
+                        info={
+                            <header className="flex flex-col gap-3">
+                                <Badge tone="success" className="w-fit">
+                                    In stock
+                                </Badge>
+                                <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900 xl:text-4xl">
+                                    {product.name}
+                                </h1>
+                                <p className="text-xs leading-relaxed text-neutral-400">
+                                    {product.description}
+                                </p>
+
+                                <div className="mt-3">
+                                    <p className="text-xs text-neutral-500">
+                                        Total price:
+                                    </p>
+                                    <p className="text-4xl font-extrabold tracking-tight text-neutral-900">
+                                        {formatMoney(product.price)}
+                                    </p>
+                                </div>
+
+                                <AddToCartButton
+                                    product={product}
+                                    variant="soft"
+                                    size="lg"
+                                    className="hidden w-fit md:inline-flex"
+                                />
+                            </header>
+                        }
                     />
 
-                    <div className="flex flex-col gap-6">
-                        <header className="flex flex-col gap-3">
-                            <Badge tone="success" className="w-fit">
-                                In stock
-                            </Badge>
-                            <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
-                                {product.name}
-                            </h1>
-                            <p className="text-3xl font-bold text-accent-600">
-                                {formatMoney(product.price)}
-                            </p>
-                            <p className="text-neutral-600">
-                                {product.description}
-                            </p>
-                        </header>
-
-                        <AddToCartButton
-                            product={product}
-                            variant="soft"
-                            size="lg"
-                            fullWidth
-                            className="hidden md:inline-flex"
-                        />
-
-                        <OrderForm
-                            source="buy_now"
-                            productId={product.id}
-                            productName={product.name}
-                            unitPrice={product.price}
-                            deliveryCharge={DEFAULT_DELIVERY_CHARGE}
-                        />
-                    </div>
+                    {/* Right: the order form sits where the Overview box is */}
+                    <OrderForm
+                        source="buy_now"
+                        productId={product.id}
+                        productName={product.name}
+                        unitPrice={product.price}
+                        deliveryCharge={DEFAULT_DELIVERY_CHARGE}
+                        outsideDhakaDeliveryCharge={OUTSIDE_DHAKA_DELIVERY_CHARGE}
+                    />
                 </div>
             </div>
 

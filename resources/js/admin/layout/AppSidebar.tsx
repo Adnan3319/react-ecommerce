@@ -22,6 +22,8 @@ type NavItem = {
 
 const mainItems: NavItem[] = [
   { name: "Dashboard", icon: <GridIcon fontSize={24} />, path: "/admin/dashboard" },
+  { name: "Sliders", icon: <TableIcon fontSize={24} />, path: "/admin/sliders" },
+  { name: "Categories", icon: <ListIcon fontSize={24} />, path: "/admin/categories" },
   { name: "Services", icon: <BoxCubeIcon fontSize={24} />, path: "/admin/services" },
   { name: "Portfolio", icon: <PageIcon fontSize={24} />, path: "/admin/portfolio" },
   { name: "Team", icon: <UserCircleIcon fontSize={24} />, path: "/admin/team" },

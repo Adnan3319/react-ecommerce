@@ -20,6 +20,8 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'destroy']);
+        Route::get('/sliders', fn () => Inertia::render('Admin/Sliders/Index'));
+        Route::get('/categories', fn () => Inertia::render('Admin/Categories/Index'));
         Route::get('/services', fn () => Inertia::render('Admin/Services/Index'));
         Route::get('/portfolio', fn () => Inertia::render('Admin/Portfolio/Index'));
         Route::get('/team', fn () => Inertia::render('Admin/Team/Index'));

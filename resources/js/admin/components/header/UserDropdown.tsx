@@ -5,10 +5,11 @@ import { cn } from "@admin/utils";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { router, usePage } from "@inertiajs/react";
+import { logout } from "@/routes/admin";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 
-type AuthUser = { name: string; email: string } | null;
+type AuthUser = { name: string; username: string } | null;
 
 export default function UserDropdown() {
   const { auth } = usePage<{ auth: { user: AuthUser } }>().props;
@@ -91,7 +92,7 @@ export default function UserDropdown() {
             {user?.name}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 no-underline dark:text-gray-400">
-            {user?.email}
+            {user?.username}
           </span>
         </div>
 
@@ -260,7 +261,7 @@ export default function UserDropdown() {
         </ul>
         <button
           type="button"
-          onClick={() => router.post("/admin/logout")}
+          onClick={() => router.post(logout().url)}
           className="group mt-3 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-theme-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg

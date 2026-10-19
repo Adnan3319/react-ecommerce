@@ -43,7 +43,7 @@ class HandleInertiaRequests extends Middleware
             // Placeholder until the server-side cart exists.
             'cart' => ['count' => 0],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],
             // Active categories for the storefront (navbar, home, search, footer).
             'categories' => fn () => $request->is('admin', 'admin/*')

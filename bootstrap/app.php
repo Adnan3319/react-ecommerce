@@ -27,6 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
 
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin', 'admin/*')
+            ? route('admin.login')
+            : route('home'));
+
+        $middleware->redirectUsersTo(fn (Request $request) => $request->is('admin', 'admin/*')
+            ? route('admin.dashboard')
+            : route('home'));
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,

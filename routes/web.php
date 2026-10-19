@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,14 +12,16 @@ Route::inertia('/cart', 'Cart')->name('cart');
 Route::inertia('/about', 'About')->name('about');
 Route::inertia('/contact', 'Contact')->name('contact');
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::redirect('/', '/admin/dashboard')->name('index');
+
     Route::middleware('guest')->group(function () {
-        Route::get('/signin', [AdminAuthController::class, 'create'])->name('login');
-        Route::post('/signin', [AdminAuthController::class, 'store']);
+        Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [AuthController::class, 'login'])->name('login.store');
     });
 
     Route::middleware('auth')->group(function () {
-        Route::post('/logout', [AdminAuthController::class, 'destroy']);
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         Route::get('/sliders', fn () => Inertia::render('Admin/Sliders/Index'));
         Route::get('/categories', fn () => Inertia::render('Admin/Categories/Index'));
         Route::get('/services', fn () => Inertia::render('Admin/Services/Index'));
@@ -30,13 +32,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/career', fn () => Inertia::render('Admin/Career/Index'));
         Route::get('/contact', fn () => Inertia::render('Admin/Contact/Index'));
         Route::get('/about', fn () => Inertia::render('Admin/About/Index'));
-        
 
-        Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard/Ecommerce'));
+        Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard/Ecommerce'))->name('dashboard');
 
         Route::get('/profile', fn () => Inertia::render('Admin/UserProfiles'));
         Route::get('/blank', fn () => Inertia::render('Admin/OtherPage/Blank'));
-
 
         Route::get('/form-elements', fn () => Inertia::render('Admin/Forms/FormElements'));
         Route::get('/basic-tables', fn () => Inertia::render('Admin/Tables/BasicTables'));

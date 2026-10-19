@@ -3,6 +3,7 @@ import Checkbox from "@admin/components/form/input/Checkbox";
 import Input from "@admin/components/form/input/InputField";
 import Button from "@admin/components/ui/button/Button";
 import { EyeCloseIcon, EyeIcon } from "@admin/icons";
+import { store } from "@/routes/admin/login";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 import type { FormEvent } from "react";
@@ -10,14 +11,14 @@ import type { FormEvent } from "react";
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { data, setData, post, processing, errors } = useForm({
-    email: "",
+    username: "",
     password: "",
     remember: false,
   });
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    post("/admin/signin"); // /admin/login theke /admin/signin kore dewa holo
+    post(store().url);
   };
 
   return (
@@ -28,7 +29,7 @@ export default function SignInForm() {
             Admin Sign In
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Enter your email and password to sign in!
+            Enter your username and password to sign in!
           </p>
         </div>
 
@@ -36,16 +37,16 @@ export default function SignInForm() {
           <div className="space-y-6">
             <div>
               <Label>
-                Email <span className="text-error-500">*</span>
+                Username <span className="text-error-500">*</span>
               </Label>
               <Input
-                name="email"
-                placeholder="info@gmail.com"
-                value={data.email}
-                onChange={(e) => setData("email", e.target.value)}
+                name="username"
+                placeholder="Enter your username"
+                value={data.username}
+                onChange={(e) => setData("username", e.target.value)}
               />
-              {errors.email && (
-                <p className="mt-1.5 text-sm text-error-500">{errors.email}</p>
+              {errors.username && (
+                <p className="mt-1.5 text-sm text-error-500">{errors.username}</p>
               )}
             </div>
 

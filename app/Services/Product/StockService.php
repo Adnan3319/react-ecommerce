@@ -3,8 +3,10 @@
 namespace App\Services\Product;
 
 use App\Enums\StockMovementReason;
+use App\Exceptions\InsufficientStock;
 use App\Models\ProductVariant;
 use App\Models\StockMovement;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -31,6 +33,52 @@ class StockService
     public function adjust(ProductVariant $variant, int $newQuantity, ?string $note = null): void
     {
         $this->moveTo($variant, $newQuantity, StockMovementReason::ManualAdjustment, $note);
+    }
+
+    /**
+     * Takes units out of stock for `$reference` (an order). Never goes below zero.
+     *
+     * @throws InsufficientStock when fewer than `$quantity` units are left
+     */
+    public function deduct(ProductVariant $variant, int $quantity, StockMovementReason $reason, Model $reference): void
+    {
+        $this->change($variant, -$quantity, $reason, $reference);
+    }
+
+    /**
+     * Puts units back into stock for `$reference` (a cancelled or returned order).
+     */
+    public function restore(ProductVariant $variant, int $quantity, StockMovementReason $reason, Model $reference): void
+    {
+        $this->change($variant, $quantity, $reason, $reference);
+    }
+
+    private function change(ProductVariant $variant, int $signedQuantity, StockMovementReason $reason, Model $reference): void
+    {
+        DB::transaction(function () use ($variant, $signedQuantity, $reason, $reference): void {
+            $current = ProductVariant::withTrashed()->lockForUpdate()->findOrFail($variant->id);
+            $newStock = $current->stock + $signedQuantity;
+
+            if ($newStock < 0) {
+                throw new InsufficientStock("Only {$current->stock} left of variant {$current->id}.");
+            }
+
+            $current->forceFill(['stock' => $newStock])->save();
+
+            StockMovement::create([
+                'product_variant_id' => $current->id,
+                'quantity' => $signedQuantity,
+                'reason' => $reason,
+                'reference_type' => $reference->getMorphClass(),
+                'reference_id' => $reference->getKey(),
+                'created_by' => Auth::id(),
+            ]);
+
+            $variant->setAttribute('stock', $newStock);
+            $variant->syncOriginalAttribute('stock');
+        });
+
+        $this->cache->flush();
     }
 
     private function moveTo(ProductVariant $variant, int $newQuantity, StockMovementReason $reason, ?string $note = null): void

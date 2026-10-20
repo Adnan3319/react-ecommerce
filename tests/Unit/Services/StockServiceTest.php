@@ -1,6 +1,8 @@
 <?php
 
 use App\Enums\StockMovementReason;
+use App\Exceptions\InsufficientStock;
+use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Models\StockMovement;
 use App\Models\User;
@@ -71,5 +73,39 @@ describe('adjust', function () {
         $this->stock->adjust($this->variant, 3);
 
         expect(StockMovement::sum('quantity'))->toBe($this->variant->fresh()->stock);
+    });
+});
+
+describe('deduct and restore', function () {
+    it('removes and returns units for an order with a signed, referenced movement', function () {
+        $this->stock->setInitial($this->variant, 10);
+        $order = Order::factory()->create();
+
+        $this->stock->deduct($this->variant, 4, StockMovementReason::OrderPlaced, $order);
+        $this->stock->restore($this->variant, 4, StockMovementReason::OrderCancelled, $order);
+
+        $movements = StockMovement::whereIn('reason', [StockMovementReason::OrderPlaced, StockMovementReason::OrderCancelled])->orderBy('id')->get();
+
+        expect($movements->pluck('quantity')->all())->toBe([-4, 4])
+            ->and($movements->pluck('reference_id')->unique()->all())->toBe([$order->id])
+            ->and($this->variant->fresh()->stock)->toBe(10)
+            ->and(StockMovement::sum('quantity'))->toBe(10);
+    });
+
+    it('never goes below zero', function () {
+        $this->stock->setInitial($this->variant, 2);
+
+        $this->stock->deduct($this->variant, 3, StockMovementReason::OrderPlaced, Order::factory()->create());
+    })->throws(InsufficientStock::class);
+
+    it('leaves stock and movements untouched when it refuses', function () {
+        $this->stock->setInitial($this->variant, 2);
+
+        try {
+            $this->stock->deduct($this->variant, 3, StockMovementReason::OrderPlaced, Order::factory()->create());
+        } catch (InsufficientStock) {
+        }
+
+        expect($this->variant->fresh()->stock)->toBe(2)->and(StockMovement::count())->toBe(1);
     });
 });

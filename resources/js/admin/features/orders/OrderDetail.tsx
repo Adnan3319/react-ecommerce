@@ -4,7 +4,7 @@ import { index } from '@/routes/admin/orders';
 import BlockPhoneButton from './BlockPhoneButton';
 import CustomerCard from './CustomerCard';
 import CustomerHistory from './CustomerHistory';
-import { formatFull } from './format-date';
+import { formatFull } from '@admin/lib/format-date';
 import OrderItems from './OrderItems';
 import OrderNoteForm from './OrderNoteForm';
 import StatusActions from './StatusActions';

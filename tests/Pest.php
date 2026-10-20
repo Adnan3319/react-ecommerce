@@ -19,7 +19,7 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature', 'Unit/Models', 'Unit/Seeders', 'Unit/Services');
+    ->in('Feature', 'Unit/Jobs', 'Unit/Mail', 'Unit/Models', 'Unit/Seeders', 'Unit/Services');
 
 // Real MySQL, rows committed for real (parallel processes must see them): truncate between tests
 // instead of wrapping each one in a transaction. Only phpunit-mysql.xml includes this folder.

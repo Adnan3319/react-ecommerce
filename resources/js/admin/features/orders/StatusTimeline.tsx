@@ -1,4 +1,4 @@
-import { formatShort } from './format-date';
+import { formatShort } from '@admin/lib/format-date';
 import type { HistoryEntry } from './types';
 
 function title(entry: HistoryEntry): string {

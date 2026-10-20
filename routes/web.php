@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerBlockController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SliderController;
@@ -48,6 +49,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/customers/{customer}/block', [CustomerBlockController::class, 'store'])->withTrashed()->name('customers.block');
         Route::delete('/customers/{customer}/block', [CustomerBlockController::class, 'destroy'])->withTrashed()->name('customers.unblock');
 
-        Route::get('/dashboard', fn () => Inertia::render('Admin/Dashboard/Ecommerce'))->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 });

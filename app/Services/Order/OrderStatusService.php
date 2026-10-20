@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Services\Dashboard\DashboardCache;
 use App\Services\Product\StockService;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,7 @@ class OrderStatusService
     public function __construct(
         private readonly StockService $stock,
         private readonly PendingOrderCount $pendingOrders,
+        private readonly DashboardCache $dashboard,
     ) {}
 
     /**
@@ -56,6 +58,7 @@ class OrderStatusService
         });
 
         $this->pendingOrders->forget();
+        $this->dashboard->forget();
 
         return $moved;
     }

@@ -3,7 +3,7 @@ import DataTable from '@admin/components/DataTable';
 import type { DataTableToolbar } from '@admin/components/DataTable';
 import Badge from '@admin/components/ui/badge/Badge';
 import { show } from '@/routes/admin/orders';
-import { formatShort } from './format-date';
+import { formatShort } from '@admin/lib/format-date';
 import type { OrderListItem } from './types';
 
 type OrderTableProps = {

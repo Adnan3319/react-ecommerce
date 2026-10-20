@@ -308,61 +308,6 @@
     }
 }
 
-/* third-party libraries CSS */
-.apexcharts-legend-text {
-    @apply text-gray-700! dark:text-gray-400!;
-}
-
-.apexcharts-text {
-    @apply fill-gray-700! dark:fill-gray-400!;
-}
-
-.apexcharts-tooltip.apexcharts-theme-light {
-    @apply shadow-theme-sm! gap-1 rounded-lg! border-gray-200! p-3 dark:border-gray-800! dark:bg-gray-900!;
-}
-
-.apexcharts-tooltip-marker {
-    margin-right: 6px;
-    height: 6px;
-    width: 6px;
-}
-.apexcharts-legend-text {
-    @apply pl-5! text-gray-700! dark:text-gray-400!;
-}
-.apexcharts-tooltip-series-group {
-    @apply p-0!;
-}
-.apexcharts-tooltip-y-group {
-    @apply p-0!;
-}
-.apexcharts-tooltip-title {
-    @apply mb-0! border-b-0! bg-transparent! p-0! text-[10px]! leading-4! text-gray-800! dark:text-white/90!;
-}
-.apexcharts-tooltip-text {
-    @apply text-theme-xs! text-gray-700! dark:text-white/90!;
-}
-.apexcharts-tooltip-text-y-value {
-    @apply font-medium!;
-}
-
-.apexcharts-gridline {
-    @apply stroke-gray-100! dark:stroke-gray-800!;
-}
-#chartTwo .apexcharts-datalabels-group {
-    @apply -translate-y-24!;
-}
-#chartTwo .apexcharts-datalabels-group .apexcharts-text {
-    @apply fill-gray-800! font-semibold! dark:fill-white/90!;
-}
-
-#chartDarkStyle .apexcharts-datalabels-group .apexcharts-text {
-    @apply fill-gray-800! font-semibold! dark:fill-white/90!;
-}
-
-.chartDarkStyle .apexcharts-datalabels-group .apexcharts-text {
-    @apply fill-gray-800! font-semibold! dark:fill-white/90!;
-}
-
 .input-date-icon::-webkit-inner-spin-button,
 .input-date-icon::-webkit-calendar-picker-indicator {
     opacity: 0;
@@ -863,12 +808,6 @@ pre[class*='language-'].line-numbers {
 }
 #mapTwo .jvectormap-region[data-code='US'] {
     fill: #465fff !important;
-}
-
-.api-token-chart .apexcharts-tooltip {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
 }
 
 /* Customer Pin-Point Map */

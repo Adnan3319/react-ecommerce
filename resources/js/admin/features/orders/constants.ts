@@ -22,7 +22,4 @@ export const RANGE_OPTIONS = [
 
 export const COPIED_RESET_MS = 2000;
 
-/** Dates show in the shop's timezone so every admin sees the same times. */
-export const SHOP_TIME_ZONE = 'Asia/Dhaka';
-
 export const SOURCE_FILTER_LABEL = 'Source: All';

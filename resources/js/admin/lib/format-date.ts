@@ -1,4 +1,5 @@
-import { SHOP_TIME_ZONE } from './constants';
+/** Dates show in the shop's timezone so every admin sees the same times (APP_TIMEZONE on the server). */
+const SHOP_TIME_ZONE = 'Asia/Dhaka';
 
 const SHORT = new Intl.DateTimeFormat('en-GB', {
     timeZone: SHOP_TIME_ZONE,

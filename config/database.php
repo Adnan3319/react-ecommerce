@@ -55,6 +55,8 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            // Session time zone, so DATE() and NOW() agree with the application timezone (Asia/Dhaka).
+            'timezone' => env('DB_TIMEZONE', '+06:00'),
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
@@ -75,6 +77,8 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+            // Session time zone, so DATE() and NOW() agree with the application timezone (Asia/Dhaka).
+            'timezone' => env('DB_TIMEZONE', '+06:00'),
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,

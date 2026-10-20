@@ -18,5 +18,10 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             CategorySeeder::class,
         ]);
+
+        // Fake feedback only on a developer machine, never on a live store.
+        if (app()->environment('local')) {
+            $this->call(TestimonialSampleSeeder::class);
+        }
     }
 }

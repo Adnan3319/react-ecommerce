@@ -21,7 +21,7 @@ it('composes sliders and categories from their own caches', function () {
 
     $data = app(HomeService::class)->data();
 
-    expect($data)->toHaveKeys(['sliders', 'promo', 'categories'])
+    expect($data)->toHaveKeys(['sliders', 'promo', 'categories', 'testimonials'])
         ->and($data['sliders'])->toBe(Cache::get(SliderService::cacheKey(SliderPosition::Hero)))
         ->and($data['categories'])->toBe(Cache::get(CategoryService::ACTIVE_CACHE_KEY));
 });

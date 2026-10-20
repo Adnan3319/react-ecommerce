@@ -7,13 +7,15 @@ import {
     PromoBanner,
     Testimonials,
 } from '@/storefront/features/home';
-import type { ApiSlider } from '@/storefront/features/home';
+import type { ApiSlider, ApiTestimonial } from '@/storefront/features/home';
 
 type HomeProps = {
     seo: SeoData;
     sliders: ApiSlider[];
     /** First active promo slider; wired into the page by the landing step. */
     promo: ApiSlider | null;
+    /** Real testimonials; the landing step renders them. */
+    testimonials: ApiTestimonial[];
 };
 
 export default function Home({ seo, sliders }: HomeProps) {

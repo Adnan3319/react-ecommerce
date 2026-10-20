@@ -5,6 +5,7 @@ namespace App\Services\Home;
 use App\Services\Category\CategoryService;
 use App\Services\Product\ProductService;
 use App\Services\Slider\SliderService;
+use App\Services\Testimonial\TestimonialService;
 
 /**
  * Composes the Home page data from the per-domain caches. Each domain service owns
@@ -16,10 +17,11 @@ class HomeService
         private readonly SliderService $sliders,
         private readonly CategoryService $categories,
         private readonly ProductService $products,
+        private readonly TestimonialService $testimonials,
     ) {}
 
     /**
-     * @return array{sliders: array<int, array<string, mixed>>, promo: ?array<string, mixed>, categories: array<int, array<string, ?string>>, featuredProducts: array<int, array<string, mixed>>}
+     * @return array{sliders: array<int, array<string, mixed>>, promo: ?array<string, mixed>, categories: array<int, array<string, ?string>>, testimonials: array<int, array<string, mixed>>, featuredProducts: array<int, array<string, mixed>>}
      */
     public function data(): array
     {
@@ -29,7 +31,8 @@ class HomeService
             'sliders' => $sliders['hero'],
             'promo' => $sliders['promo'],
             'categories' => $this->categories->activeForStorefront(),
-            'featuredProducts' => $this->products->featuredForStorefront(),
+            'testimonials' => $this->testimonials->activeForStorefront(),
+            'featuredProducts' =>$this->products->featuredForStorefront(),
         ];
     }
 }

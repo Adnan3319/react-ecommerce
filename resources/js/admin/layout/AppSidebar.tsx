@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { Link, useLocation } from '@admin/lib/router';
 import {
     BoxCubeIcon,
+    ChatIcon,
     GridIcon,
     HorizontaLDots,
     ListIcon,
@@ -11,6 +12,7 @@ import {
 } from '../icons';
 import { cn } from '../utils';
 import * as orders from '@/routes/admin/orders';
+import * as testimonials from '@/routes/admin/testimonials';
 
 type NavItem = {
     name: string;
@@ -44,6 +46,11 @@ const navItems: NavItem[] = [
         name: 'Categories',
         icon: <ListIcon fontSize={24} />,
         path: '/admin/categories',
+    },
+    {
+        name: 'Testimonials',
+        icon: <ChatIcon fontSize={24} />,
+        path: testimonials.index().url,
     },
 ];
 

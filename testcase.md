@@ -47,8 +47,17 @@ Split a file when it passes ~300 lines: `ProductTest` (CRUD) + `ProductValidatio
 ## 3. Database & environment
 
 - Feature tests use `RefreshDatabase` (set once in `tests/Pest.php`). Never truncate manually.
-- Tests run on SQLite. Anything MySQL-only (FULLTEXT search, MySQL JSON functions)
-  goes in `->group('mysql')` and is skipped on SQLite. Do not change app code to please SQLite.
+- Tests run on SQLite. Anything MySQL-only (FULLTEXT search, MySQL JSON functions, real
+  concurrency) goes in `tests/Mysql/` (group `mysql`), which only `phpunit-mysql.xml` runs.
+  Do not change app code to please SQLite.
+- **Real-MySQL tests** (`tests/Mysql`, e.g. `CheckoutConcurrencyTest`): they need an empty database
+  `checkit_test` on the same MySQL server (`CREATE DATABASE checkit_test CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;`). Host, user and password come from `.env`; `phpunit-mysql.xml`
+  forces the name `checkit_test`, and the `TestCase` guard refuses any database that does not end in
+  `_test`, so `checkit_db` and other projects are never touched. Run:
+  `php artisan test -c phpunit-mysql.xml --group=mysql`. These tests commit real rows (the tables are
+  truncated between tests, not wrapped in a transaction) and start parallel PHP processes with
+  `Process::pool` that run `tests/Support/place-order-process.php`. Never put them in the normal suite.
 - Cache and session use the `array` driver and queue uses the `sync` driver in tests (`phpunit.xml`).
 - Files: `Storage::fake('uploads')` in `beforeEach` of any test that uploads.
 - Queued jobs: `Queue::fake()` and assert pushed; run the job class directly in its own Unit test.
@@ -143,7 +152,7 @@ Always unit-test these in the Service, with exact numbers:
 ```bash
 php artisan test --compact                      # everything
 php artisan test --compact --filter=CategoryTest
-php artisan test --compact --exclude-group=mysql
+php artisan test -c phpunit-mysql.xml --group=mysql   # real MySQL + parallel processes (needs checkit_test)
 ```
 
 A task is done only when `php artisan test`, `npx tsc --noEmit` and `vp lint` all exit 0.

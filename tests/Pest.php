@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -19,6 +20,13 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit/Models', 'Unit/Seeders', 'Unit/Services');
+
+// Real MySQL, rows committed for real (parallel processes must see them): truncate between tests
+// instead of wrapping each one in a transaction. Only phpunit-mysql.xml includes this folder.
+pest()->extend(TestCase::class)
+    ->use(DatabaseTruncation::class)
+    ->group('mysql')
+    ->in('Mysql');
 
 /*
 |--------------------------------------------------------------------------

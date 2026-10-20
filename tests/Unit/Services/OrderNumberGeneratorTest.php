@@ -46,6 +46,23 @@ describe('next', function () {
         expect($this->generator->next())->toBe('ZZ-260305-0001');
     });
 
+    it('hands out a new number on every call, even before the order is saved', function () {
+        expect([$this->generator->next(), $this->generator->next()])->toBe(['CK-260305-0001', 'CK-260305-0002']);
+    });
+
+    it('gives a number back when the surrounding transaction rolls back', function () {
+        try {
+            DB::transaction(function () {
+                $this->generator->next();
+
+                throw new RuntimeException('order failed');
+            });
+        } catch (RuntimeException) {
+        }
+
+        expect($this->generator->next())->toBe('CK-260305-0001');
+    });
+
     it('numbers for a given date', function () {
         expect($this->generator->next(Carbon::parse('2027-12-31')))->toBe('CK-271231-0001');
     });

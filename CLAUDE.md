@@ -174,6 +174,7 @@ resources/js/
 - No observers/events with hidden side effects on hot paths (cart, order placement)
 - Cache read-heavy data (catalog, categories, menu, delivery zones); invalidate explicitly on write
 - Product search: MySQL FULLTEXT index for now
+- When a step adds a migration, also run `php artisan migrate` on the local `checkit_db` before reporting done (tests use a separate DB, so they don't catch this)
 
 ## Security
 

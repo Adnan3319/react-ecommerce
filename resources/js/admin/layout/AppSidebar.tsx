@@ -2,7 +2,7 @@ import { useSidebar } from "@admin/context/SidebarContext";
 import { usePage } from "@inertiajs/react";
 import { useCallback, useEffect } from "react";
 import { Link, useLocation } from "@admin/lib/router";
-import { GridIcon, HorizontaLDots, ListIcon, TableIcon } from "../icons";
+import { BoxCubeIcon, GridIcon, HorizontaLDots, ListIcon, TableIcon } from "../icons";
 import { cn } from "../utils";
 
 type NavItem = {
@@ -13,6 +13,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { name: "Dashboard", icon: <GridIcon fontSize={24} />, path: "/admin/dashboard" },
+  { name: "Products", icon: <BoxCubeIcon fontSize={24} />, path: "/admin/products" },
   { name: "Sliders", icon: <TableIcon fontSize={24} />, path: "/admin/sliders" },
   { name: "Categories", icon: <ListIcon fontSize={24} />, path: "/admin/categories" },
 ];

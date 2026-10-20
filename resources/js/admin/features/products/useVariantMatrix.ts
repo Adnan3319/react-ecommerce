@@ -11,38 +11,65 @@ export type BulkValues = { price: string; sale_price: string; stock: string };
 function hasChip(head: HeadState, text: string, exceptKey?: string): boolean {
     const wanted = text.toLowerCase();
 
-    return head.values.some((chip) => chip.key !== exceptKey && chip.value.toLowerCase() === wanted);
+    return head.values.some(
+        (chip) => chip.key !== exceptKey && chip.value.toLowerCase() === wanted,
+    );
 }
 
 /**
  * Edits the variant heads, their value chips and the generated rows of the product form. Every edit
  * re-syncs the rows in the same state update, so rows never lag behind the chips.
  */
-export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'update'>, limits: Limits) {
+export function useVariantMatrix(
+    { data, update }: Pick<FormApi, 'data' | 'update'>,
+    limits: Limits,
+) {
     const updateHeads = (edit: (heads: HeadState[]) => HeadState[]) =>
         update((previous) => {
             const heads = edit(previous.heads);
 
-            return { ...previous, heads, rows: syncRows(heads, previous.rows, previous.removedRows) };
+            return {
+                ...previous,
+                heads,
+                rows: syncRows(heads, previous.rows, previous.removedRows),
+            };
         });
 
-    const updateHead = (headKey: string, edit: (head: HeadState) => HeadState) =>
-        updateHeads((heads) => heads.map((head) => (head.key === headKey ? edit(head) : head)));
+    const updateHead = (
+        headKey: string,
+        edit: (head: HeadState) => HeadState,
+    ) =>
+        updateHeads((heads) =>
+            heads.map((head) => (head.key === headKey ? edit(head) : head)),
+        );
 
-    const emptyHead = (): HeadState => ({ key: newKey(), id: null, name: '', values: [] });
+    const emptyHead = (): HeadState => ({
+        key: newKey(),
+        id: null,
+        name: '',
+        values: [],
+    });
 
     const setHasVariants = (enabled: boolean) =>
         update((previous) => ({
             ...previous,
             has_variants: enabled,
-            heads: enabled && previous.heads.length === 0 ? [emptyHead()] : previous.heads,
+            heads:
+                enabled && previous.heads.length === 0
+                    ? [emptyHead()]
+                    : previous.heads,
         }));
 
-    const addHead = () => updateHeads((heads) => (heads.length >= limits.maxHeads ? heads : [...heads, emptyHead()]));
+    const addHead = () =>
+        updateHeads((heads) =>
+            heads.length >= limits.maxHeads ? heads : [...heads, emptyHead()],
+        );
 
-    const removeHead = (headKey: string) => updateHeads((heads) => heads.filter((head) => head.key !== headKey));
+    const removeHead = (headKey: string) =>
+        updateHeads((heads) => heads.filter((head) => head.key !== headKey));
 
-    const renameHead = (headKey: string, name: string) => updateHead(headKey, (head) => ({ ...head, name }));
+    const renameHead = (headKey: string, name: string) =>
+        updateHead(headKey, (head) => ({ ...head, name }));
 
     const addChip = (headKey: string, raw: string): ChipResult => {
         const text = raw.trim();
@@ -57,7 +84,15 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
         }
 
         const grown = data.heads.map((candidate) =>
-            candidate.key === headKey ? { ...candidate, values: [...candidate.values, { key: newKey(), id: null, value: text }] } : candidate,
+            candidate.key === headKey
+                ? {
+                      ...candidate,
+                      values: [
+                          ...candidate.values,
+                          { key: newKey(), id: null, value: text },
+                      ],
+                  }
+                : candidate,
         );
 
         if (combinationCount(grown) > limits.maxVariants) {
@@ -70,10 +105,17 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
     };
 
     const removeChip = (headKey: string, chipKey: string) =>
-        updateHead(headKey, (head) => ({ ...head, values: head.values.filter((chip) => chip.key !== chipKey) }));
+        updateHead(headKey, (head) => ({
+            ...head,
+            values: head.values.filter((chip) => chip.key !== chipKey),
+        }));
 
     /** Keeps the chip identity, so its rows (and typed prices) stay. */
-    const renameChip = (headKey: string, chipKey: string, raw: string): ChipResult => {
+    const renameChip = (
+        headKey: string,
+        chipKey: string,
+        raw: string,
+    ): ChipResult => {
         const text = raw.trim();
         const head = data.heads.find((candidate) => candidate.key === headKey);
 
@@ -87,7 +129,9 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
 
         updateHead(headKey, (current) => ({
             ...current,
-            values: current.values.map((chip) => (chip.key === chipKey ? { ...chip, value: text } : chip)),
+            values: current.values.map((chip) =>
+                chip.key === chipKey ? { ...chip, value: text } : chip,
+            ),
         }));
 
         return 'added';
@@ -96,7 +140,9 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
     const updateRow = (key: string, patch: Partial<VariantRow>) =>
         update((previous) => ({
             ...previous,
-            rows: previous.rows.map((row) => (row.key === key ? { ...row, ...patch } : row)),
+            rows: previous.rows.map((row) =>
+                row.key === key ? { ...row, ...patch } : row,
+            ),
         }));
 
     const removeRow = (key: string) =>
@@ -107,7 +153,11 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
         }));
 
     const addMissing = () =>
-        update((previous) => ({ ...previous, removedRows: [], rows: syncRows(previous.heads, previous.rows, []) }));
+        update((previous) => ({
+            ...previous,
+            removedRows: [],
+            rows: syncRows(previous.heads, previous.rows, []),
+        }));
 
     const applyToAll = (values: BulkValues) =>
         update((previous) => ({
@@ -115,7 +165,10 @@ export function useVariantMatrix({ data, update }: Pick<FormApi, 'data' | 'updat
             rows: previous.rows.map((row) => ({
                 ...row,
                 price: values.price === '' ? row.price : values.price,
-                sale_price: values.sale_price === '' ? row.sale_price : values.sale_price,
+                sale_price:
+                    values.sale_price === ''
+                        ? row.sale_price
+                        : values.sale_price,
                 stock: values.stock === '' ? row.stock : values.stock,
             })),
         }));

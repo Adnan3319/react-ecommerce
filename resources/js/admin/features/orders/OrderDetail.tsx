@@ -11,7 +11,8 @@ import StatusActions from './StatusActions';
 import StatusTimeline from './StatusTimeline';
 import type { OrderDetailData } from './types';
 
-const CARD = 'rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3';
+const CARD =
+    'rounded-lg border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/3';
 
 /** "from Facebook ad (utm_campaign=summer_dress)" built from whatever tracking data was captured. */
 function describeOrigin(order: OrderDetailData): string | null {
@@ -32,14 +33,21 @@ export default function OrderDetail({ order }: { order: OrderDetailData }) {
             <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
                 <div>
                     <p className="text-sm text-gray-500">
-                        <Link href={index().url} className="hover:text-brand-500">
+                        <Link
+                            href={index().url}
+                            className="hover:text-brand-500"
+                        >
                             Orders
                         </Link>{' '}
                         / {order.number}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-3">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">{order.number}</h1>
-                        <Badge color={order.status.color}>{order.status.label}</Badge>
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">
+                            {order.number}
+                        </h1>
+                        <Badge color={order.status.color}>
+                            {order.status.label}
+                        </Badge>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
                         {formatFull(order.placed_at)} · {order.source.label}

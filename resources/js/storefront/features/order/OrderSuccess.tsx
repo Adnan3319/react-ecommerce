@@ -19,7 +19,9 @@ export default function OrderSuccess({ order }: OrderSuccessProps) {
             </span>
 
             <div>
-                <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900">Thank you, {order.first_name}!</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900">
+                    Thank you, {order.first_name}!
+                </h1>
                 <p className="mt-2 text-neutral-600">Your order is placed.</p>
             </div>
 
@@ -30,27 +32,45 @@ export default function OrderSuccess({ order }: OrderSuccessProps) {
             <p className="flex w-full items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-start text-sm text-amber-900">
                 <Icon name="phone" size={20} className="mt-0.5 shrink-0" />
                 <span>
-                    <strong>We will call {order.phone}</strong> within a few hours to confirm your order. Please keep your
-                    phone close.
+                    <strong>We will call {order.phone}</strong> within a few
+                    hours to confirm your order. Please keep your phone close.
                 </span>
             </p>
 
             <div className="w-full rounded-[24px] bg-white p-5 text-start shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
                 <ul className="divide-y divide-neutral-100">
                     {order.items.map((item) => (
-                        <li key={`${item.name}-${item.variant_label}`} className="flex items-center gap-3 py-3">
+                        <li
+                            key={`${item.name}-${item.variant_label}`}
+                            className="flex items-center gap-3 py-3"
+                        >
                             <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-100">
                                 {item.image_url && (
-                                    <Image src={item.image_url} alt="" width={THUMB_SIZE} height={THUMB_SIZE} className="h-full w-full object-cover" />
+                                    <Image
+                                        src={item.image_url}
+                                        alt=""
+                                        width={THUMB_SIZE}
+                                        height={THUMB_SIZE}
+                                        className="h-full w-full object-cover"
+                                    />
                                 )}
                             </span>
                             <span className="min-w-0 flex-1">
-                                <span className="block truncate font-semibold text-neutral-900">{item.name}</span>
+                                <span className="block truncate font-semibold text-neutral-900">
+                                    {item.name}
+                                </span>
                                 <span className="block text-sm text-neutral-500">
-                                    {[item.variant_label, `Qty ${item.quantity}`].filter(Boolean).join(' · ')}
+                                    {[
+                                        item.variant_label,
+                                        `Qty ${item.quantity}`,
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' · ')}
                                 </span>
                             </span>
-                            <span className="font-semibold text-neutral-900">{formatMoney(item.line_total)}</span>
+                            <span className="font-semibold text-neutral-900">
+                                {formatMoney(item.line_total)}
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -60,8 +80,12 @@ export default function OrderSuccess({ order }: OrderSuccessProps) {
                         <dd>{formatMoney(order.delivery_charge)}</dd>
                     </div>
                     <div className="flex items-baseline justify-between text-neutral-900">
-                        <dt className="text-base font-semibold">Pay on delivery</dt>
-                        <dd className="text-lg font-bold">{formatMoney(order.total)}</dd>
+                        <dt className="text-base font-semibold">
+                            Pay on delivery
+                        </dt>
+                        <dd className="text-lg font-bold">
+                            {formatMoney(order.total)}
+                        </dd>
                     </div>
                 </dl>
             </div>

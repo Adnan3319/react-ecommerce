@@ -4,7 +4,11 @@ import ConfirmDialog from '@admin/components/common/ConfirmDialog';
 import TextArea from '@admin/components/form/input/TextArea';
 import Button from '@admin/components/ui/button/Button';
 import { transition } from '@/routes/admin/orders';
-import { ENDING_STATUSES, NOTE_MAX_LENGTH, STATUS_CANCELLED } from './constants';
+import {
+    ENDING_STATUSES,
+    NOTE_MAX_LENGTH,
+    STATUS_CANCELLED,
+} from './constants';
 import type { OrderDetailData, OrderStatusOption } from './types';
 
 type Errors = { to?: string; note?: string };
@@ -35,12 +39,18 @@ export default function StatusActions({ order }: { order: OrderDetailData }) {
         setErrors({});
     };
 
-    const steps = order.allowed_next.filter((status) => !ENDING_STATUSES.includes(status.value));
-    const endings = order.allowed_next.filter((status) => ENDING_STATUSES.includes(status.value));
+    const steps = order.allowed_next.filter(
+        (status) => !ENDING_STATUSES.includes(status.value),
+    );
+    const endings = order.allowed_next.filter((status) =>
+        ENDING_STATUSES.includes(status.value),
+    );
 
     return (
         <div className="flex flex-wrap items-center gap-3">
-            {errors.to && !target && <p className="text-sm text-error-600">{errors.to}</p>}
+            {errors.to && !target && (
+                <p className="text-error-600 text-sm">{errors.to}</p>
+            )}
 
             {endings.map((status) => (
                 <Button
@@ -51,19 +61,30 @@ export default function StatusActions({ order }: { order: OrderDetailData }) {
                     disabled={processing}
                     onClick={() => setTarget(status)}
                 >
-                    {status.value === STATUS_CANCELLED ?'Cancel order' : `Mark as ${status.label.toLowerCase()}`}
+                    {status.value === STATUS_CANCELLED
+                        ? 'Cancel order'
+                        : `Mark as ${status.label.toLowerCase()}`}
                 </Button>
             ))}
 
             {steps.map((status) => (
-                <Button key={status.value} size="sm" disabled={processing} onClick={() => move(status)}>
+                <Button
+                    key={status.value}
+                    size="sm"
+                    disabled={processing}
+                    onClick={() => move(status)}
+                >
                     Mark as {status.label.toLowerCase()}
                 </Button>
             ))}
 
             <ConfirmDialog
                 isOpen={target !== null}
-                title={target ? `Mark ${order.number} as ${target.label.toLowerCase()}` : ''}
+                title={
+                    target
+                        ? `Mark ${order.number} as ${target.label.toLowerCase()}`
+                        : ''
+                }
                 message={
                     <>
                         <p className="mb-3">

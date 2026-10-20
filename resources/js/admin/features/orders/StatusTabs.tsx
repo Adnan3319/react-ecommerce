@@ -9,9 +9,16 @@ type StatusTabsProps = {
     onChange: (status: string) => void;
 };
 
-export default function StatusTabs({ statuses, active, onChange }: StatusTabsProps) {
+export default function StatusTabs({
+    statuses,
+    active,
+    onChange,
+}: StatusTabsProps) {
     const total = statuses.reduce((sum, status) => sum + status.count, 0);
-    const tabs = [{ value: FILTER_ALL, label: 'All', count: total }, ...statuses];
+    const tabs = [
+        { value: FILTER_ALL, label: 'All', count: total },
+        ...statuses,
+    ];
 
     return (
         <nav

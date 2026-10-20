@@ -9,12 +9,17 @@ type MobileOrderBarProps = {
 };
 
 /** Sticky call to action above the mobile bottom nav: jumps to the order form. */
-export default function MobileOrderBar({ total, disabled }: MobileOrderBarProps) {
+export default function MobileOrderBar({
+    total,
+    disabled,
+}: MobileOrderBarProps) {
     return (
         <div className="fixed inset-x-0 bottom-14 z-30 flex items-center justify-between gap-3 border-t border-neutral-200 bg-white px-4 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] md:hidden">
             <div>
                 <p className="text-xs text-neutral-500">Total</p>
-                <p className="text-lg font-bold leading-tight text-neutral-900">{formatMoney(total)}</p>
+                <p className="text-lg leading-tight font-bold text-neutral-900">
+                    {formatMoney(total)}
+                </p>
             </div>
             {disabled ? (
                 <span className="inline-flex h-12 items-center rounded-control bg-neutral-200 px-6 text-sm font-semibold text-neutral-500">

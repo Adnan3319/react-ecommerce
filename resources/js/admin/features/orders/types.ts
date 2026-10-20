@@ -1,6 +1,13 @@
 import type { Paginated } from '@/shared/types';
 
-export type BadgeColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'light' | 'dark';
+export type BadgeColor =
+    | 'primary'
+    | 'success'
+    | 'error'
+    | 'warning'
+    | 'info'
+    | 'light'
+    | 'dark';
 
 /** Mirrors App\Enums\OrderStatus (color is OrderStatus::color(), a Badge color). */
 export type OrderStatusOption = {

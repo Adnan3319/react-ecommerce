@@ -55,7 +55,10 @@ export default function CategoryFormModal({
         { value: NO_PARENT, label: 'None (top level)' },
         ...parents
             .filter((parent) => parent.id !== category?.id)
-            .map((parent) => ({ value: String(parent.id), label: parent.name })),
+            .map((parent) => ({
+                value: String(parent.id),
+                label: parent.name,
+            })),
     ];
 
     const form = useForm<CategoryFormData>({
@@ -81,7 +84,9 @@ export default function CategoryFormModal({
         [preview],
     );
 
-    const currentImage = preview ?? (form.data.remove_image ? null : (category?.image_url ?? null));
+    const currentImage =
+        preview ??
+        (form.data.remove_image ? null : (category?.image_url ?? null));
 
     const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0] ?? null;
@@ -93,7 +98,11 @@ export default function CategoryFormModal({
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const options = { forceFormData: true, preserveScroll: true, onSuccess: onClose };
+        const options = {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: onClose,
+        };
 
         form.transform((data) => ({
             ...data,
@@ -120,18 +129,23 @@ export default function CategoryFormModal({
                     <Label>Parent category</Label>
                     {hasChildren ? (
                         <p className="text-sm text-gray-500">
-                            This category has sub-categories, so it stays top-level.
+                            This category has sub-categories, so it stays
+                            top-level.
                         </p>
                     ) : (
                         <Select
                             options={parentOptions}
                             defaultValue={form.data.parent_id}
                             placeholder="Select parent"
-                            onChange={(value) => form.setData('parent_id', value)}
+                            onChange={(value) =>
+                                form.setData('parent_id', value)
+                            }
                         />
                     )}
                     {form.errors.parent_id && (
-                        <p className="mt-1.5 text-xs text-error-500">{form.errors.parent_id}</p>
+                        <p className="text-error-500 mt-1.5 text-xs">
+                            {form.errors.parent_id}
+                        </p>
                     )}
                 </div>
 
@@ -160,17 +174,26 @@ export default function CategoryFormModal({
                             <p className="text-xs text-gray-500">
                                 Square logo, 300–1000px, max 512KB
                             </p>
-                            {isEdit && category.image_url && !form.data.image && (
-                                <Checkbox
-                                    label="Remove current image"
-                                    checked={form.data.remove_image}
-                                    onChange={(checked) => form.setData('remove_image', checked)}
-                                />
-                            )}
+                            {isEdit &&
+                                category.image_url &&
+                                !form.data.image && (
+                                    <Checkbox
+                                        label="Remove current image"
+                                        checked={form.data.remove_image}
+                                        onChange={(checked) =>
+                                            form.setData(
+                                                'remove_image',
+                                                checked,
+                                            )
+                                        }
+                                    />
+                                )}
                         </div>
                     </div>
                     {form.errors.image && (
-                        <p className="mt-1.5 text-xs text-error-500">{form.errors.image}</p>
+                        <p className="text-error-500 mt-1.5 text-xs">
+                            {form.errors.image}
+                        </p>
                     )}
                 </div>
 
@@ -179,7 +202,9 @@ export default function CategoryFormModal({
                     <Input
                         id="category-name"
                         value={form.data.name}
-                        onChange={(event) => form.setData('name', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('name', event.target.value)
+                        }
                         placeholder="Kitchenware"
                         error={Boolean(form.errors.name)}
                         hint={form.errors.name}
@@ -191,7 +216,9 @@ export default function CategoryFormModal({
                     <Input
                         id="category-slug"
                         value={form.data.slug}
-                        onChange={(event) => form.setData('slug', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('slug', event.target.value)
+                        }
                         placeholder="kitchenware"
                         error={Boolean(form.errors.slug)}
                         hint={
@@ -202,11 +229,15 @@ export default function CategoryFormModal({
                 </div>
 
                 <div>
-                    <Label htmlFor="category-headline">Headline (optional)</Label>
+                    <Label htmlFor="category-headline">
+                        Headline (optional)
+                    </Label>
                     <Input
                         id="category-headline"
                         value={form.data.headline}
-                        onChange={(event) => form.setData('headline', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('headline', event.target.value)
+                        }
                         placeholder="Cook with Joy"
                         error={Boolean(form.errors.headline)}
                         hint={form.errors.headline}
@@ -233,7 +264,9 @@ export default function CategoryFormModal({
                             type="number"
                             min={0}
                             value={form.data.sort_order}
-                            onChange={(event) => form.setData('sort_order', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('sort_order', event.target.value)
+                            }
                             error={Boolean(form.errors.sort_order)}
                             hint={form.errors.sort_order}
                         />
@@ -244,20 +277,33 @@ export default function CategoryFormModal({
                             options={statuses}
                             defaultValue={form.data.status}
                             placeholder="Select status"
-                            onChange={(value) => form.setData('status', value as ActiveStatus)}
+                            onChange={(value) =>
+                                form.setData('status', value as ActiveStatus)
+                            }
                         />
                         {form.errors.status && (
-                            <p className="mt-1.5 text-xs text-error-500">{form.errors.status}</p>
+                            <p className="text-error-500 mt-1.5 text-xs">
+                                {form.errors.status}
+                            </p>
                         )}
                     </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2">
-                    <Button variant="outline" size="sm" onClick={onClose} disabled={form.processing}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onClose}
+                        disabled={form.processing}
+                    >
                         Cancel
                     </Button>
                     <Button type="submit" size="sm" disabled={form.processing}>
-                        {form.processing ? 'Saving...' : isEdit ? 'Save changes' : 'Create category'}
+                        {form.processing
+                            ? 'Saving...'
+                            : isEdit
+                              ? 'Save changes'
+                              : 'Create category'}
                     </Button>
                 </div>
             </form>

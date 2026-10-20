@@ -15,8 +15,16 @@ import VariantPicker from './VariantPicker';
 type ProductViewProps = Omit<ProductPageProps, 'seo'>;
 
 /** The product page body: gallery, price, variants, Order Now form and description. */
-export default function ProductView({ product, category, deliveryZones, maxQty }: ProductViewProps) {
-    const { selected, variant, isAvailable, select } = useVariantSelection(product.heads, product.variants);
+export default function ProductView({
+    product,
+    category,
+    deliveryZones,
+    maxQty,
+}: ProductViewProps) {
+    const { selected, variant, isAvailable, select } = useVariantSelection(
+        product.heads,
+        product.variants,
+    );
     const [requested, setRequested] = useState(1);
 
     const outOfStock = !variant || variant.stock <= 0;
@@ -31,7 +39,10 @@ export default function ProductView({ product, category, deliveryZones, maxQty }
                 <Breadcrumbs
                     items={[
                         { label: 'Home', href: home() },
-                        ...category.trail.map((crumb) => ({ label: crumb.label, href: categoryHref(crumb.slug) })),
+                        ...category.trail.map((crumb) => ({
+                            label: crumb.label,
+                            href: categoryHref(crumb.slug),
+                        })),
                         { label: product.name },
                     ]}
                 />
@@ -44,7 +55,10 @@ export default function ProductView({ product, category, deliveryZones, maxQty }
                         initialImageId={variant?.image_id ?? null}
                         badge={
                             variant?.discount_percent ? (
-                                <Badge tone="danger" className="px-3 py-1 text-sm font-semibold">
+                                <Badge
+                                    tone="danger"
+                                    className="px-3 py-1 text-sm font-semibold"
+                                >
                                     -{variant.discount_percent}%
                                 </Badge>
                             ) : null
@@ -52,21 +66,46 @@ export default function ProductView({ product, category, deliveryZones, maxQty }
                     />
 
                     <div className="flex flex-col gap-5">
-                        <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900 xl:text-4xl">{product.name}</h1>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900 xl:text-4xl">
+                            {product.name}
+                        </h1>
 
-                        {variant && <PriceTag price={variant.price} salePrice={variant.sale_price} />}
-                        {variant && <StockNotice state={variant.stock_state} stock={variant.stock} />}
+                        {variant && (
+                            <PriceTag
+                                price={variant.price}
+                                salePrice={variant.sale_price}
+                            />
+                        )}
+                        {variant && (
+                            <StockNotice
+                                state={variant.stock_state}
+                                stock={variant.stock}
+                            />
+                        )}
 
                         {product.short_description && (
-                            <p className="text-neutral-600">{product.short_description}</p>
+                            <p className="text-neutral-600">
+                                {product.short_description}
+                            </p>
                         )}
 
                         {product.heads.length > 0 && (
-                            <VariantPicker heads={product.heads} selected={selected} isAvailable={isAvailable} onSelect={select} />
+                            <VariantPicker
+                                heads={product.heads}
+                                selected={selected}
+                                isAvailable={isAvailable}
+                                onSelect={select}
+                            />
                         )}
 
                         {!outOfStock && (
-                            <QuantityStepper label="Quantity" value={quantity} min={1} max={maxQuantity} onChange={setRequested} />
+                            <QuantityStepper
+                                label="Quantity"
+                                value={quantity}
+                                min={1}
+                                max={maxQuantity}
+                                onChange={setRequested}
+                            />
                         )}
 
                         {variant && (
@@ -83,13 +122,20 @@ export default function ProductView({ product, category, deliveryZones, maxQty }
 
                 {product.description && (
                     <section className="mt-12 max-w-3xl">
-                        <h2 className="text-2xl font-bold tracking-tight text-neutral-900">Description</h2>
-                        <p className="mt-3 leading-relaxed whitespace-pre-line text-neutral-700">{product.description}</p>
+                        <h2 className="text-2xl font-bold tracking-tight text-neutral-900">
+                            Description
+                        </h2>
+                        <p className="mt-3 leading-relaxed whitespace-pre-line text-neutral-700">
+                            {product.description}
+                        </p>
                     </section>
                 )}
             </div>
 
-            <MobileOrderBar total={unitPrice * quantity + lowestCharge} disabled={outOfStock} />
+            <MobileOrderBar
+                total={unitPrice * quantity + lowestCharge}
+                disabled={outOfStock}
+            />
         </>
     );
 }

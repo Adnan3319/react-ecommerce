@@ -17,9 +17,20 @@ type ChipInputProps = {
 const SEPARATOR = ',';
 
 /** Value chips of one variant head: Enter or comma adds, × removes, double-click renames in place. */
-export default function ChipInput({ chips, maxVariants, label, errors, onAdd, onRename, onRemove }: ChipInputProps) {
+export default function ChipInput({
+    chips,
+    maxVariants,
+    label,
+    errors,
+    onAdd,
+    onRename,
+    onRemove,
+}: ChipInputProps) {
     const [draft, setDraft] = useState('');
-    const [editing, setEditing] = useState<{ key: string; text: string } | null>(null);
+    const [editing, setEditing] = useState<{
+        key: string;
+        text: string;
+    } | null>(null);
     const [warning, setWarning] = useState<string | null>(null);
 
     const report = (result: ChipResult): boolean => {
@@ -70,11 +81,13 @@ export default function ChipInput({ chips, maxVariants, label, errors, onAdd, on
         }
     };
 
-    const chipErrors = Object.values(errors).filter((message): message is string => Boolean(message));
+    const chipErrors = Object.values(errors).filter(
+        (message): message is string => Boolean(message),
+    );
 
     return (
         <div>
-            <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 focus-within:border-brand-300 focus-within:ring-3 focus-within:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900">
+            <div className="focus-within:border-brand-300 focus-within:ring-brand-500/20 flex min-h-11 flex-wrap items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 focus-within:ring-3 dark:border-gray-700 dark:bg-gray-900">
                 {chips.map((chip, index) =>
                     editing?.key === chip.key ? (
                         <input
@@ -82,7 +95,12 @@ export default function ChipInput({ chips, maxVariants, label, errors, onAdd, on
                             autoFocus
                             aria-label={`Rename ${chip.value}`}
                             value={editing.text}
-                            onChange={(event) => setEditing({ key: chip.key, text: event.target.value })}
+                            onChange={(event) =>
+                                setEditing({
+                                    key: chip.key,
+                                    text: event.target.value,
+                                })
+                            }
                             onBlur={commitEdit}
                             onKeyDown={(event) => {
                                 if (event.key === 'Enter') {
@@ -94,16 +112,18 @@ export default function ChipInput({ chips, maxVariants, label, errors, onAdd, on
                                     setEditing(null);
                                 }
                             }}
-                            className="h-7 w-28 rounded-md border border-brand-300 bg-white px-2 text-sm text-gray-800 outline-hidden dark:bg-gray-800 dark:text-white/90"
+                            className="border-brand-300 h-7 w-28 rounded-md border bg-white px-2 text-sm text-gray-800 outline-hidden dark:bg-gray-800 dark:text-white/90"
                         />
                     ) : (
                         <span
                             key={chip.key}
                             title="Double-click to rename"
-                            onDoubleClick={() => setEditing({ key: chip.key, text: chip.value })}
+                            onDoubleClick={() =>
+                                setEditing({ key: chip.key, text: chip.value })
+                            }
                             className={cn(
                                 'inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1 text-sm text-gray-800 dark:bg-white/10 dark:text-white/90',
-                                errors[index] && 'ring-1 ring-error-500',
+                                errors[index] && 'ring-error-500 ring-1',
                             )}
                         >
                             {chip.value}
@@ -111,7 +131,7 @@ export default function ChipInput({ chips, maxVariants, label, errors, onAdd, on
                                 type="button"
                                 aria-label={`Remove ${chip.value}`}
                                 onClick={() => onRemove(chip.key)}
-                                className="text-gray-400 hover:text-error-500"
+                                className="hover:text-error-500 text-gray-400"
                             >
                                 ×
                             </button>
@@ -129,12 +149,16 @@ export default function ChipInput({ chips, maxVariants, label, errors, onAdd, on
                 />
             </div>
             {warning && (
-                <p role="status" className="mt-1.5 text-xs text-warning-600">
+                <p role="status" className="text-warning-600 mt-1.5 text-xs">
                     {warning}
                 </p>
             )}
             {chipErrors.map((message) => (
-                <p key={message} role="alert" className="mt-1.5 text-xs text-error-500">
+                <p
+                    key={message}
+                    role="alert"
+                    className="text-error-500 mt-1.5 text-xs"
+                >
                     {message}
                 </p>
             ))}

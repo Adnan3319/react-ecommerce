@@ -9,22 +9,35 @@ type VariantPickerProps = {
 };
 
 /** One row of buttons per head (Size, Color). Values with no stock for the other picks are struck through. */
-export default function VariantPicker({ heads, selected, isAvailable, onSelect }: VariantPickerProps) {
+export default function VariantPicker({
+    heads,
+    selected,
+    isAvailable,
+    onSelect,
+}: VariantPickerProps) {
     return (
         <div className="flex flex-col gap-4">
             {heads.map((head) => {
-                const current = head.values.find((value) => value.id === selected[head.id]);
+                const current = head.values.find(
+                    (value) => value.id === selected[head.id],
+                );
 
                 return (
                     <fieldset key={head.id} className="flex flex-col gap-2">
                         <legend className="mb-1 text-sm font-semibold text-neutral-900">
                             {head.name}:{' '}
-                            <span className="font-normal text-neutral-600">{current?.value}</span>
+                            <span className="font-normal text-neutral-600">
+                                {current?.value}
+                            </span>
                         </legend>
                         <div className="flex flex-wrap gap-2">
                             {head.values.map((value) => {
-                                const available = isAvailable(head.id, value.id);
-                                const isSelected = value.id === selected[head.id];
+                                const available = isAvailable(
+                                    head.id,
+                                    value.id,
+                                );
+                                const isSelected =
+                                    value.id === selected[head.id];
 
                                 return (
                                     <button
@@ -32,7 +45,9 @@ export default function VariantPicker({ heads, selected, isAvailable, onSelect }
                                         type="button"
                                         disabled={!available}
                                         aria-pressed={isSelected}
-                                        onClick={() => onSelect(head.id, value.id)}
+                                        onClick={() =>
+                                            onSelect(head.id, value.id)
+                                        }
                                         className={cn(
                                             'min-h-11 min-w-12 rounded-control border px-4 text-sm font-medium transition',
                                             isSelected

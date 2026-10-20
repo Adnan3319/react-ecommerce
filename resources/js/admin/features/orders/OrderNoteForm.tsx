@@ -10,23 +10,36 @@ export default function OrderNoteForm({ orderId }: { orderId: number }) {
 
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        form.post(notes(orderId).url, { preserveScroll: true, onSuccess: () => form.reset() });
+        form.post(notes(orderId).url, {
+            preserveScroll: true,
+            onSuccess: () => form.reset(),
+        });
     };
 
     return (
-        <form onSubmit={submit} className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-start">
+        <form
+            onSubmit={submit}
+            className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-start"
+        >
             <div className="flex-1">
                 <Input
                     value={form.data.note}
                     maxLength={NOTE_MAX_LENGTH}
-                    onChange={(event) => form.setData('note', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('note', event.target.value)
+                    }
                     placeholder='Add a note (e.g. "Called, will receive after 5pm")'
                     aria-label="Note"
                     error={Boolean(form.errors.note)}
                     hint={form.errors.note}
                 />
             </div>
-            <Button type="submit" variant="outline" size="sm" disabled={form.processing || form.data.note.trim() === ''}>
+            <Button
+                type="submit"
+                variant="outline"
+                size="sm"
+                disabled={form.processing || form.data.note.trim() === ''}
+            >
                 Add note
             </Button>
         </form>

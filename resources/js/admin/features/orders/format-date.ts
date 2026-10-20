@@ -20,7 +20,9 @@ const FULL = new Intl.DateTimeFormat('en-GB', {
 });
 
 /** "20 Oct, 10:42" */
-export const formatShort = (iso: string): string => SHORT.format(new Date(iso)).replace(' at', ',');
+export const formatShort = (iso: string): string =>
+    SHORT.format(new Date(iso)).replace(' at', ',');
 
 /** "20 Oct 2026, 10:42" */
-export const formatFull = (iso: string): string => FULL.format(new Date(iso)).replace(' at', ',');
+export const formatFull = (iso: string): string =>
+    FULL.format(new Date(iso)).replace(' at', ',');

@@ -3,7 +3,9 @@ import type { OrderDetailData } from './types';
 export default function OrderItems({ order }: { order: OrderDetailData }) {
     return (
         <>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white/90">Items</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white/90">
+                Items
+            </h2>
 
             <ul className="divide-y divide-gray-200 dark:divide-gray-800">
                 {order.items.map((item) => (
@@ -18,18 +20,28 @@ export default function OrderItems({ order }: { order: OrderDetailData }) {
                                 className="h-13 w-13 rounded-md bg-gray-100 object-cover dark:bg-white/5"
                             />
                         ) : (
-                            <div className="h-13 w-13 rounded-md bg-gray-100 dark:bg-white/5" aria-hidden />
+                            <div
+                                className="h-13 w-13 rounded-md bg-gray-100 dark:bg-white/5"
+                                aria-hidden
+                            />
                         )}
                         <div className="min-w-0 flex-1">
-                            <p className="font-medium text-gray-900 dark:text-white/90">{item.name}</p>
+                            <p className="font-medium text-gray-900 dark:text-white/90">
+                                {item.name}
+                            </p>
                             <p className="text-xs text-gray-500">
-                                {item.variant_label ? `${item.variant_label} · ` : ''}SKU {item.sku}
+                                {item.variant_label
+                                    ? `${item.variant_label} · `
+                                    : ''}
+                                SKU {item.sku}
                             </p>
                         </div>
                         <p className="text-sm text-gray-500">
                             {item.unit_price} × {item.quantity}
                         </p>
-                        <p className="w-24 text-end font-semibold text-gray-900 dark:text-white/90">{item.line_total}</p>
+                        <p className="w-24 text-end font-semibold text-gray-900 dark:text-white/90">
+                            {item.line_total}
+                        </p>
                     </li>
                 ))}
             </ul>

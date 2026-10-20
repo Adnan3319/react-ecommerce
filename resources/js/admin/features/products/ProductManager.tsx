@@ -10,19 +10,39 @@ import ProductFilters from './components/ProductFilters';
 import ProductTable from './components/ProductTable';
 import type { ProductIndexProps, ProductListItem } from './types';
 
-export default function ProductManager({ products, filters, statuses, categoryTree }: ProductIndexProps) {
-    const [deleteTarget, setDeleteTarget] = useState<ProductListItem | null>(null);
+export default function ProductManager({
+    products,
+    filters,
+    statuses,
+    categoryTree,
+}: ProductIndexProps) {
+    const [deleteTarget, setDeleteTarget] = useState<ProductListItem | null>(
+        null,
+    );
     const [deleting, setDeleting] = useState(false);
     const [busyId, setBusyId] = useState<number | null>(null);
 
-    const { search, setSearch, status, setStatus, setExtra, perPage, setPerPage, goToPage, processing } =
-        useListFilters(index().url, filters, {
-            category_id: filters.category_id ?? undefined,
-            featured: filters.featured === null ? undefined : Number(filters.featured),
-            stock: filters.stock ?? undefined,
-        });
+    const {
+        search,
+        setSearch,
+        status,
+        setStatus,
+        setExtra,
+        perPage,
+        setPerPage,
+        goToPage,
+        processing,
+    } = useListFilters(index().url, filters, {
+        category_id: filters.category_id ?? undefined,
+        featured:
+            filters.featured === null ? undefined : Number(filters.featured),
+        stock: filters.stock ?? undefined,
+    });
 
-    const patch = (product: ProductListItem, data: { status: ActiveStatus } | { is_featured: boolean }) =>
+    const patch = (
+        product: ProductListItem,
+        data: { status: ActiveStatus } | { is_featured: boolean },
+    ) =>
         router.put(update(product.id).url, data, {
             preserveScroll: true,
             onStart: () => setBusyId(product.id),
@@ -47,10 +67,12 @@ export default function ProductManager({ products, filters, statuses, categoryTr
     return (
         <div className="w-full">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">Products</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">
+                    Products
+                </h1>
                 <Link
                     href={create().url}
-                    className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600"
+                    className="bg-brand-500 shadow-theme-xs hover:bg-brand-600 inline-flex items-center rounded-lg px-4 py-3 text-sm font-medium text-white"
                 >
                     Add product
                 </Link>
@@ -79,9 +101,16 @@ export default function ProductManager({ products, filters, statuses, categoryTr
                 busyId={busyId}
                 onDelete={setDeleteTarget}
                 onToggleStatus={(product) =>
-                    patch(product, { status: product.status === STATUS_ACTIVE ? STATUS_INACTIVE : STATUS_ACTIVE })
+                    patch(product, {
+                        status:
+                            product.status === STATUS_ACTIVE
+                                ? STATUS_INACTIVE
+                                : STATUS_ACTIVE,
+                    })
                 }
-                onToggleFeatured={(product) => patch(product, { is_featured: !product.is_featured })}
+                onToggleFeatured={(product) =>
+                    patch(product, { is_featured: !product.is_featured })
+                }
             />
 
             <TableFooter meta={products.meta} onPageChange={goToPage} />
@@ -91,8 +120,9 @@ export default function ProductManager({ products, filters, statuses, categoryTr
                 title="Delete product"
                 message={
                     <>
-                        Delete <strong>{deleteTarget?.name}</strong>? It disappears from the store; its variants and
-                        stock history are kept.
+                        Delete <strong>{deleteTarget?.name}</strong>? It
+                        disappears from the store; its variants and stock
+                        history are kept.
                     </>
                 }
                 confirmLabel={deleting ? 'Deleting...' : 'Delete'}

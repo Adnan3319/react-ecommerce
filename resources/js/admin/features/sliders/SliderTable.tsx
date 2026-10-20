@@ -48,8 +48,12 @@ export default function SliderTable({
             accessor: 'title',
             render: (row: Slider) => (
                 <div>
-                    <p className="font-medium text-gray-900 dark:text-white/90">{row.title}</p>
-                    {row.subtitle && <p className="text-xs text-gray-500">{row.subtitle}</p>}
+                    <p className="font-medium text-gray-900 dark:text-white/90">
+                        {row.title}
+                    </p>
+                    {row.subtitle && (
+                        <p className="text-xs text-gray-500">{row.subtitle}</p>
+                    )}
                 </div>
             ),
         },
@@ -60,7 +64,9 @@ export default function SliderTable({
                 row.button_link ? (
                     <div>
                         <p>{row.button_text || 'Shop Now'}</p>
-                        <p className="text-xs text-gray-500">{row.button_link}</p>
+                        <p className="text-xs text-gray-500">
+                            {row.button_link}
+                        </p>
                     </div>
                 ) : (
                     <span className="text-gray-400">-</span>

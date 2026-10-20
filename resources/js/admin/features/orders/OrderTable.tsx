@@ -17,12 +17,19 @@ const columns = [
         header: 'Order',
         accessor: 'number',
         render: (row: OrderListItem) => (
-            <Link href={show(row.id).url} className="font-semibold text-gray-900 hover:text-brand-500 dark:text-white/90">
+            <Link
+                href={show(row.id).url}
+                className="hover:text-brand-500 font-semibold text-gray-900 dark:text-white/90"
+            >
                 {row.number}
             </Link>
         ),
     },
-    { header: 'Date', accessor: 'placed_at', render: (row: OrderListItem) => formatShort(row.placed_at) },
+    {
+        header: 'Date',
+        accessor: 'placed_at',
+        render: (row: OrderListItem) => formatShort(row.placed_at),
+    },
     {
         header: 'Customer',
         accessor: 'customer_name',
@@ -39,12 +46,16 @@ const columns = [
     {
         header: 'Total',
         accessor: 'total',
-        render: (row: OrderListItem) => <span className="font-semibold">{row.total}</span>,
+        render: (row: OrderListItem) => (
+            <span className="font-semibold">{row.total}</span>
+        ),
     },
     {
         header: 'Source',
         accessor: 'source',
-        render: (row: OrderListItem) => <Badge size="sm">{row.source.label}</Badge>,
+        render: (row: OrderListItem) => (
+            <Badge size="sm">{row.source.label}</Badge>
+        ),
     },
     {
         header: 'Status',
@@ -59,13 +70,28 @@ const columns = [
         header: 'Actions',
         accessor: 'actions',
         render: (row: OrderListItem) => (
-            <Link href={show(row.id).url} className="text-sm font-medium text-brand-500 hover:text-brand-600">
+            <Link
+                href={show(row.id).url}
+                className="text-brand-500 hover:text-brand-600 text-sm font-medium"
+            >
                 View
             </Link>
         ),
     },
 ];
 
-export default function OrderTable({ orders, loading, toolbar }: OrderTableProps) {
-    return <DataTable columns={columns} data={orders} loading={loading} toolbar={toolbar} noDataMessage="No orders found." />;
+export default function OrderTable({
+    orders,
+    loading,
+    toolbar,
+}: OrderTableProps) {
+    return (
+        <DataTable
+            columns={columns}
+            data={orders}
+            loading={loading}
+            toolbar={toolbar}
+            noDataMessage="No orders found."
+        />
+    );
 }

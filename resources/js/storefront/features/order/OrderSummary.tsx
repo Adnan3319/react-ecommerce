@@ -9,7 +9,11 @@ type OrderSummaryProps = {
 };
 
 /** Display only: the server recalculates every amount when the order is placed. */
-export default function OrderSummary({ subtotal, deliveryCharge, itemCount }: OrderSummaryProps) {
+export default function OrderSummary({
+    subtotal,
+    deliveryCharge,
+    itemCount,
+}: OrderSummaryProps) {
     return (
         <dl className="flex flex-col gap-1.5 border-t border-dashed border-neutral-300 pt-4 text-sm">
             <div className="flex justify-between">
@@ -20,11 +24,17 @@ export default function OrderSummary({ subtotal, deliveryCharge, itemCount }: Or
             </div>
             <div className="flex justify-between">
                 <dt className="text-neutral-600">Delivery</dt>
-                <dd className="text-neutral-900">{formatMoney(deliveryCharge)}</dd>
+                <dd className="text-neutral-900">
+                    {formatMoney(deliveryCharge)}
+                </dd>
             </div>
             <div className="flex items-baseline justify-between pt-1">
-                <dt className="text-base font-semibold text-neutral-900">Total</dt>
-                <dd className="text-lg font-bold text-neutral-900">{formatMoney(subtotal + deliveryCharge)}</dd>
+                <dt className="text-base font-semibold text-neutral-900">
+                    Total
+                </dt>
+                <dd className="text-lg font-bold text-neutral-900">
+                    {formatMoney(subtotal + deliveryCharge)}
+                </dd>
             </div>
         </dl>
     );

@@ -13,22 +13,40 @@ import type { Category, CategoryIndexProps } from './types';
 
 type FormTarget = { category: Category | null };
 
-export default function CategoryManager({ categories, filters, statuses, parents }: CategoryIndexProps) {
+export default function CategoryManager({
+    categories,
+    filters,
+    statuses,
+    parents,
+}: CategoryIndexProps) {
     const [formTarget, setFormTarget] = useState<FormTarget | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
     const [deleteError, setDeleteError] = useState<string | null>(null);
 
-    const { search, setSearch, status, setStatus, perPage, setPerPage, goToPage, processing } =
-        useListFilters(index().url, filters);
+    const {
+        search,
+        setSearch,
+        status,
+        setStatus,
+        perPage,
+        setPerPage,
+        goToPage,
+        processing,
+    } = useListFilters(index().url, filters);
 
     const { meta } = categories;
 
     const toggleStatus = (category: Category) => {
         router.put(
             update(category.id).url,
-            { status: category.status === STATUS_ACTIVE ? STATUS_INACTIVE : STATUS_ACTIVE },
+            {
+                status:
+                    category.status === STATUS_ACTIVE
+                        ? STATUS_INACTIVE
+                        : STATUS_ACTIVE,
+            },
             {
                 preserveScroll: true,
                 onStart: () => setTogglingId(category.id),
@@ -48,7 +66,10 @@ export default function CategoryManager({ categories, filters, statuses, parents
                 setDeleteError(null);
                 setDeleting(true);
             },
-            onError: (errors) => setDeleteError(errors.category ?? 'Could not delete the category.'),
+            onError: (errors) =>
+                setDeleteError(
+                    errors.category ?? 'Could not delete the category.',
+                ),
             onFinish: () => {
                 setDeleting(false);
                 setDeleteTarget(null);
@@ -59,8 +80,13 @@ export default function CategoryManager({ categories, filters, statuses, parents
     return (
         <div className="w-full">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">Categories</h1>
-                <Button size="sm" onClick={() => setFormTarget({ category: null })}>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">
+                    Categories
+                </h1>
+                <Button
+                    size="sm"
+                    onClick={() => setFormTarget({ category: null })}
+                >
                     Add category
                 </Button>
             </div>
@@ -68,7 +94,7 @@ export default function CategoryManager({ categories, filters, statuses, parents
             {deleteError && (
                 <p
                     role="alert"
-                    className="mb-4 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-700 dark:bg-error-500/15 dark:text-error-500"
+                    className="bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-500 mb-4 rounded-lg px-4 py-3 text-sm"
                 >
                     {deleteError}
                 </p>
@@ -114,8 +140,9 @@ export default function CategoryManager({ categories, filters, statuses, parents
                 title="Delete category"
                 message={
                     <>
-                        Delete <strong>{deleteTarget?.name}</strong>? Its image will be removed
-                        and it will disappear from the storefront.
+                        Delete <strong>{deleteTarget?.name}</strong>? Its image
+                        will be removed and it will disappear from the
+                        storefront.
                     </>
                 }
                 confirmLabel={deleting ? 'Deleting...' : 'Delete'}

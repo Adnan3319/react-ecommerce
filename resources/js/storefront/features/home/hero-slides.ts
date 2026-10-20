@@ -48,7 +48,10 @@ export function toHeroSlide(slider: ApiSlider): HeroSlide {
         imageWidth: BACKEND_SLIDE_WIDTH,
         imageHeight: BACKEND_SLIDE_HEIGHT,
         cta: slider.button_link
-            ? { label: slider.button_text || 'Shop Now', href: slider.button_link }
+            ? {
+                  label: slider.button_text || 'Shop Now',
+                  href: slider.button_link,
+              }
             : null,
     };
 }

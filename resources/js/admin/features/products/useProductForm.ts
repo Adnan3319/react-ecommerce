@@ -1,7 +1,12 @@
 import { useForm } from '@inertiajs/react';
 import type { TabId } from './constants';
 import { initialFormState, tabsWithErrors, toPayload } from './form-state';
-import type { FormApi, FormErrors, ProductDetail, ProductFormData } from './types';
+import type {
+    FormApi,
+    FormErrors,
+    ProductDetail,
+    ProductFormData,
+} from './types';
 import { store, update as updateRoute } from '@/routes/admin/products';
 
 type Callbacks = {
@@ -13,14 +18,18 @@ type Callbacks = {
  * The product form state plus submit: multipart (`forceFormData`), `_method=put` on edit, and the tabs that
  * contain server errors reported back so the shell can jump to the first one.
  */
-export function useProductForm(product: ProductDetail | undefined, { onErrorTabs, onSaved }: Callbacks) {
+export function useProductForm(
+    product: ProductDetail | undefined,
+    { onErrorTabs, onSaved }: Callbacks,
+) {
     const isEdit = product !== undefined;
     const form = useForm<ProductFormData>(initialFormState(product));
 
     const api: FormApi = {
         data: form.data,
         errors: form.errors as FormErrors,
-        set: (key, value) => form.setData((previous) => ({ ...previous, [key]: value })),
+        set: (key, value) =>
+            form.setData((previous) => ({ ...previous, [key]: value })),
         update: (updater) => form.setData(updater),
     };
 

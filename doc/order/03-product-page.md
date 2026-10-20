@@ -19,10 +19,10 @@ Read `CLAUDE.md`, `doc/order/README.md` and open `mockups/01-product-page.png`, 
 ## Frontend (match mockups)
 
 - `storefront/pages/Products/Show.tsx` thin; features:
-  - `product/ProductGallery` (main + thumbs, first image priority, others lazy),
-  - `product/VariantPicker` (one row per head, unavailable combinations disabled with strike-through, selection drives price, stock state and image),
-  - `product/PriceTag`, `product/QuantityInput` (1..min(stock, maxQty)),
-  - `order/OrderForm` (name, phone, address textarea, `DeliveryZonePicker` radios, collapsible note, `OrderSummary`, Confirm button with total, trust line). `useForm`, idempotency key generated once per form mount, button disabled while processing.
+    - `product/ProductGallery` (main + thumbs, first image priority, others lazy),
+    - `product/VariantPicker` (one row per head, unavailable combinations disabled with strike-through, selection drives price, stock state and image),
+    - `product/PriceTag`, `product/QuantityInput` (1..min(stock, maxQty)),
+    - `order/OrderForm` (name, phone, address textarea, `DeliveryZonePicker` radios, collapsible note, `OrderSummary`, Confirm button with total, trust line). `useForm`, idempotency key generated once per form mount, button disabled while processing.
 - Totals on screen are display only (server recalculates).
 - Mobile: sticky bottom bar "Total · Order Now" that scrolls to the form (mockup 02).
 - Do not render `Add to Cart` yet; step 04 adds it.

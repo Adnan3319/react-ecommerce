@@ -4,7 +4,7 @@ export default function FieldError({ message }: { message?: string }) {
     }
 
     return (
-        <p role="alert" className="mt-1.5 text-xs text-error-500">
+        <p role="alert" className="text-error-500 mt-1.5 text-xs">
             {message}
         </p>
     );

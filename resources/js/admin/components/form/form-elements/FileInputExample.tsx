@@ -1,23 +1,26 @@
-import ComponentCard from "@admin/components/common/ComponentCard";
-import FileInput from "@admin/components/form/input/FileInput";
-import Label from "@admin/components/form/Label";
-import { cn } from "@admin/utils";
-import React from "react";
+import ComponentCard from '@admin/components/common/ComponentCard';
+import FileInput from '@admin/components/form/input/FileInput';
+import Label from '@admin/components/form/Label';
+import { cn } from '@admin/utils';
+import React from 'react';
 
 export default function FileInputExample() {
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log("Selected file:", file.name);
-    }
-  };
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            console.log('Selected file:', file.name);
+        }
+    };
 
-  return (
-    <ComponentCard title="File Input">
-      <div>
-        <Label>Upload file</Label>
-        <FileInput onChange={handleFileChange} className={cn("custom-class")} />
-      </div>
-    </ComponentCard>
-  );
+    return (
+        <ComponentCard title="File Input">
+            <div>
+                <Label>Upload file</Label>
+                <FileInput
+                    onChange={handleFileChange}
+                    className={cn('custom-class')}
+                />
+            </div>
+        </ComponentCard>
+    );
 }

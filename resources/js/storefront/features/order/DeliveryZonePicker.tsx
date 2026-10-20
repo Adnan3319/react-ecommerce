@@ -9,17 +9,26 @@ type DeliveryZonePickerProps = {
     onChange: (zoneKey: string) => void;
 };
 
-export default function DeliveryZonePicker({ zones, value, error, onChange }: DeliveryZonePickerProps) {
+export default function DeliveryZonePicker({
+    zones,
+    value,
+    error,
+    onChange,
+}: DeliveryZonePickerProps) {
     return (
         <fieldset className="flex flex-col gap-2">
-            <legend className="mb-1 text-sm font-medium text-neutral-800">Delivery area</legend>
+            <legend className="mb-1 text-sm font-medium text-neutral-800">
+                Delivery area
+            </legend>
             <div className="grid gap-2 sm:grid-cols-2">
                 {zones.map((zone) => (
                     <label
                         key={zone.key}
                         className={cn(
                             'flex min-h-12 cursor-pointer items-center gap-3 rounded-control border px-4 py-3 text-sm transition',
-                            zone.key === value ? 'border-accent-600 bg-accent-50' : 'border-neutral-300 bg-white hover:border-neutral-400',
+                            zone.key === value
+                                ? 'border-accent-600 bg-accent-50'
+                                : 'border-neutral-300 bg-white hover:border-neutral-400',
                         )}
                     >
                         <input
@@ -30,8 +39,12 @@ export default function DeliveryZonePicker({ zones, value, error, onChange }: De
                             onChange={() => onChange(zone.key)}
                             className="h-4 w-4 shrink-0 accent-accent-600"
                         />
-                        <span className="flex-1 font-medium text-neutral-900">{zone.label}</span>
-                        <span className="text-neutral-500">{formatMoney(zone.charge)}</span>
+                        <span className="flex-1 font-medium text-neutral-900">
+                            {zone.label}
+                        </span>
+                        <span className="text-neutral-500">
+                            {formatMoney(zone.charge)}
+                        </span>
                     </label>
                 ))}
             </div>

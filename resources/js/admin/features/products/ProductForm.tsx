@@ -30,7 +30,9 @@ export default function ProductForm(props: ProductFormProps) {
 
     const onTabChange = (next: TabId) => {
         setTab(next);
-        setVisited((current) => (current.includes(next) ? current : [...current, next]));
+        setVisited((current) =>
+            current.includes(next) ? current : [...current, next],
+        );
     };
 
     return (
@@ -72,12 +74,17 @@ function ProductFormBody({
             <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
                 <div>
                     <p className="text-sm text-gray-500">
-                        <Link href={index().url} className="hover:text-brand-500">
+                        <Link
+                            href={index().url}
+                            className="hover:text-brand-500"
+                        >
                             Products
                         </Link>{' '}
                         / {title}
                     </p>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">{title}</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">
+                        {title}
+                    </h1>
                 </div>
                 <div className="flex gap-3">
                     <Link
@@ -92,24 +99,43 @@ function ProductFormBody({
                 </div>
             </div>
 
-            <TabNav tab={tab} visited={visited} errorTabs={errorTabs} onSelect={onTabChange} />
+            <TabNav
+                tab={tab}
+                visited={visited}
+                errorTabs={errorTabs}
+                onSelect={onTabChange}
+            />
 
             <div className="mt-6 space-y-6">
-                {tab === 'basic' && <BasicInfoTab api={api} categoryTree={categoryTree} />}
-                {tab === 'images' && <ImagesTab api={api} galleryMax={galleryMax} />}
+                {tab === 'basic' && (
+                    <BasicInfoTab api={api} categoryTree={categoryTree} />
+                )}
+                {tab === 'images' && (
+                    <ImagesTab api={api} galleryMax={galleryMax} />
+                )}
                 {tab === 'price' && (
-                    <PriceStockTab api={api} maxVariantHeads={maxVariantHeads} maxVariants={maxVariants} />
+                    <PriceStockTab
+                        api={api}
+                        maxVariantHeads={maxVariantHeads}
+                        maxVariants={maxVariants}
+                    />
                 )}
                 {tab === 'seo' && <SeoTab api={api} />}
             </div>
 
             <div className="mt-6 flex items-center justify-between">
                 {previous ? (
-                    <Button variant="outline" size="sm" onClick={() => onTabChange(previous.id)}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onTabChange(previous.id)}
+                    >
                         ← {previous.label}
                     </Button>
                 ) : (
-                    <span className="text-sm text-gray-500">Step 1 of {TABS.length}</span>
+                    <span className="text-sm text-gray-500">
+                        Step 1 of {TABS.length}
+                    </span>
                 )}
                 {next ? (
                     <Button size="sm" onClick={() => onTabChange(next.id)}>

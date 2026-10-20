@@ -27,7 +27,11 @@ type Query = ExtraQuery & {
     page?: number;
 };
 
-function visit(url: string, query: Query, setProcessing: (processing: boolean) => void): void {
+function visit(
+    url: string,
+    query: Query,
+    setProcessing: (processing: boolean) => void,
+): void {
     router.get(url, query, {
         preserveState: true,
         preserveScroll: true,
@@ -38,7 +42,9 @@ function visit(url: string, query: Query, setProcessing: (processing: boolean) =
 }
 
 function toStatus(value: string): ActiveStatus | undefined {
-    return value === STATUS_ACTIVE || value === STATUS_INACTIVE ? value : undefined;
+    return value === STATUS_ACTIVE || value === STATUS_INACTIVE
+        ? value
+        : undefined;
 }
 
 /**
@@ -47,14 +53,19 @@ function toStatus(value: string): ActiveStatus | undefined {
  * browser back button. `url` is the list's index route; `extra` holds the
  * currently applied list-specific params, changed through `setExtra`.
  */
-export function useListFilters(url: string, filters: ListFilters, extra: ExtraQuery = {}) {
+export function useListFilters(
+    url: string,
+    filters: ListFilters,
+    extra: ExtraQuery = {},
+) {
     const [search, setSearch] = useState(filters.search ?? '');
     const [processing, setProcessing] = useState(false);
 
     const appliedSearch = filters.search ?? '';
     const appliedStatus = filters.status ?? undefined;
     // The default size stays out of the URL.
-    const appliedPerPage = filters.per_page === PER_PAGE_OPTIONS[0] ? undefined : filters.per_page;
+    const appliedPerPage =
+        filters.per_page === PER_PAGE_OPTIONS[0] ? undefined : filters.per_page;
     const extraKey = JSON.stringify(extra);
 
     useEffect(() => {
@@ -85,18 +96,24 @@ export function useListFilters(url: string, filters: ListFilters, extra: ExtraQu
         per_page: appliedPerPage,
     });
 
-    const setStatus = (value: string) => visit(url, { ...current(), status: toStatus(value) }, setProcessing);
+    const setStatus = (value: string) =>
+        visit(url, { ...current(), status: toStatus(value) }, setProcessing);
 
-    const setExtra = (patch: ExtraQuery) => visit(url, { ...current(), ...patch }, setProcessing);
+    const setExtra = (patch: ExtraQuery) =>
+        visit(url, { ...current(), ...patch }, setProcessing);
 
     const setPerPage = (perPage: number) =>
         visit(
             url,
-            { ...current(), per_page: perPage === PER_PAGE_OPTIONS[0] ? undefined : perPage },
+            {
+                ...current(),
+                per_page: perPage === PER_PAGE_OPTIONS[0] ? undefined : perPage,
+            },
             setProcessing,
         );
 
-    const goToPage = (page: number) => visit(url, { ...current(), page }, setProcessing);
+    const goToPage = (page: number) =>
+        visit(url, { ...current(), page }, setProcessing);
 
     return {
         search,

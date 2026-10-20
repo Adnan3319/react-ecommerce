@@ -10,19 +10,19 @@
 
 ## 1. Decisions (fixed)
 
-| Topic | Decision |
-|---|---|
-| Payment | Cash on Delivery only. `PaymentMethod` enum has `cod`; gateways later without changing the order flow. |
-| Account | Guest only: name, phone, address. Customer is identified by phone. |
-| Flows | **Buy now** (form on the product page, one variant) and **Cart** (session cart, form on the cart page). Both use the same `OrderForm` component and the same `CheckoutService`. |
-| Delivery area | From `config('shop.delivery_zones')` (key → label + charge in minor units; passed to the frontend in minor units too). No admin UI yet. |
-| Free delivery | Not now. |
-| Max quantity | `config('shop.max_qty_per_item')` per order line. |
-| Stock | Decreases when the order is placed (status `pending`). Restored on `cancelled` and `returned`. |
-| Address | One textarea + delivery area radio. |
-| Customer SMS | Later (needs a paid gateway). Admin gets a queued email now. |
-| Prices | Always recalculated on the server from the DB. Client totals are display only. |
-| Snapshot | Order lines store product name, variant label, SKU, unit price at purchase time. |
+| Topic         | Decision                                                                                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Payment       | Cash on Delivery only. `PaymentMethod` enum has `cod`; gateways later without changing the order flow.                                                                          |
+| Account       | Guest only: name, phone, address. Customer is identified by phone.                                                                                                              |
+| Flows         | **Buy now** (form on the product page, one variant) and **Cart** (session cart, form on the cart page). Both use the same `OrderForm` component and the same `CheckoutService`. |
+| Delivery area | From `config('shop.delivery_zones')` (key → label + charge in minor units; passed to the frontend in minor units too). No admin UI yet.                                         |
+| Free delivery | Not now.                                                                                                                                                                        |
+| Max quantity  | `config('shop.max_qty_per_item')` per order line.                                                                                                                               |
+| Stock         | Decreases when the order is placed (status `pending`). Restored on `cancelled` and `returned`.                                                                                  |
+| Address       | One textarea + delivery area radio.                                                                                                                                             |
+| Customer SMS  | Later (needs a paid gateway). Admin gets a queued email now.                                                                                                                    |
+| Prices        | Always recalculated on the server from the DB. Client totals are display only.                                                                                                  |
+| Snapshot      | Order lines store product name, variant label, SKU, unit price at purchase time.                                                                                                |
 
 ---
 
@@ -54,56 +54,61 @@ customers 1──n orders 1──n order_items n──1 product_variants
 ```
 
 ### customers
-| Column | Notes |
-|---|---|
-| name | last used name |
-| phone | unique, normalized `01XXXXXXXXX` |
-| is_blocked | bool, blocked phones cannot order |
+
+| Column                                         | Notes                                       |
+| ---------------------------------------------- | ------------------------------------------- |
+| name                                           | last used name                              |
+| phone                                          | unique, normalized `01XXXXXXXXX`            |
+| is_blocked                                     | bool, blocked phones cannot order           |
 | orders_count, delivered_count, cancelled_count | counters for the admin "order history" card |
-| timestamps | |
+| timestamps                                     |                                             |
 
 ### orders
-| Column | Notes |
-|---|---|
-| number | unique, `CK-YYMMDD-NNNN` (daily sequence) |
-| public_token | unique, random 32 chars — used in the success page URL, never the id |
-| customer_id | FK |
-| status | `OrderStatus` |
-| payment_method | `PaymentMethod` (`cod`) |
-| payment_status | `PaymentStatus` (`unpaid`, `paid`) |
-| source | `OrderSource` (`buy_now`, `cart`) |
-| subtotal, delivery_charge, total | minor units |
-| shipping_name, shipping_phone, shipping_address | snapshot |
-| delivery_zone, delivery_zone_label | snapshot |
-| customer_note | nullable, 500 |
-| idempotency_key | unique, from the form |
-| utm_source, utm_medium, utm_campaign, fbclid | nullable |
-| ip_address, user_agent | |
-| confirmed_at, shipped_at, delivered_at, cancelled_at | nullable |
-| timestamps | |
+
+| Column                                               | Notes                                                                |
+| ---------------------------------------------------- | -------------------------------------------------------------------- |
+| number                                               | unique, `CK-YYMMDD-NNNN` (daily sequence)                            |
+| public_token                                         | unique, random 32 chars — used in the success page URL, never the id |
+| customer_id                                          | FK                                                                   |
+| status                                               | `OrderStatus`                                                        |
+| payment_method                                       | `PaymentMethod` (`cod`)                                              |
+| payment_status                                       | `PaymentStatus` (`unpaid`, `paid`)                                   |
+| source                                               | `OrderSource` (`buy_now`, `cart`)                                    |
+| subtotal, delivery_charge, total                     | minor units                                                          |
+| shipping_name, shipping_phone, shipping_address      | snapshot                                                             |
+| delivery_zone, delivery_zone_label                   | snapshot                                                             |
+| customer_note                                        | nullable, 500                                                        |
+| idempotency_key                                      | unique, from the form                                                |
+| utm_source, utm_medium, utm_campaign, fbclid         | nullable                                                             |
+| ip_address, user_agent                               |                                                                      |
+| confirmed_at, shipped_at, delivered_at, cancelled_at | nullable                                                             |
+| timestamps                                           |                                                                      |
 
 Indexes: status + created_at, customer_id, shipping_phone, created_at.
 
 ### order_items
-| Column | Notes |
-|---|---|
-| order_id, product_id, product_variant_id | FKs (restrict delete) |
-| product_name, variant_label, sku, image_path | snapshot |
-| unit_price, quantity, line_total | minor units |
+
+| Column                                       | Notes                 |
+| -------------------------------------------- | --------------------- |
+| order_id, product_id, product_variant_id     | FKs (restrict delete) |
+| product_name, variant_label, sku, image_path | snapshot              |
+| unit_price, quantity, line_total             | minor units           |
 
 ### order_status_histories
-| Column | Notes |
-|---|---|
-| order_id | FK |
-| from_status (null for placed), to_status | |
-| note | nullable |
-| changed_by | user id, null = customer/system |
-| created_at | |
+
+| Column                                   | Notes                           |
+| ---------------------------------------- | ------------------------------- |
+| order_id                                 | FK                              |
+| from_status (null for placed), to_status |                                 |
+| note                                     | nullable                        |
+| changed_by                               | user id, null = customer/system |
+| created_at                               |                                 |
 
 ### order_number_sequences
-| Column | Notes |
-|---|---|
-| day | primary key, `YYMMDD` |
+
+| Column      | Notes                             |
+| ----------- | --------------------------------- |
+| day         | primary key, `YYMMDD`             |
 | last_number | last sequence handed out that day |
 
 One row per day. It is the only source of order numbers (see §5).
@@ -121,13 +126,13 @@ pending ──► confirmed ──► processing ──► shipped ──► del
 
 `cancelled` is possible from `pending`, `confirmed` and `processing` only. Once shipped, the only ways out are `delivered` or `returned`. `cancelled` and `returned` are final.
 
-| Transition | Side effect |
-|---|---|
-| → cancelled | stock restored (`order_cancelled` movements), `cancelled_at` |
-| shipped → returned | customer refused at delivery / courier return: stock restored (`order_returned`), payment stays `unpaid` |
-| delivered → returned | stock restored (`order_returned`), payment stays `paid` (refund is manual) |
-| → delivered | `payment_status = paid`, `delivered_at`, customer `delivered_count++` |
-| → confirmed / shipped | timestamp set |
+| Transition            | Side effect                                                                                              |
+| --------------------- | -------------------------------------------------------------------------------------------------------- |
+| → cancelled           | stock restored (`order_cancelled` movements), `cancelled_at`                                             |
+| shipped → returned    | customer refused at delivery / courier return: stock restored (`order_returned`), payment stays `unpaid` |
+| delivered → returned  | stock restored (`order_returned`), payment stays `paid` (refund is manual)                               |
+| → delivered           | `payment_status = paid`, `delivered_at`, customer `delivered_count++`                                    |
+| → confirmed / shipped | timestamp set                                                                                            |
 
 Any other transition throws `InvalidOrderTransition`. Every change writes `order_status_histories`. All inside `DB::transaction`.
 
@@ -198,12 +203,12 @@ resources/js/admin/
 
 ## 8. Mockups (`mockups/`)
 
-| File | Step |
-|---|---|
-| `01-product-page.png`, `02-product-page-mobile.png` | 03 |
-| `03-order-success.png` | 03 |
-| `04-cart.png` | 04 |
-| `05-admin-orders.png`, `06-admin-order-detail.png` | 05 |
+| File                                                | Step |
+| --------------------------------------------------- | ---- |
+| `01-product-page.png`, `02-product-page-mobile.png` | 03   |
+| `03-order-success.png`                              | 03   |
+| `04-cart.png`                                       | 04   |
+| `05-admin-orders.png`, `06-admin-order-detail.png`  | 05   |
 
 Names and phone numbers in the mockups are sample data.
 
@@ -211,13 +216,13 @@ Names and phone numbers in the mockups are sample data.
 
 ## 9. Steps
 
-| File | Scope | Commit |
-|---|---|---|
-| `01-data-model.md` | config, enums, migrations, models, status rules, unit tests | `feat: order data model` |
-| `02-checkout-service.md` | CheckoutService, OrderStatusService, number generator, abuse checks, tests | `feat: checkout service` |
-| `03-product-page.md` | storefront product page, Order Now form, success page | `feat: product page with order now` |
-| `04-cart.md` | session cart, add to cart, cart page checkout | `feat: cart checkout` |
-| `05-admin-orders.md` | admin order list, detail, status actions, block phone | `feat: admin orders` |
-| `06-notifications.md` | admin email job, dashboard widgets with real data | `feat: order notifications` |
+| File                     | Scope                                                                      | Commit                              |
+| ------------------------ | -------------------------------------------------------------------------- | ----------------------------------- |
+| `01-data-model.md`       | config, enums, migrations, models, status rules, unit tests                | `feat: order data model`            |
+| `02-checkout-service.md` | CheckoutService, OrderStatusService, number generator, abuse checks, tests | `feat: checkout service`            |
+| `03-product-page.md`     | storefront product page, Order Now form, success page                      | `feat: product page with order now` |
+| `04-cart.md`             | session cart, add to cart, cart page checkout                              | `feat: cart checkout`               |
+| `05-admin-orders.md`     | admin order list, detail, status actions, block phone                      | `feat: admin orders`                |
+| `06-notifications.md`    | admin email job, dashboard widgets with real data                          | `feat: order notifications`         |
 
 After all six: update `CLAUDE.md` Build Order and Current Codebase State.

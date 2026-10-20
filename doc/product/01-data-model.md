@@ -13,11 +13,11 @@ Read `CLAUDE.md`, `testcase.md` and `doc/product/README.md` first. Follow README
 3. `App\Enums\StockMovementReason`.
 4. Config: `media.product_gallery_max` (default 3), `media.presets.product` + `thumb` variant (README §3), `shop.low_stock_threshold` (default 5), `shop.max_variant_heads` (2).
 5. Models:
-   - `Product`: category, images, mainImage, galleryImages, variantHeads, variants, activeVariants; scopes `active()`, `featured()`, `inStock()`; accessors `price_range` (min/max effective price), `total_stock`, `has_variants` (has variant heads).
-   - `VariantHead` (product, values), `VariantValue` (head, variants).
-   - `ProductVariant`: product, image, stockMovements, variantValues; accessors `effective_price` (sale ?? price), `discount_percent` (int, null when no sale), `is_out_of_stock`, `label` ("M / Pink", "Default"); `combinationKeyFor()` and `syncVariantValues()`.
-   - `ProductImage`, `StockMovement` (no `updated_at`).
-   - Casts: enums, money as int, booleans.
+    - `Product`: category, images, mainImage, galleryImages, variantHeads, variants, activeVariants; scopes `active()`, `featured()`, `inStock()`; accessors `price_range` (min/max effective price), `total_stock`, `has_variants` (has variant heads).
+    - `VariantHead` (product, values), `VariantValue` (head, variants).
+    - `ProductVariant`: product, image, stockMovements, variantValues; accessors `effective_price` (sale ?? price), `discount_percent` (int, null when no sale), `is_out_of_stock`, `label` ("M / Pink", "Default"); `combinationKeyFor()` and `syncVariantValues()`.
+    - `ProductImage`, `StockMovement` (no `updated_at`).
+    - Casts: enums, money as int, booleans.
 6. `App\Services\Product\SkuGenerator`: `{CAT3}-{product id 4 digits}-{option short codes}` e.g. `FAS-0012-M-PNK`; default variant `FAS-0012`; appends `-2`, `-3` on collision.
 7. Factories with states: `Product::factory()->simple()`, `->withVariants(int $n)`, `->withOptions(array $heads)`, `->outOfStock()`, `->featured()`, `->inactive()`.
 

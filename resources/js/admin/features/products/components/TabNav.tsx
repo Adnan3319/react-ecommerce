@@ -10,7 +10,12 @@ type TabNavProps = {
 };
 
 /** Tab header: active (blue), error (red), done (green: visited and error-free). */
-export default function TabNav({ tab, visited, errorTabs, onSelect }: TabNavProps) {
+export default function TabNav({
+    tab,
+    visited,
+    errorTabs,
+    onSelect,
+}: TabNavProps) {
     return (
         <nav
             aria-label="Product form steps"
@@ -19,7 +24,8 @@ export default function TabNav({ tab, visited, errorTabs, onSelect }: TabNavProp
             {TABS.map((item, index) => {
                 const hasError = errorTabs.includes(item.id);
                 const isActive = item.id === tab;
-                const isDone = !hasError && visited.includes(item.id) && !isActive;
+                const isDone =
+                    !hasError && visited.includes(item.id) && !isActive;
 
                 return (
                     <button
@@ -38,10 +44,16 @@ export default function TabNav({ tab, visited, errorTabs, onSelect }: TabNavProp
                         <span
                             className={cn(
                                 'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs',
-                                isActive && !hasError && 'border-brand-500 bg-brand-500 text-white',
+                                isActive &&
+                                    !hasError &&
+                                    'border-brand-500 bg-brand-500 text-white',
                                 isDone && 'border-success-500 text-success-600',
-                                hasError && 'border-error-500 bg-error-50 text-error-600',
-                                !isActive && !isDone && !hasError && 'border-gray-300 text-gray-500',
+                                hasError &&
+                                    'border-error-500 bg-error-50 text-error-600',
+                                !isActive &&
+                                    !isDone &&
+                                    !hasError &&
+                                    'border-gray-300 text-gray-500',
                             )}
                         >
                             {hasError ? '!' : isDone ? '✓' : index + 1}

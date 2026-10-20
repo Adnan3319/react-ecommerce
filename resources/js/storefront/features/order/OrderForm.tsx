@@ -30,7 +30,13 @@ type OrderFormData = {
 };
 
 /** Order Now: guest details + delivery area for one variant, Cash on Delivery. */
-export default function OrderForm({ variantId, quantity, unitPrice, zones, outOfStock }: OrderFormProps) {
+export default function OrderForm({
+    variantId,
+    quantity,
+    unitPrice,
+    zones,
+    outOfStock,
+}: OrderFormProps) {
     const form = useForm<OrderFormData>({
         name: '',
         phone: '',
@@ -43,11 +49,17 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
     // One key per form: sending the same form twice (double click, retry) can never create two orders.
     const idempotencyKey = useRef<string | null>(null);
 
-    const zone = zones.find((candidate) => candidate.key === form.data.delivery_zone) ?? zones[0];
+    const zone =
+        zones.find((candidate) => candidate.key === form.data.delivery_zone) ??
+        zones[0];
     const subtotal = unitPrice * quantity;
     const total = subtotal + (zone?.charge ?? 0);
     const errors = form.errors as Partial<Record<string, string>>;
-    const lineError = errors['items.0.quantity'] ?? errors['items.0.variant'] ?? errors.order ?? errors.items;
+    const lineError =
+        errors['items.0.quantity'] ??
+        errors['items.0.variant'] ??
+        errors.order ??
+        errors.items;
 
     function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -72,8 +84,12 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
             className="flex scroll-mt-24 flex-col gap-4 rounded-[28px] bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
         >
             <div>
-                <h2 className="text-xl font-bold tracking-tight text-neutral-900">Order now · Cash on Delivery</h2>
-                <p className="mt-1 text-sm text-neutral-500">No account needed. Pay when it arrives.</p>
+                <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+                    Order now · Cash on Delivery
+                </h2>
+                <p className="mt-1 text-sm text-neutral-500">
+                    No account needed. Pay when it arrives.
+                </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -83,7 +99,9 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                     autoComplete="name"
                     value={form.data.name}
                     error={errors.name}
-                    onChange={(event) => form.setData('name', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('name', event.target.value)
+                    }
                 />
                 <Input
                     label="Phone number"
@@ -94,7 +112,9 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                     placeholder="01XXXXXXXXX"
                     value={form.data.phone}
                     error={errors.phone}
-                    onChange={(event) => form.setData('phone', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('phone', event.target.value)
+                    }
                 />
             </div>
 
@@ -105,7 +125,9 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                 placeholder="House, road, area, thana, district"
                 value={form.data.address}
                 error={errors.address}
-                onChange={(event) => form.setData('address', event.target.value)}
+                onChange={(event) =>
+                    form.setData('address', event.target.value)
+                }
             />
 
             <DeliveryZonePicker
@@ -121,7 +143,9 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                     name="note"
                     value={form.data.note}
                     error={errors.note}
-                    onChange={(event) => form.setData('note', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('note', event.target.value)
+                    }
                 />
             ) : (
                 <button
@@ -133,7 +157,10 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                 </button>
             )}
 
-            <div aria-hidden="true" className="absolute -start-[9999px] h-0 w-0 overflow-hidden">
+            <div
+                aria-hidden="true"
+                className="absolute -start-[9999px] h-0 w-0 overflow-hidden"
+            >
                 <label>
                     Website
                     <input
@@ -142,20 +169,35 @@ export default function OrderForm({ variantId, quantity, unitPrice, zones, outOf
                         tabIndex={-1}
                         autoComplete="off"
                         value={form.data.website}
-                        onChange={(event) => form.setData('website', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('website', event.target.value)
+                        }
                     />
                 </label>
             </div>
 
-            <OrderSummary subtotal={subtotal} deliveryCharge={zone?.charge ?? 0} itemCount={quantity} />
+            <OrderSummary
+                subtotal={subtotal}
+                deliveryCharge={zone?.charge ?? 0}
+                itemCount={quantity}
+            />
 
             {lineError && (
-                <p role="alert" className="rounded-control bg-red-50 px-3 py-2 text-sm text-red-700">
+                <p
+                    role="alert"
+                    className="rounded-control bg-red-50 px-3 py-2 text-sm text-red-700"
+                >
                     {lineError}
                 </p>
             )}
 
-            <Button type="submit" size="lg" fullWidth disabled={outOfStock || form.processing} loading={form.processing}>
+            <Button
+                type="submit"
+                size="lg"
+                fullWidth
+                disabled={outOfStock || form.processing}
+                loading={form.processing}
+            >
                 {outOfStock ? (
                     'Out of stock'
                 ) : (

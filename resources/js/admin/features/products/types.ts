@@ -48,13 +48,23 @@ export type ProductDetail = {
     is_featured: boolean;
     meta_title: string | null;
     meta_description: string | null;
-    images: { id: number; url: string; thumb_url: string | null; is_main: boolean; sort_order: number }[];
+    images: {
+        id: number;
+        url: string;
+        thumb_url: string | null;
+        is_main: boolean;
+        sort_order: number;
+    }[];
     has_variants: boolean;
     sku: string | null;
     price: string | null;
     sale_price: string | null;
     stock: number;
-    heads: { id: number; name: string; values: { id: number; value: string }[] }[];
+    heads: {
+        id: number;
+        name: string;
+        values: { id: number; value: string }[];
+    }[];
     variants: {
         id: number;
         values: string[];
@@ -141,6 +151,9 @@ export type FormErrors = Partial<Record<string, string>>;
 export type FormApi = {
     data: ProductFormData;
     errors: FormErrors;
-    set: <K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) => void;
+    set: <K extends keyof ProductFormData>(
+        key: K,
+        value: ProductFormData[K],
+    ) => void;
     update: (updater: (previous: ProductFormData) => ProductFormData) => void;
 };

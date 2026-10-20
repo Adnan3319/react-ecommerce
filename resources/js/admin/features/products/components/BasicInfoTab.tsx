@@ -17,14 +17,22 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
     const { data, errors, set, update } = api;
 
     const changeName = (name: string) =>
-        update((previous) => ({ ...previous, name, slug: previous.slugTouched ? previous.slug : slugify(name) }));
+        update((previous) => ({
+            ...previous,
+            name,
+            slug: previous.slugTouched ? previous.slug : slugify(name),
+        }));
 
     return (
         <>
             <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">Basic information</h2>
-                    <p className="text-sm text-gray-500">Name and description customers will see.</p>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
+                        Basic information
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                        Name and description customers will see.
+                    </p>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
@@ -75,7 +83,8 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
                         hint={errors.short_description}
                     />
                     <p className="mt-1.5 text-xs text-gray-500">
-                        Shown on product cards · {data.short_description.length}/{LIMITS.shortDescription}
+                        Shown on product cards · {data.short_description.length}
+                        /{LIMITS.shortDescription}
                     </p>
                 </div>
 
@@ -96,7 +105,12 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
                         <Switch
                             label="Active — visible in the store"
                             defaultChecked={data.status === STATUS_ACTIVE}
-                            onChange={(checked) => set('status', checked ? STATUS_ACTIVE : STATUS_INACTIVE)}
+                            onChange={(checked) =>
+                                set(
+                                    'status',
+                                    checked ? STATUS_ACTIVE : STATUS_INACTIVE,
+                                )
+                            }
                         />
                     </div>
                     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-white/5">
@@ -111,8 +125,12 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
 
             <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">Category *</h2>
-                    <p className="text-sm text-gray-500">Pick one. Sub-categories are shown under their parent.</p>
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
+                        Category *
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                        Pick one. Sub-categories are shown under their parent.
+                    </p>
                 </div>
                 <CategoryPicker
                     tree={categoryTree}

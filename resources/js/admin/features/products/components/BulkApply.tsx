@@ -20,14 +20,21 @@ export default function BulkApply({ onApply }: BulkApplyProps) {
                 value={values[key]}
                 placeholder={placeholder}
                 aria-label={`Set ${placeholder.toLowerCase()} for all`}
-                onChange={(event) => setValues((current) => ({ ...current, [key]: event.target.value }))}
+                onChange={(event) =>
+                    setValues((current) => ({
+                        ...current,
+                        [key]: event.target.value,
+                    }))
+                }
             />
         </div>
     );
 
     return (
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-white/5">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-400">Set for all:</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-400">
+                Set for all:
+            </span>
             {field('price', 'Price')}
             {field('sale_price', 'Sale')}
             {field('stock', 'Stock')}

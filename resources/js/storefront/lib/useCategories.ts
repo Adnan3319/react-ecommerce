@@ -7,7 +7,9 @@ export function useCategories(): CategoryNode[] {
 }
 
 /** Finds a top-level category or a sub-category by slug. */
-export function useCategory(slug: string | null | undefined): Category | undefined {
+export function useCategory(
+    slug: string | null | undefined,
+): Category | undefined {
     const categories = useCategories();
 
     if (!slug) {

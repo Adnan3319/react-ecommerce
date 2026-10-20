@@ -32,7 +32,7 @@ function CategoryRadio({ id, label, checked, onSelect }: RadioProps) {
                 value={id}
                 checked={checked}
                 onChange={onSelect}
-                className="h-4 w-4 accent-brand-500"
+                className="accent-brand-500 h-4 w-4"
             />
             {label}
         </label>
@@ -40,12 +40,20 @@ function CategoryRadio({ id, label, checked, onSelect }: RadioProps) {
 }
 
 /** Parents are headers with their sub-categories as radios; a parent without sub-categories is a radio itself. */
-export default function CategoryPicker({ tree, value, error, onChange }: CategoryPickerProps) {
+export default function CategoryPicker({
+    tree,
+    value,
+    error,
+    onChange,
+}: CategoryPickerProps) {
     const selected = tree
         .flatMap((parent) =>
             parent.children.length === 0
                 ? [{ id: parent.id, path: parent.name }]
-                : parent.children.map((child) => ({ id: child.id, path: `${parent.name} › ${child.name}` })),
+                : parent.children.map((child) => ({
+                      id: child.id,
+                      path: `${parent.name} › ${child.name}`,
+                  })),
         )
         .find((option) => String(option.id) === value);
 
@@ -65,8 +73,12 @@ export default function CategoryPicker({ tree, value, error, onChange }: Categor
                     ) : (
                         <div key={parent.id}>
                             <div className="flex items-center justify-between bg-gray-50 px-4 py-2.5 text-sm dark:bg-white/5">
-                                <span className="font-medium text-gray-900 dark:text-white/90">{parent.name}</span>
-                                <span className="text-xs text-gray-500">{parent.children.length} sub-categories</span>
+                                <span className="font-medium text-gray-900 dark:text-white/90">
+                                    {parent.name}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                    {parent.children.length} sub-categories
+                                </span>
                             </div>
                             <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3">
                                 {parent.children.map((child) => (
@@ -75,7 +87,9 @@ export default function CategoryPicker({ tree, value, error, onChange }: Categor
                                         id={child.id}
                                         label={child.name}
                                         checked={String(child.id) === value}
-                                        onSelect={() => onChange(String(child.id))}
+                                        onSelect={() =>
+                                            onChange(String(child.id))
+                                        }
                                     />
                                 ))}
                             </div>
@@ -84,7 +98,10 @@ export default function CategoryPicker({ tree, value, error, onChange }: Categor
                 )}
             </div>
             <p className="mt-2 text-sm text-gray-500">
-                Selected: <strong className="text-brand-500">{selected?.path ?? 'none'}</strong>
+                Selected:{' '}
+                <strong className="text-brand-500">
+                    {selected?.path ?? 'none'}
+                </strong>
             </p>
             <FieldError message={error} />
         </div>

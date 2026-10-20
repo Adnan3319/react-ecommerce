@@ -57,35 +57,35 @@ variants[0][status]
 2. `Admin\ProductController` (thin): `index`, `create`, `store`, `edit`, `update`, `destroy`. Writes redirect back / to index with flash.
 3. `IndexProductRequest`: `search` (max 100), `category_id`, `status`, `featured`, `stock` (`in|out|low`), `per_page` clamped 10–50.
 4. `SaveProductRequest` (store + update):
-   - Basic: `name`, `slug` (auto from name when empty; unique incl. soft-deleted), `short_description` ≤300, `description`, `status`, `is_featured`, `category_id` (must be a leaf).
-   - Images: upload rule from README §3. `main_image` is required on create. **Every product always keeps exactly one main image:** on update the current main stays unless a new `main_image` replaces it, the main image cannot be removed or sent in `gallery_keep[]`, and a product that has no main image (should never happen) must get one on the next save. `gallery_keep[]` ids must be non-main images of this product; kept + new gallery files ≤ `config('media.product_gallery_max')`.
-   - `has_variants` bool.
-   - Off: `price`, `sale_price` (< price), `stock`, `sku`.
-   - On, heads: `heads` required, 1 to `config('shop.max_variant_heads')` items (the same config value is sent to the UI); `heads.*.name` required, unique among the product's heads (case-insensitive); `heads.*.values` min 1; `value` unique within its head (case-insensitive); `heads.*.id` / `values.*.id` must belong to this product (never accepted on create).
-   - On, variants: `variants` min 1 and at most `config('shop.max_variants_per_product')` (add it, default 100, so a cartesian explosion cannot be submitted); each variant has exactly one value text per head, and each text must exist in that head; no two variants with the same combination; `variants.*.id` must belong to this product; `sku`, `price`, `sale_price` (< price), `stock`, `status`; `image_ref` must point to an image of this product or to an upload in this request.
-   - Convert taka → minor units in `prepareForValidation`/`validated()`.
+    - Basic: `name`, `slug` (auto from name when empty; unique incl. soft-deleted), `short_description` ≤300, `description`, `status`, `is_featured`, `category_id` (must be a leaf).
+    - Images: upload rule from README §3. `main_image` is required on create. **Every product always keeps exactly one main image:** on update the current main stays unless a new `main_image` replaces it, the main image cannot be removed or sent in `gallery_keep[]`, and a product that has no main image (should never happen) must get one on the next save. `gallery_keep[]` ids must be non-main images of this product; kept + new gallery files ≤ `config('media.product_gallery_max')`.
+    - `has_variants` bool.
+    - Off: `price`, `sale_price` (< price), `stock`, `sku`.
+    - On, heads: `heads` required, 1 to `config('shop.max_variant_heads')` items (the same config value is sent to the UI); `heads.*.name` required, unique among the product's heads (case-insensitive); `heads.*.values` min 1; `value` unique within its head (case-insensitive); `heads.*.id` / `values.*.id` must belong to this product (never accepted on create).
+    - On, variants: `variants` min 1 and at most `config('shop.max_variants_per_product')` (add it, default 100, so a cartesian explosion cannot be submitted); each variant has exactly one value text per head, and each text must exist in that head; no two variants with the same combination; `variants.*.id` must belong to this product; `sku`, `price`, `sale_price` (< price), `stock`, `status`; `image_ref` must point to an image of this product or to an upload in this request.
+    - Convert taka → minor units in `prepareForValidation`/`validated()`.
 5. `App\Services\Product\ProductService`:
-   - `paginate(filters)` — search name/SKU with escaped LIKE; category filter includes its children; eager load main image, category, variants (select only needed columns).
-   - `create(data)`, `update(product, data)` in one `DB::transaction`. Order inside the transaction:
-     1. product fields;
-     2. images (FileUploadService preset `product`): replace main, add gallery, drop gallery rows not in `gallery_keep[]`;
-     3. heads: create new, update existing by id (name, position);
-     4. values: create new, update existing by id (text, position); values that no submitted variant uses are not saved;
-     5. variants: resolve each variant's value texts to value ids and compute `combination_key` (`ProductVariant::combinationKeyFor`); match to existing variants by id; create / update; write the selections and key together with `syncVariantValues()`; variants missing from the payload are soft-deleted **and their `variant_selections` rows are removed**, so the values they used can be deleted and stay out of the way of the restrict FK;
-     6. delete heads and values that are no longer submitted (nothing live references them any more);
-     7. variant image links (`product_image_id`) and stock via `StockService`;
-     8. assert the product still has exactly one main image, otherwise throw a `ValidationException`.
-   - Combination changes on existing variants are applied in two passes (move to a temporary unique key, then the final key), so swapping two combinations in one request does not trip `unique (product_id, live_key)`.
-   - Variants off → keep exactly one default variant (`combination_key = default`, no selections). Turning variants **on**: the default variant is soft-deleted and variants are created from the heads. Turning them **off**: all variants are soft-deleted (selections removed), heads and values are deleted, and a new default variant is created. The soft-deleted variants keep their own stock and movement history.
-   - `delete(product)` — soft delete product + variants (selections removed). Hard delete of an ordered product or variant is blocked by the `order_items` foreign keys.
-   - Old image files deleted only after commit.
+    - `paginate(filters)` — search name/SKU with escaped LIKE; category filter includes its children; eager load main image, category, variants (select only needed columns).
+    - `create(data)`, `update(product, data)` in one `DB::transaction`. Order inside the transaction:
+        1. product fields;
+        2. images (FileUploadService preset `product`): replace main, add gallery, drop gallery rows not in `gallery_keep[]`;
+        3. heads: create new, update existing by id (name, position);
+        4. values: create new, update existing by id (text, position); values that no submitted variant uses are not saved;
+        5. variants: resolve each variant's value texts to value ids and compute `combination_key` (`ProductVariant::combinationKeyFor`); match to existing variants by id; create / update; write the selections and key together with `syncVariantValues()`; variants missing from the payload are soft-deleted **and their `variant_selections` rows are removed**, so the values they used can be deleted and stay out of the way of the restrict FK;
+        6. delete heads and values that are no longer submitted (nothing live references them any more);
+        7. variant image links (`product_image_id`) and stock via `StockService`;
+        8. assert the product still has exactly one main image, otherwise throw a `ValidationException`.
+    - Combination changes on existing variants are applied in two passes (move to a temporary unique key, then the final key), so swapping two combinations in one request does not trip `unique (product_id, live_key)`.
+    - Variants off → keep exactly one default variant (`combination_key = default`, no selections). Turning variants **on**: the default variant is soft-deleted and variants are created from the heads. Turning them **off**: all variants are soft-deleted (selections removed), heads and values are deleted, and a new default variant is created. The soft-deleted variants keep their own stock and movement history.
+    - `delete(product)` — soft delete product + variants (selections removed). Hard delete of an ordered product or variant is blocked by the `order_items` foreign keys.
+    - Old image files deleted only after commit.
 6. `App\Services\Product\StockService`:
-   - `setInitial(variant, qty)`, `adjust(variant, newQty, note)` → writes `stock_movements` with the difference; no row when unchanged.
-   - Used by ProductService for every stock write (new variants created on update get an `initial` movement).
+    - `setInitial(variant, qty)`, `adjust(variant, newQty, note)` → writes `stock_movements` with the difference; no row when unchanged.
+    - Used by ProductService for every stock write (new variants created on update get an `initial` movement).
 7. Resources:
-   - `ProductListResource`: id, name, thumb_url, category path ("Fashion › Women's Clothing"), price range (taka, formatted), total_stock, stock_state (`in|low|out`), status, is_featured.
-   - `ProductFormResource`: everything the 4 tabs need; prices in taka; images with ids and urls; `has_variants`; `heads` (id, name, values with id and text, in position order); `variants` (id, value texts in head order, sku, price, sale_price, stock, image id, status); simple products expose their default variant fields at the top level.
-   - `create`/`edit` also pass: category tree (roots with children), `galleryMax`, `maxVariantHeads` (`shop.max_variant_heads`) and `maxVariants` (`shop.max_variants_per_product`).
+    - `ProductListResource`: id, name, thumb_url, category path ("Fashion › Women's Clothing"), price range (taka, formatted), total_stock, stock_state (`in|low|out`), status, is_featured.
+    - `ProductFormResource`: everything the 4 tabs need; prices in taka; images with ids and urls; `has_variants`; `heads` (id, name, values with id and text, in position order); `variants` (id, value texts in head order, sku, price, sale_price, stock, image id, status); simple products expose their default variant fields at the top level.
+    - `create`/`edit` also pass: category tree (roots with children), `galleryMax`, `maxVariantHeads` (`shop.max_variant_heads`) and `maxVariants` (`shop.max_variants_per_product`).
 8. Cache: `products.featured` (active + featured + in stock, limit 8, plain arrays: id, name, slug, thumb, srcset, price, sale_price, discount_percent). Cleared on every product write. Add `featuredProducts` to `HomeService::data()`.
 9. Sidebar link is added in step 03.
 

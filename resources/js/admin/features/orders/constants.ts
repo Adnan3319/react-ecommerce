@@ -3,7 +3,10 @@ export const STATUS_CANCELLED = 'cancelled';
 export const STATUS_RETURNED = 'returned';
 
 /** Moves that end the order: shown as danger actions and asking for a note (TransitionOrderRequest). */
-export const ENDING_STATUSES: readonly string[] = [STATUS_CANCELLED, STATUS_RETURNED];
+export const ENDING_STATUSES: readonly string[] = [
+    STATUS_CANCELLED,
+    STATUS_RETURNED,
+];
 
 export const NOTE_MAX_LENGTH = 500;
 

@@ -8,15 +8,15 @@ Read `CLAUDE.md`, `testcase.md` and `doc/order/README.md` first. Step 01 must be
 ## Tasks
 
 1. `CheckoutService::place(CheckoutData $data): Order` exactly as README §5.
-   - `CheckoutData` (readonly DTO): items `[variant_id, quantity]`, name, phone, address, delivery_zone, note, source, idempotency_key, utm fields, fbclid, ip, user_agent.
-   - Errors as `ValidationException` with keys the form can show: `phone`, `items.N.quantity`, `items.N.variant`, `delivery_zone`, `order` (generic).
-   - Variants locked in a fixed order (by id) to avoid deadlocks.
-   - Stock changes only through `StockService` with reason `order_placed` and the order as reference.
-   - Customer upsert by normalized phone; counters updated.
-   - After commit: dispatch `NotifyAdminOfNewOrder` (job class can be a stub until step 06).
+    - `CheckoutData` (readonly DTO): items `[variant_id, quantity]`, name, phone, address, delivery_zone, note, source, idempotency_key, utm fields, fbclid, ip, user_agent.
+    - Errors as `ValidationException` with keys the form can show: `phone`, `items.N.quantity`, `items.N.variant`, `delivery_zone`, `order` (generic).
+    - Variants locked in a fixed order (by id) to avoid deadlocks.
+    - Stock changes only through `StockService` with reason `order_placed` and the order as reference.
+    - Customer upsert by normalized phone; counters updated.
+    - After commit: dispatch `NotifyAdminOfNewOrder` (job class can be a stub until step 06).
 2. `OrderStatusService`:
-   - `transition(Order, OrderStatus $to, ?string $note, ?User $by)` — validates via enum, applies README §4 side effects, writes history, all in one transaction with the order row locked.
-   - `addNote(Order, string $note, User $by)` — history row without status change.
+    - `transition(Order, OrderStatus $to, ?string $note, ?User $by)` — validates via enum, applies README §4 side effects, writes history, all in one transaction with the order row locked.
+    - `addNote(Order, string $note, User $by)` — history row without status change.
 3. `CustomerService::block(phone)` / `unblock(phone)`.
 4. No HTTP here; controllers come in steps 03–05.
 

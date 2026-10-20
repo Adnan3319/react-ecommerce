@@ -49,14 +49,30 @@ export default function CategoryTable({
             render: (row: Category) => (
                 <div className={row.parent_id ? 'ps-6' : undefined}>
                     <p className="font-medium text-gray-900 dark:text-white/90">
-                        {row.parent_id && <span aria-hidden="true" className="me-1.5 text-gray-400">↳</span>}
+                        {row.parent_id && (
+                            <span
+                                aria-hidden="true"
+                                className="me-1.5 text-gray-400"
+                            >
+                                ↳
+                            </span>
+                        )}
                         {row.name}
                     </p>
-                    {row.parent_name && <p className="text-xs text-gray-500">in {row.parent_name}</p>}
-                    {!row.parent_id && row.headline && <p className="text-xs text-gray-500">{row.headline}</p>}
+                    {row.parent_name && (
+                        <p className="text-xs text-gray-500">
+                            in {row.parent_name}
+                        </p>
+                    )}
+                    {!row.parent_id && row.headline && (
+                        <p className="text-xs text-gray-500">{row.headline}</p>
+                    )}
                     {!row.parent_id && (row.children_count ?? 0) > 0 && (
                         <p className="text-xs text-gray-400">
-                            {row.children_count} sub-{row.children_count === 1 ? 'category' : 'categories'}
+                            {row.children_count} sub-
+                            {row.children_count === 1
+                                ? 'category'
+                                : 'categories'}
                         </p>
                     )}
                 </div>

@@ -1,6 +1,7 @@
 # E-commerce Storefront — Laravel 13 + Inertia React
 
 ## Tech Stack (Fixed — never assume otherwise)
+
 - Backend: Laravel 13, PHP 8.3+, MySQL 8.4 (InnoDB, utf8mb4)
 - Frontend: Inertia 3 + React 19 (React Compiler) + TypeScript strict + Tailwind 4 + Vite+
 - Installed helpers: Wayfinder (typed routes/actions), swiper, clsx, tailwind-merge, i18next (admin only for now)
@@ -9,6 +10,7 @@
 - Don't install new packages without asking
 
 ## Hosting Constraints (Namecheap cPanel shared hosting)
+
 - No SSR, no Redis, no long-running processes
 - Cache + session driver: `database`
 - Queues: `database` driver, processed by cron `schedule:run` → `queue:work --stop-when-empty`
@@ -18,23 +20,26 @@
 - Deploy steps: build assets locally (`npm run build`), upload, then on the server `php artisan migrate --force` and `php artisan optimize` (caches config, routes, events and views; re-run after every deploy)
 
 ## Engineering Standard
+
 Senior-level, production-grade code only. No tutorial-style shortcuts.
 
 ## Business Scope
+
 - Single vendor, physical products (variants + stock), English only
 - Payment: Cash on Delivery only. `PaymentMethod` enum has only `cod`; gateways added later without changing order flow
 - Guest ordering: name, phone, address — no login required
 - Two order flows, both handled by one `CheckoutService`:
-  1. Order Now — order form on the product page (single product, does not touch the cart)
-  2. Cart — multiple products, order form on the Cart page
+    1. Order Now — order form on the product page (single product, does not touch the cart)
+    2. Cart — multiple products, order form on the Cart page
 - No separate checkout page
 - Delivery charge is configured in admin and calculated by the backend only
 
 ## Backend Architecture
+
 - Layering: Controller → FormRequest → Service → Model → Resource
-  - Controllers: no queries, no business logic — validate, call a Service, return a response
-  - Services: business logic and Eloquent queries; no HTTP request/response handling
-  - Reusable query constraints go in Model local scopes
+    - Controllers: no queries, no business logic — validate, call a Service, return a response
+    - Services: business logic and Eloquent queries; no HTTP request/response handling
+    - Reusable query constraints go in Model local scopes
 - Group by domain inside each layer: `app/Http/Controllers/{Domain}`, `app/Http/Requests/{Domain}`, `app/Http/Resources/{Domain}`, `app/Services/{Domain}`, plus `app/Models`, `app/Enums`, `app/Policies`, `app/Jobs`
 - Storefront controllers return `Inertia::render()` with Resource-shaped props and a `seo` prop on every indexable page
 - Admin and storefront pages never call JSON APIs: reads via Inertia props, writes via Inertia form submit → redirect back with flash
@@ -43,11 +48,12 @@ Senior-level, production-grade code only. No tutorial-style shortcuts.
 - Soft deletes on master data (products, categories, customers)
 
 ## E-commerce Rules (Non-negotiable)
+
 - Money stored as integer minor units — never floats
 - Prices, delivery charge and totals always recalculated server-side; never trust client amounts
 - Order status and payment status are Enums with explicit allowed transitions
-  - Order: pending → confirmed → processing → shipped → delivered | cancelled | returned
-  - Payment: unpaid → paid
+    - Order: pending → confirmed → processing → shipped → delivered | cancelled | returned
+    - Payment: unpaid → paid
 - Order placement runs in `DB::transaction()` with `lockForUpdate()` on stock rows; stock released on cancel/return
 - Order lines snapshot product name, SKU, variant and unit price
 - Orders store `source` (`buy_now` | `cart`) and captured UTM params / fbclid
@@ -57,6 +63,7 @@ Senior-level, production-grade code only. No tutorial-style shortcuts.
 - Emails/notifications are queued — never on the order request path
 
 ## SEO Rules
+
 - Clean URLs: `/products/{slug}`, `/categories/{slug}`; 301 redirect on slug change
 - Every indexable page sends a `seo` prop (title, description, canonical, image, JSON-LD)
 - `storefront.blade.php` renders these meta tags server-side (first load, crawlers, social previews); `shared/components/Seo.tsx` updates them on client navigation — same data source
@@ -66,6 +73,7 @@ Senior-level, production-grade code only. No tutorial-style shortcuts.
 - Semantic HTML, one `h1` per page, descriptive image `alt`, real links for pagination
 
 ## Frontend Structure
+
 ```
 resources/views/
 ├── storefront.blade.php     # root view + server-rendered SEO meta
@@ -95,6 +103,7 @@ resources/js/
 ```
 
 ## Frontend Rules
+
 - Dependency direction: pages → features → shared (storefront `components/`/`layouts` may use features). `admin` and `storefront` never import each other; `shared` imports neither. Enforced with Oxlint `no-restricted-imports` in `vite.config.ts`
 - Admin and storefront never share UI components: admin uses TailAdmin styling (`admin/components/ui`), storefront has its own design (`storefront/components/ui`). Reuse the existing primitives there; never create duplicates
 - Features never import another feature's files. Anything used by 2+ features moves to `admin/components/common` or `storefront/components`
@@ -115,11 +124,13 @@ resources/js/
 - Prettier + Tailwind class sorting; ESLint must pass
 
 ### SSR-safe code (mandatory)
+
 - No `window`, `document`, `localStorage` at module scope or during render — only in `useEffect`/event handlers
 - No `Date.now()`, `Math.random()` or browser-only values in render output; format dates in a fixed timezone
 - Check SSR compatibility before adding a library; lazy-load browser-only ones
 
 ### Performance
+
 - Storefront bundle never includes admin code; pages are code-split
 - `storefront/components/ui/Image`: explicit width/height, `srcset`, WebP, lazy by default; `priority` for LCP images
 - Home hero first slide is static (no slider JS blocking LCP): plain `<img srcset sizes="100vw" width height loading="eager" fetchpriority="high">` in the main bundle (no SSR, so the bundle must run) plus a `<link rel="preload" as="image" imagesrcset ...>` in `storefront.blade.php` for the first active slider
@@ -129,21 +140,24 @@ resources/js/
 - Targets: LCP < 2.5s, CLS < 0.1, mobile Lighthouse 90+
 
 ### Image presets (`config/media.php`, all webp)
-| Preset | Output | Fit | Upload rule |
-|---|---|---|---|
-| `category` | 300x300, q80 | contain (padded, transparent; never cropped) | square logo, 300–1000px, max 512KB |
-| `slider` | 1920x800, q72 + `-sm` variant 960x400, q70 (`uuid.webp` + `uuid-sm.webp`) | cover | at least 1920x800, up to 5000px, max 2MB |
-| `product` (later) | 1200 + 400 thumb | — | — |
+
+| Preset            | Output                                                                    | Fit                                          | Upload rule                              |
+| ----------------- | ------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------- |
+| `category`        | 300x300, q80                                                              | contain (padded, transparent; never cropped) | square logo, 300–1000px, max 512KB       |
+| `slider`          | 1920x800, q72 + `-sm` variant 960x400, q70 (`uuid.webp` + `uuid-sm.webp`) | cover                                        | at least 1920x800, up to 5000px, max 2MB |
+| `product` (later) | 1200 + 400 thumb                                                          | —                                            | —                                        |
 
 `FileUploadService::upload()` writes every size of a preset in one call, `delete()` removes all sizes, `srcset()` builds `960w, 1920w`. Uploaded files are served from `public/uploads` with a 1-year immutable `Cache-Control` (`public/uploads/.htaccess`).
 
 ## Design Direction
+
 - Clean, modern, minimal: generous whitespace, neutral palette with one accent color, consistent spacing scale, rounded corners, subtle shadows
 - Mobile-first (most traffic comes from Facebook on phones); sticky Order Now / Add to Cart bar on mobile product pages
 - Clear price, stock and delivery info above the fold; large tap targets; fast, obvious order form
 - Use design tokens (Tailwind theme variables) — no one-off colors or spacing
 
 ## Code Quality
+
 - Clean Code, PSR-12 (PHP), ESLint + Prettier (TS)
 - No duplication, no dead/commented-out code, no magic values (Enums/constants), max 2–3 nesting levels
 - Full type hints and return types
@@ -151,6 +165,7 @@ resources/js/
 - Dependency injection for testability
 
 ## Database
+
 - No N+1: eager load relations used in loops/Resources
 - `select()` only needed columns
 - Index every FK and every column used in WHERE / ORDER BY / JOIN
@@ -161,6 +176,7 @@ resources/js/
 - Product search: MySQL FULLTEXT index for now
 
 ## Security
+
 - All input validated via FormRequest classes
 - `$fillable` only — never `$guarded = []`
 - Authorization via Policies/Gates only
@@ -170,14 +186,17 @@ resources/js/
 - Rate limit auth, cart, order and search endpoints
 
 ## Performance Targets (backend)
+
 - p50 < 200ms, p95 < 500ms, p99 < 1s
 - Endpoints exceeding these must be optimized (cache, index, query refactor) before merge
 
 ## Testing
+
 - Read testcase.md before writing any test and follow it.
 - Any change to checkout, stock or order numbering must also pass: `php artisan test -c phpunit-mysql.xml --group=mysql`
 
 ## Build Order (current scope)
+
 1. Admin auth (DONE)
 2. Category admin (DONE)
 3. Slider admin (DONE)
@@ -187,14 +206,16 @@ resources/js/
 7. Product details (Order Now)
 8. Product search
 9. Contact inbox
-Do not start anything beyond the current step without my instruction.
+   Do not start anything beyond the current step without my instruction.
 
 ## Don't Hallucinate
+
 - Only what is marked DONE below exists. Verify before assuming any file, field, relation or route
 - If a table structure or field isn't confirmed, ask first — don't invent it
 - Don't infer feature scope from requirement docs; I specify scope before each feature
 
 ## Current Codebase State (Facts only)
+
 - Laravel 13 + Inertia/React scaffolded: DONE
 - TailAdmin admin panel in `resources/js/admin`: DONE (not yet feature-based)
 - Legacy company-site code is removed (blog, portfolio, services, team, clients, career, about CMS, newsletter, quote requests, settings, the whole `/api` resource layer, `RejectXss`/`ValidateMimeType`, `resources/js/frontend`, TailAdmin demo pages and unused demo images). `routes/api.php` is empty on purpose (non-page JSON endpoints only)

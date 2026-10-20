@@ -13,29 +13,49 @@ import type { Slider, SliderIndexProps } from './types';
 
 type FormTarget = { slider: Slider | null };
 
-export default function SliderManager({ sliders, filters, statuses }: SliderIndexProps) {
+export default function SliderManager({
+    sliders,
+    filters,
+    statuses,
+}: SliderIndexProps) {
     const [formTarget, setFormTarget] = useState<FormTarget | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Slider | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
     const [toggleError, setToggleError] = useState<string | null>(null);
 
-    const { search, setSearch, status, setStatus, perPage, setPerPage, goToPage, processing } =
-        useListFilters(index().url, filters);
+    const {
+        search,
+        setSearch,
+        status,
+        setStatus,
+        perPage,
+        setPerPage,
+        goToPage,
+        processing,
+    } = useListFilters(index().url, filters);
 
     const { meta } = sliders;
 
     const toggleStatus = (slider: Slider) => {
         router.put(
             update(slider.id).url,
-            { status: slider.status === STATUS_ACTIVE ? STATUS_INACTIVE : STATUS_ACTIVE },
+            {
+                status:
+                    slider.status === STATUS_ACTIVE
+                        ? STATUS_INACTIVE
+                        : STATUS_ACTIVE,
+            },
             {
                 preserveScroll: true,
                 onStart: () => {
                     setToggleError(null);
                     setTogglingId(slider.id);
                 },
-                onError: (errors) => setToggleError(errors.status ?? 'Could not change the status.'),
+                onError: (errors) =>
+                    setToggleError(
+                        errors.status ?? 'Could not change the status.',
+                    ),
                 onFinish: () => setTogglingId(null),
             },
         );
@@ -59,8 +79,13 @@ export default function SliderManager({ sliders, filters, statuses }: SliderInde
     return (
         <div className="w-full">
             <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">Sliders</h1>
-                <Button size="sm" onClick={() => setFormTarget({ slider: null })}>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white/90">
+                    Sliders
+                </h1>
+                <Button
+                    size="sm"
+                    onClick={() => setFormTarget({ slider: null })}
+                >
                     Add slider
                 </Button>
             </div>
@@ -68,7 +93,7 @@ export default function SliderManager({ sliders, filters, statuses }: SliderInde
             {toggleError && (
                 <p
                     role="alert"
-                    className="mb-4 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-700 dark:bg-error-500/15 dark:text-error-500"
+                    className="bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-500 mb-4 rounded-lg px-4 py-3 text-sm"
                 >
                     {toggleError}
                 </p>
@@ -113,8 +138,9 @@ export default function SliderManager({ sliders, filters, statuses }: SliderInde
                 title="Delete slider"
                 message={
                     <>
-                        Delete <strong>{deleteTarget?.title}</strong>? Its image will be removed and
-                        it will disappear from the Home page.
+                        Delete <strong>{deleteTarget?.title}</strong>? Its image
+                        will be removed and it will disappear from the Home
+                        page.
                     </>
                 }
                 confirmLabel={deleting ? 'Deleting...' : 'Delete'}

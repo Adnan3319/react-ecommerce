@@ -50,7 +50,10 @@ export default function ProductTable({
             header: 'Name',
             accessor: 'name',
             render: (row: ProductListItem) => (
-                <Link href={edit(row.id).url} className="font-medium text-gray-900 hover:text-brand-500 dark:text-white/90">
+                <Link
+                    href={edit(row.id).url}
+                    className="hover:text-brand-500 font-medium text-gray-900 dark:text-white/90"
+                >
                     {row.name}
                 </Link>
             ),
@@ -105,7 +108,10 @@ export default function ProductTable({
             accessor: 'actions',
             render: (row: ProductListItem) => (
                 <div className="flex items-center gap-4 text-sm font-medium">
-                    <Link href={edit(row.id).url} className="text-brand-500 hover:text-brand-600">
+                    <Link
+                        href={edit(row.id).url}
+                        className="text-brand-500 hover:text-brand-600"
+                    >
                         Edit
                     </Link>
                     <button

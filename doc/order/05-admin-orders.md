@@ -17,8 +17,8 @@ Read `CLAUDE.md`, `doc/order/README.md` (§4) and open `mockups/05-admin-orders.
 ## Frontend (match mockups)
 
 - `admin/pages/Orders/Index.tsx`, `Show.tsx` thin; `admin/features/orders/`:
-  - `StatusTabs` (counts), `OrderFilters` (URL synced), `OrderTable`,
-  - `OrderItems`, `CustomerCard` (tel: link "Call", copy phone), `CustomerHistory`, `StatusTimeline`, `StatusActions` (primary = next normal step, cancel as danger with `ConfirmDialog` + note), note input, block/unblock button.
+    - `StatusTabs` (counts), `OrderFilters` (URL synced), `OrderTable`,
+    - `OrderItems`, `CustomerCard` (tel: link "Call", copy phone), `CustomerHistory`, `StatusTimeline`, `StatusActions` (primary = next normal step, cancel as danger with `ConfirmDialog` + note), note input, block/unblock button.
 - Sidebar "Orders" with pending badge.
 - Status badge colors from `OrderStatus::color()`.
 

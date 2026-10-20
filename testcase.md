@@ -30,14 +30,14 @@ MySQL in production, SQLite in-memory for tests. Session auth on the `web` guard
 
 "Unit" means no HTTP, not no DB — unit tests may use the DB.
 
-| What | Folder |
-|---|---|
-| Admin CRUD pages, validation, redirects, flash | `Feature/Admin/` |
-| Storefront pages, order placement, cart | `Feature/Storefront/` |
-| Auth (login, logout, throttle, guest redirect) | `Feature/Auth/` |
-| Service logic (price calc, stock, cache, upload) | `Unit/Services/` |
+| What                                             | Folder                        |
+| ------------------------------------------------ | ----------------------------- |
+| Admin CRUD pages, validation, redirects, flash   | `Feature/Admin/`              |
+| Storefront pages, order placement, cart          | `Feature/Storefront/`         |
+| Auth (login, logout, throttle, guest redirect)   | `Feature/Auth/`               |
+| Service logic (price calc, stock, cache, upload) | `Unit/Services/`              |
 | Model scopes, casts, relations, enum transitions | `Unit/Models/`, `Unit/Enums/` |
-| Seeder idempotency | `Unit/Seeders/` |
+| Seeder idempotency                               | `Unit/Seeders/`               |
 
 File name: `<Thing>Test.php` — `CategoryTest`, `ProductVariantTest`, `CheckoutServiceTest`.
 Split a file when it passes ~300 lines: `ProductTest` (CRUD) + `ProductValidationTest`.
@@ -52,7 +52,7 @@ Split a file when it passes ~300 lines: `ProductTest` (CRUD) + `ProductValidatio
   Do not change app code to please SQLite.
 - **Real-MySQL tests** (`tests/Mysql`, e.g. `CheckoutConcurrencyTest`): they need an empty database
   `checkit_test` on the same MySQL server (`CREATE DATABASE checkit_test CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;`). Host, user and password come from `.env`; `phpunit-mysql.xml`
+COLLATE utf8mb4_unicode_ci;`). Host, user and password come from `.env`; `phpunit-mysql.xml`
   forces the name `checkit_test`, and the `TestCase` guard refuses any database that does not end in
   `_test`, so `checkit_db` and other projects are never touched. Run:
   `php artisan test -c phpunit-mysql.xml --group=mysql`. These tests commit real rows (the tables are
@@ -95,14 +95,14 @@ describe('create', function () {
 
 ## 6. Inertia assertions
 
-| Situation | Assert |
-|---|---|
-| Page renders | `->assertOk()->assertInertia(fn (Assert $page) => $page->component('Admin/Categories/Index')->has('categories.data', 2))` |
-| Successful write | `->assertRedirect()->assertSessionHasNoErrors()` + DB state |
-| Validation fails | `->assertSessionHasErrors('field')` (not 422 — Inertia redirects back) + DB unchanged |
-| Flash message | assert it the same way existing `CategoryTest` does |
-| Prop shape | assert only the keys the page uses; never dump the whole prop |
-| JSON endpoint (search suggest, webhook) | `->assertOk()->assertJsonPath('data.0.name', ...)` |
+| Situation                               | Assert                                                                                                                    |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Page renders                            | `->assertOk()->assertInertia(fn (Assert $page) => $page->component('Admin/Categories/Index')->has('categories.data', 2))` |
+| Successful write                        | `->assertRedirect()->assertSessionHasNoErrors()` + DB state                                                               |
+| Validation fails                        | `->assertSessionHasErrors('field')` (not 422 — Inertia redirects back) + DB unchanged                                     |
+| Flash message                           | assert it the same way existing `CategoryTest` does                                                                       |
+| Prop shape                              | assert only the keys the page uses; never dump the whole prop                                                             |
+| JSON endpoint (search suggest, webhook) | `->assertOk()->assertJsonPath('data.0.name', ...)`                                                                        |
 
 ---
 
@@ -110,11 +110,11 @@ describe('create', function () {
 
 No roles yet, so the matrix is:
 
-| Actor | Expected |
-|---|---|
-| Guest | redirect to `route('admin.login')` |
+| Actor          | Expected                                             |
+| -------------- | ---------------------------------------------------- |
+| Guest          | redirect to `route('admin.login')`                   |
 | Inactive admin | cannot log in (same generic error as wrong password) |
-| Active admin | 2xx / redirect back on success |
+| Active admin   | 2xx / redirect back on success                       |
 
 When roles/permissions are added, this section is extended — do not add permission
 tests before that.

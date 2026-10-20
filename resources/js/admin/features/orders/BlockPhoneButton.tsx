@@ -5,7 +5,11 @@ import Button from '@admin/components/ui/button/Button';
 import { block, unblock } from '@/routes/admin/customers';
 import type { OrderCustomer } from './types';
 
-export default function BlockPhoneButton({ customer }: { customer: OrderCustomer }) {
+export default function BlockPhoneButton({
+    customer,
+}: {
+    customer: OrderCustomer;
+}) {
     const [open, setOpen] = useState(false);
     const [processing, setProcessing] = useState(false);
 
@@ -30,7 +34,9 @@ export default function BlockPhoneButton({ customer }: { customer: OrderCustomer
 
     return (
         <>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">Danger zone</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
+                Danger zone
+            </h2>
             <p className="mb-4 text-sm text-gray-500">
                 {customer.is_blocked
                     ? 'This phone cannot place new orders.'
@@ -39,7 +45,7 @@ export default function BlockPhoneButton({ customer }: { customer: OrderCustomer
             <Button
                 variant="outline"
                 size="sm"
-                className="w-full text-error-600 ring-error-300 hover:bg-error-50 dark:text-error-500"
+                className="text-error-600 ring-error-300 hover:bg-error-50 dark:text-error-500 w-full"
                 onClick={() => setOpen(true)}
             >
                 {verb} {customer.phone}

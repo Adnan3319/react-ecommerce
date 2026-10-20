@@ -1,7 +1,12 @@
 import { Link } from '@inertiajs/react';
 import { show } from '@/routes/products';
 import { formatMoney } from '@/shared/lib';
-import { Icon, Image, ImagePlaceholder, QuantityStepper } from '@/storefront/components/ui';
+import {
+    Icon,
+    Image,
+    ImagePlaceholder,
+    QuantityStepper,
+} from '@/storefront/components/ui';
 import { CART_MIN_QUANTITY } from '../../constants';
 import type { CartLine } from '../../types';
 

@@ -2,7 +2,13 @@ import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { formatMoney } from '@/shared/lib';
-import { Button, Icon, Input, QuantityStepper, Textarea } from '@/storefront/components/ui';
+import {
+    Button,
+    Icon,
+    Input,
+    QuantityStepper,
+    Textarea,
+} from '@/storefront/components/ui';
 import { MAX_QUANTITY, MIN_QUANTITY, validateOrder } from '../../schemas';
 import type { OrderValues } from '../../schemas';
 import { OrderTotals } from '../OrderTotals';
@@ -62,7 +68,8 @@ export default function OrderForm(props: OrderFormProps) {
               ];
 
     const deliveryCharge =
-        zone === 'outside_dhaka' && props.outsideDhakaDeliveryCharge !== undefined
+        zone === 'outside_dhaka' &&
+        props.outsideDhakaDeliveryCharge !== undefined
             ? props.outsideDhakaDeliveryCharge
             : props.deliveryCharge;
 
@@ -105,7 +112,7 @@ export default function OrderForm(props: OrderFormProps) {
 
             {/* Highlighted title, like the "4.1" rating */}
             <div>
-                <h2 className="inline-block bg-sky-200/70 px-1.5 text-3xl font-extrabold leading-tight tracking-tight text-neutral-900">
+                <h2 className="inline-block bg-sky-200/70 px-1.5 text-3xl leading-tight font-extrabold tracking-tight text-neutral-900">
                     {isBuyNow ? 'Order now' : 'Place order'}
                 </h2>
                 <p className="mt-2 text-xs text-neutral-400">
@@ -114,14 +121,16 @@ export default function OrderForm(props: OrderFormProps) {
             </div>
 
             {/* Inputs styled like the review bubbles */}
-            <div className="space-y-4 [&_input[type=text]]:rounded-xl [&_input[type=text]]:border-transparent [&_input[type=text]]:bg-neutral-100/80 [&_input[type=tel]]:rounded-xl [&_input[type=tel]]:border-transparent [&_input[type=tel]]:bg-neutral-100/80 [&_textarea]:rounded-xl [&_textarea]:border-transparent [&_textarea]:bg-neutral-100/80">
+            <div className="space-y-4 [&_input[type=tel]]:rounded-xl [&_input[type=tel]]:border-transparent [&_input[type=tel]]:bg-neutral-100/80 [&_input[type=text]]:rounded-xl [&_input[type=text]]:border-transparent [&_input[type=text]]:bg-neutral-100/80 [&_textarea]:rounded-xl [&_textarea]:border-transparent [&_textarea]:bg-neutral-100/80">
                 <Input
                     label="Your name"
                     name="name"
                     autoComplete="name"
                     value={form.data.name}
                     error={form.errors.name}
-                    onChange={(event) => form.setData('name', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('name', event.target.value)
+                    }
                 />
                 <Input
                     label="Mobile number"
@@ -132,7 +141,9 @@ export default function OrderForm(props: OrderFormProps) {
                     placeholder="01XXXXXXXXX"
                     value={form.data.phone}
                     error={form.errors.phone}
-                    onChange={(event) => form.setData('phone', event.target.value)}
+                    onChange={(event) =>
+                        form.setData('phone', event.target.value)
+                    }
                 />
                 <Textarea
                     label="Delivery address"
@@ -187,7 +198,9 @@ export default function OrderForm(props: OrderFormProps) {
                             value={form.data.quantity}
                             min={MIN_QUANTITY}
                             max={MAX_QUANTITY}
-                            onChange={(quantity) => form.setData('quantity', quantity)}
+                            onChange={(quantity) =>
+                                form.setData('quantity', quantity)
+                            }
                         />
                     </div>
                 )}

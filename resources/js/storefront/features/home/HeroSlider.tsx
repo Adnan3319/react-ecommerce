@@ -1,4 +1,11 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    Suspense,
+    lazy,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import type { Swiper as SwiperInstance } from 'swiper/types';
 import { cn } from '@/shared/lib';
 import { Icon, Image } from '@/storefront/components/ui';
@@ -20,7 +27,10 @@ type HeroSliderProps = {
     sliders?: ApiSlider[];
 };
 
-function addIndex(current: ReadonlySet<number>, index: number): ReadonlySet<number> {
+function addIndex(
+    current: ReadonlySet<number>,
+    index: number,
+): ReadonlySet<number> {
     return current.has(index) ? current : new Set(current).add(index);
 }
 
@@ -149,7 +159,11 @@ export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
 
             <div className="relative md:pt-[4.5rem]">
                 {swiperRequested ? (
-                    <Suspense fallback={<StaticSlide slide={slides[0]} count={slideCount} />}>
+                    <Suspense
+                        fallback={
+                            <StaticSlide slide={slides[0]} count={slideCount} />
+                        }
+                    >
                         <HeroSwiper
                             slides={slides}
                             onSwiper={setSwiper}

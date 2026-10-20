@@ -75,7 +75,11 @@ export default function SliderFormModal({
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        const options = { forceFormData: true, preserveScroll: true, onSuccess: onClose };
+        const options = {
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: onClose,
+        };
 
         if (isEdit) {
             // Multipart bodies need POST; Laravel reads the spoofed method.
@@ -123,7 +127,9 @@ export default function SliderFormModal({
                         Wide image, at least 1920x800, max 2MB
                     </p>
                     {form.errors.image && (
-                        <p className="mt-1.5 text-xs text-error-500">{form.errors.image}</p>
+                        <p className="text-error-500 mt-1.5 text-xs">
+                            {form.errors.image}
+                        </p>
                     )}
                 </div>
 
@@ -132,7 +138,9 @@ export default function SliderFormModal({
                     <Input
                         id="slider-title"
                         value={form.data.title}
-                        onChange={(event) => form.setData('title', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('title', event.target.value)
+                        }
                         placeholder="Smart Kitchen Essentials"
                         error={Boolean(form.errors.title)}
                         hint={form.errors.title}
@@ -144,7 +152,9 @@ export default function SliderFormModal({
                     <Input
                         id="slider-subtitle"
                         value={form.data.subtitle}
-                        onChange={(event) => form.setData('subtitle', event.target.value)}
+                        onChange={(event) =>
+                            form.setData('subtitle', event.target.value)
+                        }
                         error={Boolean(form.errors.subtitle)}
                         hint={form.errors.subtitle}
                     />
@@ -152,22 +162,30 @@ export default function SliderFormModal({
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                        <Label htmlFor="slider-button-text">Button text (optional)</Label>
+                        <Label htmlFor="slider-button-text">
+                            Button text (optional)
+                        </Label>
                         <Input
                             id="slider-button-text"
                             value={form.data.button_text}
-                            onChange={(event) => form.setData('button_text', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('button_text', event.target.value)
+                            }
                             placeholder="Shop Now"
                             error={Boolean(form.errors.button_text)}
                             hint={form.errors.button_text}
                         />
                     </div>
                     <div>
-                        <Label htmlFor="slider-button-link">Button link (optional)</Label>
+                        <Label htmlFor="slider-button-link">
+                            Button link (optional)
+                        </Label>
                         <Input
                             id="slider-button-link"
                             value={form.data.button_link}
-                            onChange={(event) => form.setData('button_link', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('button_link', event.target.value)
+                            }
                             placeholder="/search"
                             error={Boolean(form.errors.button_link)}
                             hint={
@@ -186,7 +204,9 @@ export default function SliderFormModal({
                             type="number"
                             min={0}
                             value={form.data.sort_order}
-                            onChange={(event) => form.setData('sort_order', event.target.value)}
+                            onChange={(event) =>
+                                form.setData('sort_order', event.target.value)
+                            }
                             error={Boolean(form.errors.sort_order)}
                             hint={form.errors.sort_order}
                         />
@@ -197,20 +217,33 @@ export default function SliderFormModal({
                             options={statuses}
                             defaultValue={form.data.status}
                             placeholder="Select status"
-                            onChange={(value) => form.setData('status', value as ActiveStatus)}
+                            onChange={(value) =>
+                                form.setData('status', value as ActiveStatus)
+                            }
                         />
                         {form.errors.status && (
-                            <p className="mt-1.5 text-xs text-error-500">{form.errors.status}</p>
+                            <p className="text-error-500 mt-1.5 text-xs">
+                                {form.errors.status}
+                            </p>
                         )}
                     </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2">
-                    <Button variant="outline" size="sm" onClick={onClose} disabled={form.processing}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onClose}
+                        disabled={form.processing}
+                    >
                         Cancel
                     </Button>
                     <Button type="submit" size="sm" disabled={form.processing}>
-                        {form.processing ? 'Saving...' : isEdit ? 'Save changes' : 'Create slider'}
+                        {form.processing
+                            ? 'Saving...'
+                            : isEdit
+                              ? 'Save changes'
+                              : 'Create slider'}
                     </Button>
                 </div>
             </form>

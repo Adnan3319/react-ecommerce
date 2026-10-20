@@ -1,15 +1,15 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import ConfirmDialog from '@admin/components/common/ConfirmDialog';
+import StatusFilter from '@admin/components/common/StatusFilter';
+import TableFooter from '@admin/components/common/TableFooter';
 import Button from '@admin/components/ui/button/Button';
-import Pagination from '@admin/components/ui/pagination/Pagination';
-import { destroy, update } from '@/routes/admin/categories';
-import CategoryFilters from './CategoryFilters';
+import { useListFilters } from '@admin/hooks/useListFilters';
+import { destroy, index, update } from '@/routes/admin/categories';
 import CategoryFormModal from './CategoryFormModal';
 import CategoryTable from './CategoryTable';
 import { STATUS_ACTIVE, STATUS_INACTIVE } from '@/shared/constants/status';
 import type { Category, CategoryIndexProps } from './types';
-import { useCategoryFilters } from './useCategoryFilters';
 
 type FormTarget = { category: Category | null };
 
@@ -19,8 +19,8 @@ export default function CategoryManager({ categories, filters, statuses }: Categ
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
 
-    const { search, setSearch, status, setStatus, goToPage, processing } =
-        useCategoryFilters(filters);
+    const { search, setSearch, status, setStatus, perPage, setPerPage, goToPage, processing } =
+        useListFilters(index().url, filters);
 
     const { meta } = categories;
 
@@ -60,35 +60,30 @@ export default function CategoryManager({ categories, filters, statuses }: Categ
                 </Button>
             </div>
 
-            <CategoryFilters
-                search={search}
-                onSearchChange={setSearch}
-                status={status}
-                onStatusChange={setStatus}
-                statuses={statuses}
-            />
-
             <CategoryTable
                 categories={categories.data}
                 loading={processing}
+                toolbar={{
+                    search,
+                    onSearchChange: setSearch,
+                    searchPlaceholder: 'Search by name',
+                    perPage,
+                    onPerPageChange: setPerPage,
+                    filters: (
+                        <StatusFilter
+                            status={status}
+                            onStatusChange={setStatus}
+                            statuses={statuses}
+                        />
+                    ),
+                }}
                 busyId={togglingId}
                 onEdit={(category) => setFormTarget({ category })}
                 onDelete={setDeleteTarget}
                 onToggleStatus={toggleStatus}
             />
 
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-gray-500">
-                    {meta.total > 0
-                        ? `Showing ${meta.from}–${meta.to} of ${meta.total}`
-                        : 'No results'}
-                </p>
-                <Pagination
-                    currentPage={meta.current_page}
-                    lastPage={meta.last_page}
-                    onPageChange={goToPage}
-                />
-            </div>
+            <TableFooter meta={meta} onPageChange={goToPage} />
 
             {formTarget && (
                 <CategoryFormModal

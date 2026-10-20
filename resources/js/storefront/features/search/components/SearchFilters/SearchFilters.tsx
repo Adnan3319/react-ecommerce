@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
-import { CATEGORIES } from '@/storefront/config/site';
+import { useCategories } from '@/storefront/lib/useCategories';
 import { SORT_OPTIONS, buildSearchHref } from '../../query';
 import type { SearchParams, SortKey } from '../../query';
 
@@ -12,9 +12,10 @@ const CHIP_BASE =
     'inline-flex h-9 items-center rounded-full border px-4 text-sm font-medium whitespace-nowrap transition-colors';
 
 export default function SearchFilters({ params }: SearchFiltersProps) {
+    const categories = useCategories();
     const chips = [
         { slug: null, label: 'All' },
-        ...CATEGORIES.map(({ slug, label }) => ({ slug, label })),
+        ...categories.map(({ slug, label }) => ({ slug, label })),
     ];
 
     function handleSortChange(sort: SortKey) {

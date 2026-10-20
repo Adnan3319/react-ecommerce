@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ActiveStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\IndexListRequest;
 use App\Http\Requests\Admin\Slider\SaveSliderRequest;
 use App\Http\Resources\Admin\Slider\SliderResource;
 use App\Models\Slider;
@@ -16,10 +17,17 @@ class SliderController extends Controller
 {
     public function __construct(private readonly SliderService $sliders) {}
 
-    public function index(): Response
+    public function index(IndexListRequest $request): Response
     {
+        $filters = $request->filters();
+
         return Inertia::render('Admin/Sliders/Index', [
-            'sliders' => SliderResource::collection($this->sliders->all())->resolve(),
+            'sliders' => SliderResource::collection($this->sliders->paginate($filters)),
+            'filters' => [
+                'search' => $filters['search'],
+                'status' => $filters['status']?->value,
+                'per_page' => $filters['per_page'],
+            ],
             'statuses' => array_map(
                 fn (ActiveStatus $status) => ['value' => $status->value, 'label' => $status->label()],
                 ActiveStatus::cases(),

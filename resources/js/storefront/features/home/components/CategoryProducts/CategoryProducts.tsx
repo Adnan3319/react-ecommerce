@@ -1,13 +1,15 @@
-import { CATEGORIES } from '@/storefront/config/site';
 import { ProductCardAddToCart } from '@/storefront/features/cart';
 import { ProductRail, SAMPLE_PRODUCTS } from '@/storefront/features/product';
 import { categoryHref } from '@/storefront/lib/category-href';
+import { useCategories } from '@/storefront/lib/useCategories';
 
 /** One product slider per category, in category order. */
 export default function CategoryProducts() {
+    const categories = useCategories();
+
     return (
         <>
-            {CATEGORIES.map((category) => {
+            {categories.map((category) => {
                 const products = SAMPLE_PRODUCTS.filter(
                     (product) => product.categorySlug === category.slug,
                 );

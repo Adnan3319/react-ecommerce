@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Http\Requests\Admin\Category;
+namespace App\Http\Requests\Admin;
 
 use App\Enums\ActiveStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class IndexCategoryRequest extends FormRequest
+/**
+ * Query string of every admin list (search box, status filter, rows per page, page).
+ */
+class IndexListRequest extends FormRequest
 {
-    private const DEFAULT_PER_PAGE = 10;
-
-    private const MAX_PER_PAGE = 50;
+    /** Rows-per-page choices of the admin table (first one is the default). Keep in sync with PER_PAGE_OPTIONS in DataTable.tsx. */
+    private const PER_PAGE_OPTIONS = [10, 20, 50];
 
     public function authorize(): bool
     {
@@ -44,6 +46,8 @@ class IndexCategoryRequest extends FormRequest
 
     private function perPage(): int
     {
-        return min(max($this->integer('per_page', self::DEFAULT_PER_PAGE), self::DEFAULT_PER_PAGE), self::MAX_PER_PAGE);
+        $perPage = $this->integer('per_page', self::PER_PAGE_OPTIONS[0]);
+
+        return in_array($perPage, self::PER_PAGE_OPTIONS, true) ? $perPage : self::PER_PAGE_OPTIONS[0];
     }
 }

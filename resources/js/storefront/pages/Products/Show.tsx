@@ -3,10 +3,7 @@ import { home } from '@/routes';
 import { formatMoney } from '@/shared/lib';
 import { Badge } from '@/storefront/components/ui';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
-import {
-    DEFAULT_DELIVERY_CHARGE,
-    findCategory,
-} from '@/storefront/config/site';
+import { DEFAULT_DELIVERY_CHARGE } from '@/storefront/config/site';
 import { AddToCartButton } from '@/storefront/features/cart';
 import { MobileOrderBar, OrderForm } from '@/storefront/features/order';
 import {
@@ -14,6 +11,7 @@ import {
     findSampleProduct,
 } from '@/storefront/features/product';
 import { categoryHref } from '@/storefront/lib/category-href';
+import { useCategory } from '@/storefront/lib/useCategories';
 
 /** Integer minor units. Placeholder: set your real Outside Dhaka charge. */
 const OUTSIDE_DHAKA_DELIVERY_CHARGE = 12000;
@@ -24,6 +22,7 @@ type ShowProps = {
 
 export default function Show({ slug }: ShowProps) {
     const product = findSampleProduct(slug);
+    const category = useCategory(product?.categorySlug);
 
     if (!product) {
         return (
@@ -36,7 +35,6 @@ export default function Show({ slug }: ShowProps) {
         );
     }
 
-    const category = findCategory(product.categorySlug);
 
     return (
         <>

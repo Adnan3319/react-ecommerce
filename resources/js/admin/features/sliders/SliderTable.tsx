@@ -1,10 +1,13 @@
 import StatusToggle from '@admin/components/common/StatusToggle';
 import DataTable from '@admin/components/DataTable';
+import type { DataTableToolbar } from '@admin/components/DataTable';
 import { STATUS_ACTIVE } from '@/shared/constants/status';
 import type { Slider } from './types';
 
 type SliderTableProps = {
     sliders: Slider[];
+    loading: boolean;
+    toolbar: DataTableToolbar;
     busyId: number | null;
     onEdit: (slider: Slider) => void;
     onDelete: (slider: Slider) => void;
@@ -13,6 +16,8 @@ type SliderTableProps = {
 
 export default function SliderTable({
     sliders,
+    loading,
+    toolbar,
     busyId,
     onEdit,
     onDelete,
@@ -101,8 +106,9 @@ export default function SliderTable({
         <DataTable
             columns={columns}
             data={sliders}
-            loading={false}
-            noDataMessage="No sliders yet. The storefront shows sample slides until you add one."
+            loading={loading}
+            toolbar={toolbar}
+            noDataMessage="No sliders found. The storefront shows sample slides until you add an active one."
         />
     );
 }

@@ -2,10 +2,11 @@
 
 namespace App\Services\Slider;
 
+use App\Enums\ActiveStatus;
 use App\Models\Slider;
 use App\Services\Media\FileUploadService;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -23,11 +24,17 @@ class SliderService
     public function __construct(private readonly FileUploadService $uploads) {}
 
     /**
-     * @return Collection<int, Slider>
+     * @param  array{search?: ?string, status?: ?ActiveStatus, per_page: int}  $filters
+     * @return LengthAwarePaginator<int, Slider>
      */
-    public function all(): Collection
+    public function paginate(array $filters): LengthAwarePaginator
     {
-        return Slider::query()->ordered()->get();
+        return Slider::query()
+            ->search($filters['search'] ?? null)
+            ->withStatus($filters['status'] ?? null)
+            ->ordered()
+            ->paginate($filters['per_page'])
+            ->withQueryString();
     }
 
     /**

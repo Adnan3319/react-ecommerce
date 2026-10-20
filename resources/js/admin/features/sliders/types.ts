@@ -1,4 +1,5 @@
-import type { ActiveStatus, StatusOption } from '@/shared/types';
+import type { ListFilters } from '@admin/hooks/useListFilters';
+import type { ActiveStatus, Paginated, StatusOption } from '@/shared/types';
 
 export type Slider = {
     id: number;
@@ -15,6 +16,7 @@ export type Slider = {
 };
 
 export type SliderIndexProps = {
-    sliders: Slider[];
+    sliders: Paginated<Slider>;
+    filters: ListFilters;
     statuses: StatusOption[];
 };

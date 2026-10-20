@@ -9,28 +9,6 @@ export type Category = {
     image: string | null;
 };
 
-// Static until the categories table exists.
-export const CATEGORIES: Category[] = [
-    {
-        slug: 'kitchenware',
-        label: 'Kitchenware',
-        headline: 'Cook with Joy',
-        description: 'Premium kitchen essentials for your home.',
-        image: '/images/categories/kitchenware.jpg',
-    },
-    {
-        slug: 'fashion',
-        label: 'Fashion',
-        headline: 'Dress Your Style',
-        description: 'Trendy and comfortable for every occasion.',
-        image: '/images/categories/fashion.jpg',
-    },
-];
-
-export function findCategory(slug: string): Category | undefined {
-    return CATEGORIES.find((category) => category.slug === slug);
-}
-
 export const LOGO = {
     src: '/images/logo/checkit-logo.png',
     lightSrc: '/images/logo/checkit-logo-light.png',

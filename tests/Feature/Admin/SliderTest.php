@@ -66,10 +66,10 @@ describe('index', function () {
             ->assertOk()
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('Admin/Sliders/Index', false)
-                ->has('sliders', 3)
-                ->where('sliders.0.title', 'First')
-                ->where('sliders.1.id', $second->id)
-                ->where('sliders.2.id', $third->id)
+                ->has('sliders.data', 3)
+                ->where('sliders.data.0.title', 'First')
+                ->where('sliders.data.1.id', $second->id)
+                ->where('sliders.data.2.id', $third->id)
                 ->has('statuses', 2));
     });
 
@@ -78,8 +78,8 @@ describe('index', function () {
 
         $this->get(route('admin.sliders.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
-                ->where('sliders.0.image_url', Storage::disk('uploads')->url('sliders/a.webp'))
-                ->missing('sliders.0.image'));
+                ->where('sliders.data.0.image_url', Storage::disk('uploads')->url('sliders/a.webp'))
+                ->missing('sliders.data.0.image'));
     });
 });
 

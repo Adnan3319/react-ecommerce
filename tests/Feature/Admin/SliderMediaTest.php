@@ -86,8 +86,8 @@ describe('responsive images', function () {
 
         $this->get(route('admin.sliders.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
-                ->where('sliders.0.image_srcset', $expected)
-                ->where('sliders.0.image_url', $disk->url($path)));
+                ->where('sliders.data.0.image_srcset', $expected)
+                ->where('sliders.data.0.image_url', $disk->url($path)));
 
         expect(app(SliderService::class)->activeForStorefront()[0]['image_srcset'])->toBe($expected);
     });
@@ -99,8 +99,8 @@ describe('responsive images', function () {
 
         $this->get(route('admin.sliders.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
-                ->where('sliders.0.image_srcset', null)
-                ->where('sliders.1.image_srcset', null));
+                ->where('sliders.data.0.image_srcset', null)
+                ->where('sliders.data.1.image_srcset', null));
     });
 
     it('rejects images outside the slider limits', function (mixed $image) {

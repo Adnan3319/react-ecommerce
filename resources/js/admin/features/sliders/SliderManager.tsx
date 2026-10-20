@@ -1,8 +1,11 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import ConfirmDialog from '@admin/components/common/ConfirmDialog';
+import StatusFilter from '@admin/components/common/StatusFilter';
+import TableFooter from '@admin/components/common/TableFooter';
 import Button from '@admin/components/ui/button/Button';
-import { destroy, update } from '@/routes/admin/sliders';
+import { useListFilters } from '@admin/hooks/useListFilters';
+import { destroy, index, update } from '@/routes/admin/sliders';
 import { STATUS_ACTIVE, STATUS_INACTIVE } from '@/shared/constants/status';
 import SliderFormModal from './SliderFormModal';
 import SliderTable from './SliderTable';
@@ -10,12 +13,17 @@ import type { Slider, SliderIndexProps } from './types';
 
 type FormTarget = { slider: Slider | null };
 
-export default function SliderManager({ sliders, statuses }: SliderIndexProps) {
+export default function SliderManager({ sliders, filters, statuses }: SliderIndexProps) {
     const [formTarget, setFormTarget] = useState<FormTarget | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Slider | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
     const [toggleError, setToggleError] = useState<string | null>(null);
+
+    const { search, setSearch, status, setStatus, perPage, setPerPage, goToPage, processing } =
+        useListFilters(index().url, filters);
+
+    const { meta } = sliders;
 
     const toggleStatus = (slider: Slider) => {
         router.put(
@@ -67,18 +75,35 @@ export default function SliderManager({ sliders, statuses }: SliderIndexProps) {
             )}
 
             <SliderTable
-                sliders={sliders}
+                sliders={sliders.data}
+                loading={processing}
+                toolbar={{
+                    search,
+                    onSearchChange: setSearch,
+                    searchPlaceholder: 'Search by title',
+                    perPage,
+                    onPerPageChange: setPerPage,
+                    filters: (
+                        <StatusFilter
+                            status={status}
+                            onStatusChange={setStatus}
+                            statuses={statuses}
+                        />
+                    ),
+                }}
                 busyId={togglingId}
                 onEdit={(slider) => setFormTarget({ slider })}
                 onDelete={setDeleteTarget}
                 onToggleStatus={toggleStatus}
             />
 
+            <TableFooter meta={meta} onPageChange={goToPage} />
+
             {formTarget && (
                 <SliderFormModal
                     slider={formTarget.slider}
                     statuses={statuses}
-                    defaultSortOrder={sliders.length + 1}
+                    defaultSortOrder={meta.total + 1}
                     onClose={() => setFormTarget(null)}
                 />
             )}

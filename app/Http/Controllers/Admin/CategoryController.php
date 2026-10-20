@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ActiveStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Category\IndexCategoryRequest;
 use App\Http\Requests\Admin\Category\SaveCategoryRequest;
+use App\Http\Requests\Admin\IndexListRequest;
 use App\Http\Resources\Admin\Category\CategoryResource;
 use App\Models\Category;
 use App\Services\Category\CategoryService;
@@ -17,7 +17,7 @@ class CategoryController extends Controller
 {
     public function __construct(private readonly CategoryService $categories) {}
 
-    public function index(IndexCategoryRequest $request): Response
+    public function index(IndexListRequest $request): Response
     {
         $filters = $request->filters();
 

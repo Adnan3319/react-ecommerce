@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ActiveStatus;
 use App\Models\Concerns\HasAuditFields;
+use App\Models\Concerns\HasListFilters;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Slider extends Model
 {
-    use HasAuditFields, HasFactory, SoftDeletes;
+    use HasAuditFields, HasFactory, HasListFilters, SoftDeletes;
+
+    public const SEARCH_COLUMN = 'title';
 
     protected $fillable = [
         'title',

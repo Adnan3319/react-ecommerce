@@ -116,17 +116,20 @@ describe('index', function () {
             ->assertSessionHasErrors('status');
     });
 
-    it('clamps per_page between 10 and 50', function (int $requested, int $expected) {
+    it('accepts only 10, 20 or 50 rows per page and falls back to 10', function (int $requested, int $expected) {
         Category::factory()->count(3)->create();
 
         $this->get(route('admin.categories.index', ['per_page' => $requested]))
             ->assertInertia(fn (AssertableInertia $page) => $page->where('categories.meta.per_page', $expected));
     })->with([
+        'ten' => [10, 10],
+        'twenty' => [20, 20],
+        'fifty' => [50, 50],
         'below minimum' => [1, 10],
         'zero' => [0, 10],
         'negative' => [-5, 10],
-        'inside range' => [25, 25],
-        'above maximum' => [1000, 50],
+        'not an option' => [25, 10],
+        'above maximum' => [1000, 10],
     ]);
 });
 

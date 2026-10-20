@@ -1,7 +1,7 @@
 import type { IconName } from '@/storefront/components/ui';
 import { about, cart, contact, home, search } from '@/routes';
 import type { RouteDefinition } from '@/wayfinder';
-import { CATEGORIES } from '@/storefront/config/site';
+import type { Category } from '@/storefront/config/site';
 import { categoryHref } from '@/storefront/lib/category-href';
 
 type Href = RouteDefinition<'get'>;
@@ -25,21 +25,25 @@ export const MOBILE_NAV_ITEMS: MobileNavItem[] = [
     { label: 'Cart', icon: 'cart', href: cart() },
 ];
 
-export const CATEGORY_LINKS = CATEGORIES.map((category) => ({
-    ...category,
-    href: categoryHref(category.slug),
-}));
-
-export const MAIN_NAV_ITEMS: MainNavItem[] = [
-    { label: 'Home', href: home(), categorySlug: null },
-    ...CATEGORIES.map((category) => ({
-        label: category.label,
+export function categoryLinks(categories: Category[]) {
+    return categories.map((category) => ({
+        ...category,
         href: categoryHref(category.slug),
-        categorySlug: category.slug,
-    })),
-    { label: 'About Us', href: about(), categorySlug: null },
-    { label: 'Contact', href: contact(), categorySlug: null },
-];
+    }));
+}
+
+export function mainNavItems(categories: Category[]): MainNavItem[] {
+    return [
+        { label: 'Home', href: home(), categorySlug: null },
+        ...categories.map((category) => ({
+            label: category.label,
+            href: categoryHref(category.slug),
+            categorySlug: category.slug,
+        })),
+        { label: 'About Us', href: about(), categorySlug: null },
+        { label: 'Contact', href: contact(), categorySlug: null },
+    ];
+}
 
 /** Compares the current Inertia URL with a route, ignoring the query string. */
 export function isActivePath(currentUrl: string, href: Href): boolean {

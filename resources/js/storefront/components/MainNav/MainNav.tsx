@@ -1,7 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
 import { parseSearchParams } from '@/storefront/features/search';
-import { MAIN_NAV_ITEMS, isActivePath, type MainNavItem } from '../navigation';
+import { useCategories } from '@/storefront/lib/useCategories';
+import { isActivePath, mainNavItems, type MainNavItem } from '../navigation';
 
 function isItemActive(
     item: MainNavItem,
@@ -29,6 +30,7 @@ const LINK_BASE =
 export default function MainNav({ isOpen, onNavigate }: MainNavProps) {
     const { url } = usePage();
     const { category } = parseSearchParams(url);
+    const items = mainNavItems(useCategories());
 
     return (
         <nav
@@ -40,7 +42,7 @@ export default function MainNav({ isOpen, onNavigate }: MainNavProps) {
             )}
         >
             <ul className="flex flex-col divide-y divide-white/10 md:flex-row md:justify-center md:gap-1 md:divide-y-0">
-                {MAIN_NAV_ITEMS.map((item) => {
+                {items.map((item) => {
                     const isActive = isItemActive(item, url, category);
 
                     return (

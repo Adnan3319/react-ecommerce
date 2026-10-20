@@ -1,9 +1,9 @@
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
-import { findCategory } from '@/storefront/config/site';
 import { ProductCardAddToCart } from '@/storefront/features/cart';
 import { ProductGrid } from '@/storefront/features/product';
 import type { ProductDetail } from '@/storefront/features/product';
+import { useCategory } from '@/storefront/lib/useCategories';
 import type { SearchParams } from '../../query';
 
 type SearchResultsProps = {
@@ -11,23 +11,25 @@ type SearchResultsProps = {
     products: ProductDetail[];
 };
 
-function resolveHeading({ q, category }: SearchParams): string {
+function resolveHeading(q: string, categoryLabel: string | undefined): string {
     if (q) {
         return `Results for "${q}"`;
     }
 
-    return (category && findCategory(category)?.label) || 'All Products';
+    return categoryLabel || 'All Products';
 }
 
 export default function SearchResults({
     params,
     products,
 }: SearchResultsProps) {
+    const category = useCategory(params.category);
+
     return (
         <section aria-live="polite">
             <header className="mb-5 flex flex-wrap items-end justify-between gap-2">
                 <h1 className="text-2xl font-bold tracking-tight break-words text-neutral-900 sm:text-3xl">
-                    {resolveHeading(params)}
+                    {resolveHeading(params.q, category?.label)}
                 </h1>
                 <p className="text-sm text-neutral-600">
                     {products.length}{' '}

@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 /*
@@ -44,7 +46,18 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Logs an admin in on the web guard (a fresh active one unless given) and returns the test case.
+ */
+function actingAsAdmin(?User $admin = null): TestCase
 {
-    // ..
+    return test()->actingAs($admin ?? User::factory()->create());
+}
+
+/**
+ * A fake uploaded image of the given pixel size and file size in KB.
+ */
+function fakeImage(int $width, int $height, int $kb = 100): UploadedFile
+{
+    return UploadedFile::fake()->image('image.jpg', $width, $height)->size($kb);
 }

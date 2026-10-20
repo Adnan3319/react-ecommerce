@@ -96,7 +96,7 @@ export default function CategoryFormModal({
         <Modal
             isOpen
             onClose={form.processing ? noop : onClose}
-            className="m-4 max-h-[90vh] max-w-lg overflow-y-auto p-6 sm:p-8"
+            className="m-4 max-h-[90vh] max-w-2xl overflow-y-auto p-6 sm:p-8"
         >
             <form onSubmit={submit} noValidate className="space-y-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">

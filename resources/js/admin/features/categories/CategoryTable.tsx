@@ -1,11 +1,13 @@
 import StatusToggle from '@admin/components/common/StatusToggle';
 import DataTable from '@admin/components/DataTable';
+import type { DataTableToolbar } from '@admin/components/DataTable';
 import { STATUS_ACTIVE } from '@/shared/constants/status';
 import type { Category } from './types';
 
 type CategoryTableProps = {
     categories: Category[];
     loading: boolean;
+    toolbar: DataTableToolbar;
     busyId: number | null;
     onEdit: (category: Category) => void;
     onDelete: (category: Category) => void;
@@ -15,6 +17,7 @@ type CategoryTableProps = {
 export default function CategoryTable({
     categories,
     loading,
+    toolbar,
     busyId,
     onEdit,
     onDelete,
@@ -92,6 +95,7 @@ export default function CategoryTable({
             columns={columns}
             data={categories}
             loading={loading}
+            toolbar={toolbar}
             noDataMessage="No categories found."
         />
     );

@@ -3,7 +3,8 @@ import { about, cart, contact, home, search } from '@/routes';
 import type { SharedProps } from '@/shared/types';
 import { Image } from '@/storefront/components/ui';
 import { LOGO } from '@/storefront/config/site';
-import { CATEGORY_LINKS } from '../navigation';
+import { useCategories } from '@/storefront/lib/useCategories';
+import { categoryLinks } from '../navigation';
 
 const QUICK_LINKS = [
     { label: 'Home', href: home() },
@@ -17,6 +18,7 @@ const LINK_CLASS = 'transition-colors hover:text-accent-500';
 
 export default function Footer() {
     const { name } = usePage<SharedProps>().props;
+    const categories = useCategories();
 
     return (
         <footer className="border-t border-white/10 bg-shaded">
@@ -60,7 +62,7 @@ export default function Footer() {
                         Categories
                     </h2>
                     <ul className="mt-3 space-y-2 text-sm text-neutral-300">
-                        {CATEGORY_LINKS.map((category) => (
+                        {categoryLinks(categories).map((category) => (
                             <li key={category.slug}>
                                 <Link
                                     href={category.href}

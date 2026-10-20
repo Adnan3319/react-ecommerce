@@ -1,9 +1,15 @@
 import { SectionHeader } from '@/storefront/components/ui';
-import { CATEGORIES } from '@/storefront/config/site';
 import { CategoryCard } from '@/storefront/features/category';
 import { categoryHref } from '@/storefront/lib/category-href';
+import { useCategories } from '@/storefront/lib/useCategories';
 
 export default function CategoryShowcase() {
+    const categories = useCategories();
+
+    if (categories.length === 0) {
+        return null;
+    }
+
     return (
         <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6">
             <SectionHeader
@@ -12,7 +18,7 @@ export default function CategoryShowcase() {
                 accent
             />
             <ul className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                {CATEGORIES.map((category) => (
+                {categories.map((category) => (
                     <li key={category.slug}>
                         <CategoryCard
                             slug={category.slug}

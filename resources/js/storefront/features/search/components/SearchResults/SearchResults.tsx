@@ -1,6 +1,5 @@
 import { Link } from '@inertiajs/react';
 import { home } from '@/routes';
-import { ProductCardAddToCart } from '@/storefront/features/cart';
 import { ProductGrid } from '@/storefront/features/product';
 import type { ProductDetail } from '@/storefront/features/product';
 import { useCategory } from '@/storefront/lib/useCategories';
@@ -38,12 +37,7 @@ export default function SearchResults({
             </header>
 
             {products.length > 0 ? (
-                <ProductGrid
-                    products={products}
-                    renderAction={(product) => (
-                        <ProductCardAddToCart product={product} />
-                    )}
-                />
+                <ProductGrid products={products} />
             ) : (
                 <div className="rounded-card border border-dashed border-neutral-300 bg-cream-50 px-6 py-16 text-center">
                     <p className="text-lg font-semibold text-neutral-900">

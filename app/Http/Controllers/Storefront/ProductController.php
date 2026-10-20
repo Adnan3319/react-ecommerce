@@ -32,19 +32,8 @@ class ProductController extends Controller
 
         return Inertia::render('Products/Show', [
             ...$this->pages->page($productId),
-            'deliveryZones' => $this->deliveryZones(),
+            'deliveryZones' => $this->zones->forStorefront(),
             'maxQty' => (int) config('shop.max_qty_per_item'),
         ]);
-    }
-
-    /**
-     * @return list<array{key: string, label: string, charge: int}>
-     */
-    private function deliveryZones(): array
-    {
-        return array_map(
-            fn (string $key) => ['key' => $key, ...$this->zones->get($key)],
-            $this->zones->keys(),
-        );
     }
 }

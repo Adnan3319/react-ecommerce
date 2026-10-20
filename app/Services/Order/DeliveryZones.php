@@ -36,6 +36,16 @@ class DeliveryZones
     }
 
     /**
+     * The zones as the order forms list them (charges in minor units).
+     *
+     * @return list<array{key: string, label: string, charge: int}>
+     */
+    public function forStorefront(): array
+    {
+        return array_map(fn (string $key) => ['key' => $key, ...$this->get($key)], $this->keys());
+    }
+
+    /**
      * Delivery charge in minor units.
      */
     public function charge(string $key): int

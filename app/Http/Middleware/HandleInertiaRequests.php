@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\Cart\CartService;
 use App\Services\Category\CategoryService;
 use App\Services\Order\PendingOrderCount;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ class HandleInertiaRequests extends Middleware
     public function __construct(
         private readonly CategoryService $categories,
         private readonly PendingOrderCount $pendingOrders,
+        private readonly CartService $cart,
     ) {}
 
     /**
@@ -46,8 +48,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            // Placeholder until the server-side cart exists.
-            'cart' => ['count' => 0],
+            'cart' => ['count' => fn () => $this->cart->count()],
             'auth' => [
                 'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],

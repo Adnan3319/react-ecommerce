@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { home } from '@/routes';
 import { Badge, QuantityStepper } from '@/storefront/components/ui';
+import AddedToast from '@/storefront/features/cart/AddedToast';
+import AddToCartButton from '@/storefront/features/cart/AddToCartButton';
+import { useAddToCart } from '@/storefront/features/cart/useAddToCart';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
 import MobileOrderBar from '@/storefront/features/order/MobileOrderBar';
 import OrderForm from '@/storefront/features/order/OrderForm';
@@ -31,6 +34,7 @@ export default function ProductView({
     const maxQuantity = Math.max(1, Math.min(variant?.stock ?? 1, maxQty));
     const quantity = Math.min(requested, maxQuantity);
     const unitPrice = variant?.effective_price ?? 0;
+    const cart = useAddToCart(variant?.id ?? null, quantity);
     const lowestCharge = Math.min(...deliveryZones.map((zone) => zone.charge));
 
     return (
@@ -108,13 +112,23 @@ export default function ProductView({
                             />
                         )}
 
+                        <AddToCartButton
+                            onAdd={cart.add}
+                            processing={cart.processing}
+                            disabled={outOfStock}
+                            error={cart.error}
+                        />
+
                         {variant && (
                             <OrderForm
-                                variantId={variant.id}
-                                quantity={quantity}
-                                unitPrice={unitPrice}
                                 zones={deliveryZones}
-                                outOfStock={outOfStock}
+                                mode={{
+                                    source: 'buy_now',
+                                    variantId: variant.id,
+                                    quantity,
+                                    unitPrice,
+                                    outOfStock,
+                                }}
                             />
                         )}
                     </div>
@@ -135,7 +149,10 @@ export default function ProductView({
             <MobileOrderBar
                 total={unitPrice * quantity + lowestCharge}
                 disabled={outOfStock}
+                onAddToCart={cart.add}
+                addingToCart={cart.processing}
             />
+            {cart.added && <AddedToast onDismiss={cart.dismiss} />}
         </>
     );
 }

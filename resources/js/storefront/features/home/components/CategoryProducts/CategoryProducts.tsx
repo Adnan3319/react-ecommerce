@@ -1,4 +1,3 @@
-import { ProductCardAddToCart } from '@/storefront/features/cart';
 import { ProductRail, SAMPLE_PRODUCTS } from '@/storefront/features/product';
 import { categoryHref } from '@/storefront/lib/category-href';
 import { useCategories } from '@/storefront/lib/useCategories';
@@ -28,9 +27,6 @@ export default function CategoryProducts() {
                             href: categoryHref(category.slug),
                         }}
                         products={products}
-                        renderAction={(product) => (
-                            <ProductCardAddToCart product={product} />
-                        )}
                     />
                 );
             })}

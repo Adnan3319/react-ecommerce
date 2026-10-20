@@ -10,13 +10,26 @@ import OrderSummary from './OrderSummary';
 
 export const ORDER_FORM_ID = 'order-form';
 
+/** Order Now (one variant of the product page) or the visitor's whole cart (Cart page). */
+export type OrderFormMode =
+    | {
+          source: 'buy_now';
+          variantId: number;
+          quantity: number;
+          /** Minor units, per item; display only. */
+          unitPrice: number;
+          outOfStock: boolean;
+      }
+    | {
+          source: 'cart';
+          /** Minor units, payable lines only; display only. */
+          subtotal: number;
+          itemCount: number;
+      };
+
 type OrderFormProps = {
-    variantId: number;
-    quantity: number;
-    /** Minor units, per item; display only. */
-    unitPrice: number;
     zones: DeliveryZone[];
-    outOfStock: boolean;
+    mode: OrderFormMode;
 };
 
 type OrderFormData = {
@@ -29,14 +42,8 @@ type OrderFormData = {
     website: string;
 };
 
-/** Order Now: guest details + delivery area for one variant, Cash on Delivery. */
-export default function OrderForm({
-    variantId,
-    quantity,
-    unitPrice,
-    zones,
-    outOfStock,
-}: OrderFormProps) {
+/** Guest details + delivery area, Cash on Delivery. The server decides the items and every amount. */
+export default function OrderForm({ zones, mode }: OrderFormProps) {
     const form = useForm<OrderFormData>({
         name: '',
         phone: '',
@@ -52,14 +59,16 @@ export default function OrderForm({
     const zone =
         zones.find((candidate) => candidate.key === form.data.delivery_zone) ??
         zones[0];
-    const subtotal = unitPrice * quantity;
+    const isCart = mode.source === 'cart';
+    const subtotal = isCart ? mode.subtotal : mode.unitPrice * mode.quantity;
+    const itemCount = isCart ? mode.itemCount : mode.quantity;
+    const disabled = isCart ? mode.itemCount === 0 : mode.outOfStock;
     const total = subtotal + (zone?.charge ?? 0);
     const errors = form.errors as Partial<Record<string, string>>;
-    const lineError =
-        errors['items.0.quantity'] ??
-        errors['items.0.variant'] ??
-        errors.order ??
-        errors.items;
+    // Any order-level or line-level refusal of CheckoutService (items.N.quantity, items.N.variant, items, order).
+    const lineError = Object.entries(errors).find(
+        ([key]) => key === 'order' || key.startsWith('items'),
+    )?.[1];
 
     function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -67,11 +76,20 @@ export default function OrderForm({
         idempotencyKey.current ??= crypto.randomUUID();
         const key = idempotencyKey.current;
 
-        form.transform((data) => ({
-            ...data,
-            items: [{ variant_id: variantId, quantity }],
-            idempotency_key: key,
-        }));
+        form.transform((data) =>
+            mode.source === 'cart'
+                ? { ...data, source: 'cart', idempotency_key: key }
+                : {
+                      ...data,
+                      items: [
+                          {
+                              variant_id: mode.variantId,
+                              quantity: mode.quantity,
+                          },
+                      ],
+                      idempotency_key: key,
+                  },
+        );
         form.post(store().url, { preserveScroll: true });
     }
 
@@ -80,15 +98,19 @@ export default function OrderForm({
             id={ORDER_FORM_ID}
             onSubmit={submit}
             noValidate
-            aria-label="Order now"
+            aria-label={isCart ? 'Delivery details' : 'Order now'}
             className="flex scroll-mt-24 flex-col gap-4 rounded-[28px] bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
         >
             <div>
                 <h2 className="text-xl font-bold tracking-tight text-neutral-900">
-                    Order now · Cash on Delivery
+                    {isCart
+                        ? 'Delivery details'
+                        : 'Order now · Cash on Delivery'}
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500">
-                    No account needed. Pay when it arrives.
+                    {isCart
+                        ? 'Cash on Delivery · no account needed'
+                        : 'No account needed. Pay when it arrives.'}
                 </p>
             </div>
 
@@ -179,7 +201,7 @@ export default function OrderForm({
             <OrderSummary
                 subtotal={subtotal}
                 deliveryCharge={zone?.charge ?? 0}
-                itemCount={quantity}
+                itemCount={itemCount}
             />
 
             {lineError && (
@@ -195,11 +217,15 @@ export default function OrderForm({
                 type="submit"
                 size="lg"
                 fullWidth
-                disabled={outOfStock || form.processing}
+                disabled={disabled || form.processing}
                 loading={form.processing}
             >
-                {outOfStock ? (
-                    'Out of stock'
+                {disabled ? (
+                    isCart ? (
+                        'Nothing to order'
+                    ) : (
+                        'Out of stock'
+                    )
                 ) : (
                     <>
                         <Icon name="bolt" size={18} />

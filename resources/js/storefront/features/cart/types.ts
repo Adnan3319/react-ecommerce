@@ -1,21 +1,16 @@
+/** One line of `Services\Cart\CartService::lines()`. Amounts are integer minor units. */
 export type CartLine = {
-    id: number;
-    productId: number;
+    variant_id: number;
+    product_name: string;
     slug: string;
-    name: string;
-    image: string | null;
-    /** Integer minor units. */
-    unitPrice: number;
+    variant_label: string | null;
+    image_url: string | null;
+    unit_price: number;
     quantity: number;
-    maxQuantity: number;
-};
-
-/** Minimal product data needed to add an item; any product type satisfies it. */
-export type CartProduct = {
-    id: number;
-    slug: string;
-    name: string;
-    /** Integer minor units. */
-    price: number;
-    image: string | null;
+    line_total: number;
+    stock: number;
+    max_quantity: number;
+    price_changed: boolean;
+    previous_price: number;
+    unavailable: boolean;
 };

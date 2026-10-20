@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,12 @@ Route::get('/products/{slug}', [StorefrontProductController::class, 'show'])->na
 Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:orders')->name('orders.store');
 Route::get('/orders/{token}/thank-you', [OrderController::class, 'show'])->name('orders.success');
 Route::inertia('/search', 'Search')->name('search');
-Route::inertia('/cart', 'Cart')->name('cart');
+Route::get('/cart', [CartController::class, 'show'])->name('cart');
+Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->group(function () {
+    Route::post('/', [CartController::class, 'store'])->name('store');
+    Route::patch('/{variantId}', [CartController::class, 'update'])->whereNumber('variantId')->name('update');
+    Route::delete('/{variantId}', [CartController::class, 'destroy'])->whereNumber('variantId')->name('destroy');
+});
 Route::inertia('/about', 'About')->name('about');
 Route::inertia('/contact', 'Contact')->name('contact');
 

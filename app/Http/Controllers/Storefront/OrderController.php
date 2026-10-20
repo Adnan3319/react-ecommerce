@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Storefront;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Storefront\PlaceOrderRequest;
 use App\Http\Resources\Storefront\OrderSuccessResource;
+use App\Services\Cart\CartService;
 use App\Services\Order\CheckoutService;
 use App\Services\Order\OrderLookup;
 use Illuminate\Http\RedirectResponse;
@@ -16,11 +17,17 @@ class OrderController extends Controller
     public function __construct(
         private readonly CheckoutService $checkout,
         private readonly OrderLookup $orders,
+        private readonly CartService $cart,
     ) {}
 
     public function store(PlaceOrderRequest $request): RedirectResponse
     {
-        $order = $this->checkout->place($request->checkoutData());
+        $data = $request->checkoutData();
+        $order = $this->checkout->place($data);
+
+        if ($request->isCartOrder()) {
+            $this->cart->forget(array_column($data->items, 'variant_id'));
+        }
 
         return redirect()->route('orders.success', $order->public_token);
     }

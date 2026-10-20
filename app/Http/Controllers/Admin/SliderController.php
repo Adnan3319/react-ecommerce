@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\ActiveStatus;
+use App\Enums\SliderPosition;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\IndexListRequest;
+use App\Http\Requests\Admin\Slider\IndexSliderRequest;
 use App\Http\Requests\Admin\Slider\SaveSliderRequest;
 use App\Http\Resources\Admin\Slider\SliderResource;
 use App\Models\Slider;
@@ -17,7 +18,7 @@ class SliderController extends Controller
 {
     public function __construct(private readonly SliderService $sliders) {}
 
-    public function index(IndexListRequest $request): Response
+    public function index(IndexSliderRequest $request): Response
     {
         $filters = $request->filters();
 
@@ -26,8 +27,13 @@ class SliderController extends Controller
             'filters' => [
                 'search' => $filters['search'],
                 'status' => $filters['status']?->value,
+                'position' => $filters['position']?->value,
                 'per_page' => $filters['per_page'],
             ],
+            'positions' => array_map(
+                fn (SliderPosition $position) => ['value' => $position->value, 'label' => $position->label(), 'image_hint' => $position->imageHint()],
+                SliderPosition::cases(),
+            ),
             'statuses' => array_map(
                 fn (ActiveStatus $status) => ['value' => $status->value, 'label' => $status->label()],
                 ActiveStatus::cases(),

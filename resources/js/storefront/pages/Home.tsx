@@ -12,6 +12,8 @@ import type { ApiSlider } from '@/storefront/features/home';
 type HomeProps = {
     seo: SeoData;
     sliders: ApiSlider[];
+    /** First active promo slider; wired into the page by the landing step. */
+    promo: ApiSlider | null;
 };
 
 export default function Home({ seo, sliders }: HomeProps) {

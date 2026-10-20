@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SliderPosition;
 use App\Models\Category;
 use App\Models\Slider;
 use App\Models\User;
@@ -20,8 +21,8 @@ it('composes sliders and categories from their own caches', function () {
 
     $data = app(HomeService::class)->data();
 
-    expect($data)->toHaveKeys(['sliders', 'categories'])
-        ->and($data['sliders'])->toBe(Cache::get(SliderService::ACTIVE_CACHE_KEY))
+    expect($data)->toHaveKeys(['sliders', 'promo', 'categories'])
+        ->and($data['sliders'])->toBe(Cache::get(SliderService::cacheKey(SliderPosition::Hero)))
         ->and($data['categories'])->toBe(Cache::get(CategoryService::ACTIVE_CACHE_KEY));
 });
 
@@ -73,13 +74,13 @@ describe('cache invalidation per key', function () {
         $this->post(route('admin.categories.update', $this->category), ['_method' => 'put', 'status' => 'inactive']);
 
         expect(Cache::has(CategoryService::ACTIVE_CACHE_KEY))->toBeFalse()
-            ->and(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeTrue();
+            ->and(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeTrue();
     });
 
     it('a slider write clears only the sliders key', function () {
         $this->post(route('admin.sliders.update', $this->slider), ['_method' => 'put', 'status' => 'inactive']);
 
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeFalse()
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeFalse()
             ->and(Cache::has(CategoryService::ACTIVE_CACHE_KEY))->toBeTrue();
     });
 

@@ -1,7 +1,9 @@
 import StatusToggle from '@admin/components/common/StatusToggle';
 import DataTable from '@admin/components/DataTable';
 import type { DataTableToolbar } from '@admin/components/DataTable';
+import Badge from '@admin/components/ui/badge/Badge';
 import { STATUS_ACTIVE } from '@/shared/constants/status';
+import { POSITION_HERO } from './constants';
 import type { Slider } from './types';
 
 type SliderTableProps = {
@@ -71,6 +73,18 @@ export default function SliderTable({
                 ) : (
                     <span className="text-gray-400">-</span>
                 ),
+        },
+        {
+            header: 'Position',
+            accessor: 'position',
+            render: (row: Slider) => (
+                <Badge
+                    size="sm"
+                    color={row.position === POSITION_HERO ? 'primary' : 'info'}
+                >
+                    {row.position_label}
+                </Badge>
+            ),
         },
         { header: 'Order', accessor: 'sort_order' },
         {

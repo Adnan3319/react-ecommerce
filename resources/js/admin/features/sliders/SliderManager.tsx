@@ -7,6 +7,7 @@ import Button from '@admin/components/ui/button/Button';
 import { useListFilters } from '@admin/hooks/useListFilters';
 import { destroy, index, update } from '@/routes/admin/sliders';
 import { STATUS_ACTIVE, STATUS_INACTIVE } from '@/shared/constants/status';
+import PositionTabs from './PositionTabs';
 import SliderFormModal from './SliderFormModal';
 import SliderTable from './SliderTable';
 import type { Slider, SliderIndexProps } from './types';
@@ -17,6 +18,7 @@ export default function SliderManager({
     sliders,
     filters,
     statuses,
+    positions,
 }: SliderIndexProps) {
     const [formTarget, setFormTarget] = useState<FormTarget | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Slider | null>(null);
@@ -29,11 +31,14 @@ export default function SliderManager({
         setSearch,
         status,
         setStatus,
+        setExtra,
         perPage,
         setPerPage,
         goToPage,
         processing,
-    } = useListFilters(index().url, filters);
+    } = useListFilters(index().url, filters, {
+        position: filters.position ?? undefined,
+    });
 
     const { meta } = sliders;
 
@@ -99,6 +104,14 @@ export default function SliderManager({
                 </p>
             )}
 
+            <PositionTabs
+                positions={positions}
+                active={filters.position}
+                onChange={(position) =>
+                    setExtra({ position: position ?? undefined })
+                }
+            />
+
             <SliderTable
                 sliders={sliders.data}
                 loading={processing}
@@ -128,6 +141,8 @@ export default function SliderManager({
                 <SliderFormModal
                     slider={formTarget.slider}
                     statuses={statuses}
+                    positions={positions}
+                    defaultPosition={filters.position}
                     defaultSortOrder={meta.total + 1}
                     onClose={() => setFormTarget(null)}
                 />

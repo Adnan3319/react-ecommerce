@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SliderPosition;
 use App\Enums\ActiveStatus;
 use App\Models\Slider;
 use App\Models\User;
@@ -33,6 +34,7 @@ function validSlider(array $overrides = []): array
         'button_link' => '/search',
         'sort_order' => 1,
         'status' => 'active',
+        'position' => 'hero',
         'image' => UploadedFile::fake()->image('banner.jpg', 2400, 1000),
         ...$overrides,
     ];
@@ -298,7 +300,7 @@ describe('storefront cache', function () {
     function primeSliderCache(): void
     {
         app(SliderService::class)->activeForStorefront();
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeTrue();
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeTrue();
     }
 
     it('caches only active sliders, in order, as plain arrays with a public image url', function () {
@@ -306,10 +308,10 @@ describe('storefront cache', function () {
         $first = Slider::factory()->create(['title' => 'First', 'sort_order' => 1, 'image' => 'sliders/a.webp']);
         Slider::factory()->inactive()->create(['title' => 'Hidden']);
 
-        $sliders = app(SliderService::class)->activeForStorefront();
+        $sliders = app(SliderService::class)->activeForStorefront()['hero'];
 
         expect($sliders)->toHaveCount(2)
-            ->and(Cache::get(SliderService::ACTIVE_CACHE_KEY))->toBe($sliders)
+            ->and(Cache::get(SliderService::cacheKey(SliderPosition::Hero)))->toBe($sliders)
             ->and($sliders[0])->toBe([
                 'id' => $first->id,
                 'title' => 'First',
@@ -338,7 +340,7 @@ describe('storefront cache', function () {
 
         $this->post(route('admin.sliders.store'), validSlider());
 
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeFalse();
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeFalse();
     });
 
     it('is cleared when a slider is updated', function () {
@@ -347,7 +349,7 @@ describe('storefront cache', function () {
 
         updateSlider($slider, ['status' => 'inactive']);
 
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeFalse();
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeFalse();
     });
 
     it('is cleared when a slider is deleted', function () {
@@ -356,7 +358,7 @@ describe('storefront cache', function () {
 
         $this->delete(route('admin.sliders.destroy', $slider));
 
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeFalse();
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeFalse();
     });
 
     it('is left alone when validation fails', function () {
@@ -364,6 +366,6 @@ describe('storefront cache', function () {
 
         $this->post(route('admin.sliders.store'), validSlider(['title' => '']));
 
-        expect(Cache::has(SliderService::ACTIVE_CACHE_KEY))->toBeTrue();
+        expect(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeTrue();
     });
 });

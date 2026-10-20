@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Slider;
 
 use App\Enums\ActiveStatus;
+use App\Enums\SliderPosition;
 use App\Models\Slider;
 use App\Services\Slider\SliderService;
 use Illuminate\Contracts\Validation\Validator;
@@ -15,6 +16,10 @@ use Illuminate\Validation\Rule;
  */
 class SaveSliderRequest extends FormRequest
 {
+    private const MAX_IMAGE_KB = 2048;
+
+    private const MAX_IMAGE_SIDE = 5000;
+
     public function authorize(): bool
     {
         return true;
@@ -26,19 +31,27 @@ class SaveSliderRequest extends FormRequest
     public function rules(): array
     {
         $required = $this->slider() ? 'sometimes' : 'required';
+        $position = $this->position();
 
         return [
             'title' => [$required, 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
+            'position' => [$required, Rule::enum(SliderPosition::class)],
             'button_text' => ['nullable', 'string', 'max:50'],
-            // Relative path or http(s) URL only: blocks javascript:/data: links in the hero button.
+            // Relative path or http(s) URL only: blocks javascript:/data: links in the slider button.
             'button_link' => ['nullable', 'string', 'max:255', 'regex:#^(/(?!/)|https?://)\S*$#i'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'status' => [$required, Rule::enum(ActiveStatus::class)],
-            // Wide banner: stored as 1920x800 + 960x400 (config/media.php `slider` preset).
+            // Stored with the preset of the position (config/media.php: `slider` 1920x800, `promo` 1200x800).
             'image' => [
-                $required, 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048',
-                'dimensions:min_width=1920,min_height=800,max_width=5000,max_height=5000',
+                $required, 'image', 'mimes:jpg,jpeg,png,webp', 'max:'.self::MAX_IMAGE_KB,
+                sprintf(
+                    'dimensions:min_width=%d,min_height=%d,max_width=%d,max_height=%d',
+                    $position->minWidth(),
+                    $position->minHeight(),
+                    self::MAX_IMAGE_SIDE,
+                    self::MAX_IMAGE_SIDE,
+                ),
             ],
         ];
     }
@@ -49,10 +62,17 @@ class SaveSliderRequest extends FormRequest
     public function after(): array
     {
         return [function (Validator $validator): void {
+            if ($this->movesWithoutNewImage()) {
+                $validator->errors()->add(
+                    'image',
+                    'Upload a new image: the current one was cropped for the '.$this->slider()->position->label().' position.',
+                );
+            }
+
             if ($this->exceedsActiveLimit()) {
                 $validator->errors()->add(
                     'status',
-                    'You can have at most '.SliderService::MAX_ACTIVE.' active sliders. Deactivate one first.',
+                    'You can have at most '.SliderService::MAX_ACTIVE.' active '.$this->position()->label().' sliders. Deactivate one first.',
                 );
             }
         }];
@@ -67,19 +87,42 @@ class SaveSliderRequest extends FormRequest
     }
 
     /**
-     * True when this request would turn a slider active while the limit is already reached.
-     * Editing a slider that is active and stays active never counts against the limit.
+     * The position this request puts the slider in: the submitted one, else the slider's own, else hero.
+     */
+    public function position(): SliderPosition
+    {
+        return $this->enum('position', SliderPosition::class) ?? $this->slider()?->position ?? SliderPosition::Hero;
+    }
+
+    /**
+     * True when an existing slider changes position but keeps its old image, which was cropped for another size.
+     */
+    private function movesWithoutNewImage(): bool
+    {
+        $slider = $this->slider();
+
+        return $slider !== null && $this->position() !== $slider->position && ! $this->hasFile('image');
+    }
+
+    /**
+     * True when this request would make a slider active in a position that already has the maximum.
+     * A slider that is active and stays active in the same position never counts against the limit.
      */
     private function exceedsActiveLimit(): bool
     {
         $slider = $this->slider();
         $status = $this->has('status') ? $this->enum('status', ActiveStatus::class) : $slider?->status;
+        $position = $this->position();
 
-        if ($status !== ActiveStatus::Active || $slider?->status === ActiveStatus::Active) {
+        if ($status !== ActiveStatus::Active) {
             return false;
         }
 
-        return Slider::query()->active()->count() >= SliderService::MAX_ACTIVE;
+        if ($slider?->status === ActiveStatus::Active && $slider->position === $position) {
+            return false;
+        }
+
+        return Slider::query()->active()->inPosition($position)->count() >= SliderService::MAX_ACTIVE;
     }
 
     private function slider(): ?Slider

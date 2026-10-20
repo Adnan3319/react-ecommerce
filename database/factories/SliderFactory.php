@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\ActiveStatus;
+use App\Enums\SliderPosition;
 use App\Models\Slider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,11 +18,17 @@ class SliderFactory extends Factory
             'title' => fake()->sentence(3),
             'subtitle' => fake()->sentence(),
             'image' => 'sliders/'.fake()->uuid().'.webp',
+            'position' => SliderPosition::Hero,
             'button_text' => 'Shop Now',
             'button_link' => '/search',
             'sort_order' => fake()->numberBetween(0, 100),
             'status' => ActiveStatus::Active,
         ];
+    }
+
+    public function promo(): static
+    {
+        return $this->state(fn () => ['position' => SliderPosition::Promo]);
     }
 
     public function inactive(): static

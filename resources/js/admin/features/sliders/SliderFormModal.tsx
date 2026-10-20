@@ -10,11 +10,15 @@ import { Modal } from '@admin/components/ui/modal';
 import { store, update } from '@/routes/admin/sliders';
 import { STATUS_ACTIVE } from '@/shared/constants/status';
 import type { ActiveStatus, StatusOption } from '@/shared/types';
-import type { Slider } from './types';
+import { POSITION_HERO } from './constants';
+import type { PositionOption, Slider, SliderPosition } from './types';
 
 type SliderFormModalProps = {
     slider: Slider | null;
     statuses: StatusOption[];
+    positions: PositionOption[];
+    /** Position of the list tab the form was opened from. */
+    defaultPosition: SliderPosition | null;
     defaultSortOrder: number;
     onClose: () => void;
 };
@@ -26,6 +30,7 @@ type SliderFormData = {
     button_link: string;
     sort_order: string;
     status: ActiveStatus;
+    position: SliderPosition;
     image: File | null;
 };
 
@@ -37,6 +42,8 @@ const noop = () => undefined;
 export default function SliderFormModal({
     slider,
     statuses,
+    positions,
+    defaultPosition,
     defaultSortOrder,
     onClose,
 }: SliderFormModalProps) {
@@ -49,6 +56,7 @@ export default function SliderFormModal({
         button_link: slider?.button_link ?? '',
         sort_order: String(slider?.sort_order ?? defaultSortOrder),
         status: slider?.status ?? STATUS_ACTIVE,
+        position: slider?.position ?? defaultPosition ?? POSITION_HERO,
         image: null,
     });
 
@@ -64,6 +72,11 @@ export default function SliderFormModal({
     );
 
     const currentImage = preview ?? slider?.image_url ?? null;
+    const imageHint =
+        positions.find((option) => option.value === form.data.position)
+            ?.image_hint ?? '';
+    // The stored image was cropped for the old position, so moving a slider needs a new one.
+    const needsNewImage = isEdit && form.data.position !== slider.position;
 
     const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0] ?? null;
@@ -104,7 +117,31 @@ export default function SliderFormModal({
                 </h2>
 
                 <div>
-                    <Label>{isEdit ? 'Image' : 'Image (required)'}</Label>
+                    <Label>Position</Label>
+                    <Select
+                        options={positions.map(({ value, label }) => ({
+                            value,
+                            label,
+                        }))}
+                        defaultValue={form.data.position}
+                        placeholder="Select position"
+                        onChange={(value) =>
+                            form.setData('position', value as SliderPosition)
+                        }
+                    />
+                    {form.errors.position && (
+                        <p className="text-error-500 mt-1.5 text-xs">
+                            {form.errors.position}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label>
+                        {isEdit && !needsNewImage
+                            ? 'Image'
+                            : 'Image (required)'}
+                    </Label>
                     <div className="mb-3 flex h-28 items-center justify-center overflow-hidden rounded-lg bg-gray-100 text-xs text-gray-400 dark:bg-white/5">
                         {currentImage ? (
                             <img
@@ -124,7 +161,9 @@ export default function SliderFormModal({
                         onChange={handleImageChange}
                     />
                     <p className="mt-1.5 text-xs text-gray-500">
-                        Wide image, at least 1920x800, max 2MB
+                        {imageHint}
+                        {needsNewImage &&
+                            '. The position changed, so upload a new image.'}
                     </p>
                     {form.errors.image && (
                         <p className="text-error-500 mt-1.5 text-xs">

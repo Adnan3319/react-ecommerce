@@ -19,12 +19,15 @@ class HomeService
     ) {}
 
     /**
-     * @return array{sliders: array<int, array<string, mixed>>, categories: array<int, array<string, ?string>>, featuredProducts: array<int, array<string, mixed>>}
+     * @return array{sliders: array<int, array<string, mixed>>, promo: ?array<string, mixed>, categories: array<int, array<string, ?string>>, featuredProducts: array<int, array<string, mixed>>}
      */
     public function data(): array
     {
+        $sliders = $this->sliders->activeForStorefront();
+
         return [
-            'sliders' => $this->sliders->activeForStorefront(),
+            'sliders' => $sliders['hero'],
+            'promo' => $sliders['promo'],
             'categories' => $this->categories->activeForStorefront(),
             'featuredProducts' => $this->products->featuredForStorefront(),
         ];

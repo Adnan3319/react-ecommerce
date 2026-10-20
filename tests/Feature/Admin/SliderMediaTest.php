@@ -21,6 +21,7 @@ function mediaSliderData(array $overrides = []): array
         'button_link' => '/search',
         'sort_order' => 1,
         'status' => 'active',
+        'position' => 'hero',
         'image' => UploadedFile::fake()->image('banner.jpg', 2400, 1000),
         ...$overrides,
     ];
@@ -89,7 +90,7 @@ describe('responsive images', function () {
                 ->where('sliders.data.0.image_srcset', $expected)
                 ->where('sliders.data.0.image_url', $disk->url($path)));
 
-        expect(app(SliderService::class)->activeForStorefront()[0]['image_srcset'])->toBe($expected);
+        expect(app(SliderService::class)->activeForStorefront()['hero'][0]['image_srcset'])->toBe($expected);
     });
 
     it('has no srcset for static seed images or when only one size exists', function () {
@@ -134,7 +135,7 @@ describe('active slider limit', function () {
         expect(Slider::active()->count())->toBe(5);
 
         $this->post(route('admin.sliders.store'), mediaSliderData(['title' => 'Sixth']))
-            ->assertSessionHasErrors(['status' => 'You can have at most 5 active sliders. Deactivate one first.']);
+            ->assertSessionHasErrors(['status' => 'You can have at most 5 active Hero sliders. Deactivate one first.']);
 
         expect(Slider::count())->toBe(5)
             ->and(Storage::disk('uploads')->allFiles())->toHaveCount(2);

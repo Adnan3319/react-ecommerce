@@ -1,8 +1,10 @@
 <?php
 
 use App\Enums\ActiveStatus;
+use App\Enums\SliderPosition;
 use App\Models\Category;
 use App\Services\Category\CategoryService;
+use App\Services\Slider\SliderService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -282,7 +284,7 @@ describe('cache', function () {
         $parent = Category::factory()->create();
         $child = Category::factory()->childOf($parent)->create();
         Cache::put(CategoryService::ACTIVE_CACHE_KEY, ['stale']);
-        Cache::put('sliders.active', ['keep']);
+        Cache::put(SliderService::cacheKey(SliderPosition::Hero), ['keep']);
 
         match ($action) {
             'create' => actingAsAdmin()->post(route('admin.categories.store'), hierarchyPayload(['parent_id' => $parent->id])),
@@ -291,7 +293,7 @@ describe('cache', function () {
         };
 
         expect(Cache::has(CategoryService::ACTIVE_CACHE_KEY))->toBeFalse()
-            ->and(Cache::has('sliders.active'))->toBeTrue();
+            ->and(Cache::has(SliderService::cacheKey(SliderPosition::Hero)))->toBeTrue();
     })->with(['create', 'update', 'delete']);
 
     it('keeps the cache when deleting a parent with sub-categories is refused', function () {

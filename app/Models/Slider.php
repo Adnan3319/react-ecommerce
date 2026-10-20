@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ActiveStatus;
+use App\Enums\SliderPosition;
 use App\Models\Concerns\HasAuditFields;
 use App\Models\Concerns\HasListFilters;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -21,6 +22,7 @@ class Slider extends Model
         'title',
         'subtitle',
         'image',
+        'position',
         'button_text',
         'button_link',
         'sort_order',
@@ -31,8 +33,18 @@ class Slider extends Model
     {
         return [
             'status' => ActiveStatus::class,
+            'position' => SliderPosition::class,
             'sort_order' => 'integer',
         ];
+    }
+
+    /**
+     * @param  Builder<Slider>  $query
+     */
+    #[Scope]
+    protected function inPosition(Builder $query, ?SliderPosition $position): void
+    {
+        $query->when($position, fn (Builder $q) => $q->where('position', $position));
     }
 
     /**

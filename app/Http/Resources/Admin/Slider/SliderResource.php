@@ -4,7 +4,6 @@ namespace App\Http\Resources\Admin\Slider;
 
 use App\Models\Slider;
 use App\Services\Media\FileUploadService;
-use App\Services\Slider\SliderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +24,9 @@ class SliderResource extends JsonResource
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'image_url' => $uploads->url($this->image),
-            'image_srcset' => $uploads->srcset($this->image, SliderService::IMAGE_PRESET),
+            'image_srcset' => $uploads->srcset($this->image, $this->position->preset()),
+            'position' => $this->position->value,
+            'position_label' => $this->position->label(),
             'button_text' => $this->button_text,
             'button_link' => $this->button_link,
             'sort_order' => $this->sort_order,

@@ -36,6 +36,11 @@ return [
             'variants' => ['sm' => 'slider_sm'],
         ],
         'slider_sm' => ['width' => 960, 'height' => 400, 'fit' => 'cover', 'format' => 'webp', 'quality' => 70],
+        'promo' => [
+            'width' => 1200, 'height' => 800, 'fit' => 'cover', 'format' => 'webp', 'quality' => 75,
+            'variants' => ['sm' => 'promo_sm'],
+        ],
+        'promo_sm' => ['width' => 600, 'height' => 400, 'fit' => 'cover', 'format' => 'webp', 'quality' => 73],
         'product' => [
             'width' => 1200, 'height' => 1200, 'fit' => 'contain', 'format' => 'webp', 'quality' => 78,
             'variants' => ['thumb' => 'product_thumb'],

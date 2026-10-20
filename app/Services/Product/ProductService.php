@@ -75,7 +75,8 @@ class ProductService
     public function delete(Product $product): void
     {
         DB::transaction(function () use ($product): void {
-            // Guard for orders goes here once orders exist.
+            // Soft delete is always allowed; hard delete of an ordered product or variant is blocked by
+            // the restrictOnDelete foreign keys of order_items.
             foreach ($product->variants as $variant) {
                 $this->retire($variant);
             }

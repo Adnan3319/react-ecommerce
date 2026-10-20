@@ -26,4 +26,35 @@ return [
     | (3 heads x 20 values) cannot be submitted.
     */
     'max_variants_per_product' => 100,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Delivery Zones
+    |--------------------------------------------------------------------------
+    | key => label + charge (minor units). Orders keep the charge they were placed
+    | with; after changing a charge run `php artisan config:cache` on deploy.
+    */
+    'delivery_zones' => [
+        'inside_dhaka' => ['label' => 'Inside Dhaka', 'charge' => 7000],
+        'outside_dhaka' => ['label' => 'Outside Dhaka', 'charge' => 13000],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order Limits
+    |--------------------------------------------------------------------------
+    */
+    'max_qty_per_item' => (int) env('SHOP_MAX_QTY_PER_ITEM', 10),
+    'max_cart_lines' => 20,
+
+    // Pending orders one phone may have per 24 hours.
+    'max_pending_per_phone' => 3,
+
+    // Same phone + same items inside this window returns the existing order.
+    'duplicate_window_minutes' => 10,
+
+    'order_number_prefix' => 'CK',
+
+    // Receives the "new order" email; no mail is sent when empty.
+    'admin_order_email' => env('SHOP_ADMIN_ORDER_EMAIL'),
 ];

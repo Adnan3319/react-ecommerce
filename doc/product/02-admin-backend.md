@@ -77,7 +77,7 @@ variants[0][status]
      8. assert the product still has exactly one main image, otherwise throw a `ValidationException`.
    - Combination changes on existing variants are applied in two passes (move to a temporary unique key, then the final key), so swapping two combinations in one request does not trip `unique (product_id, live_key)`.
    - Variants off → keep exactly one default variant (`combination_key = default`, no selections). Turning variants **on**: the default variant is soft-deleted and variants are created from the heads. Turning them **off**: all variants are soft-deleted (selections removed), heads and values are deleted, and a new default variant is created. The soft-deleted variants keep their own stock and movement history.
-   - `delete(product)` — soft delete product + variants (selections removed); TODO guard for orders.
+   - `delete(product)` — soft delete product + variants (selections removed). Hard delete of an ordered product or variant is blocked by the `order_items` foreign keys.
    - Old image files deleted only after commit.
 6. `App\Services\Product\StockService`:
    - `setInitial(variant, qty)`, `adjust(variant, newQty, note)` → writes `stock_movements` with the difference; no row when unchanged.

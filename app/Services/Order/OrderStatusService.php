@@ -19,14 +19,17 @@ use Illuminate\Support\Facades\DB;
  */
 class OrderStatusService
 {
-    public function __construct(private readonly StockService $stock) {}
+    public function __construct(
+        private readonly StockService $stock,
+        private readonly PendingOrderCount $pendingOrders,
+    ) {}
 
     /**
      * @throws InvalidOrderTransition when the order cannot move to `$to`; nothing is changed then
      */
     public function transition(Order $order, OrderStatus $to, ?string $note = null, ?User $by = null): Order
     {
-        return DB::transaction(function () use ($order, $to, $note, $by): Order {
+        $moved = DB::transaction(function () use ($order, $to, $note, $by): Order {
             $locked = Order::query()->lockForUpdate()->findOrFail($order->id);
             $from = $locked->status;
 
@@ -51,6 +54,10 @@ class OrderStatusService
 
             return $locked;
         });
+
+        $this->pendingOrders->forget();
+
+        return $moved;
     }
 
     /**

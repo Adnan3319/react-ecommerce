@@ -7,6 +7,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Support\Like;
+use App\Support\Phone;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -101,6 +102,7 @@ class Order extends Model
 
     /**
      * Order number, customer name or phone contains the term (LIKE wildcards in the term match literally).
+     * A term that looks like a phone ("+880 1712-345") is matched against phones in their local form.
      *
      * @param  Builder<Order>  $query
      */
@@ -112,12 +114,13 @@ class Order extends Model
         }
 
         $pattern = '%'.Like::escape($term).'%';
+        $phonePattern = '%'.Like::escape(Phone::searchTerm($term) ?? $term).'%';
         $escape = Like::ESCAPE;
 
         $query->where(fn (Builder $match) => $match
             ->whereRaw("orders.number LIKE ? ESCAPE '{$escape}'", [$pattern])
             ->orWhereRaw("orders.shipping_name LIKE ? ESCAPE '{$escape}'", [$pattern])
-            ->orWhereRaw("orders.shipping_phone LIKE ? ESCAPE '{$escape}'", [$pattern]));
+            ->orWhereRaw("orders.shipping_phone LIKE ? ESCAPE '{$escape}'", [$phonePattern]));
     }
 
     /**

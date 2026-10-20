@@ -4,15 +4,18 @@ import { useCallback, useEffect } from "react";
 import { Link, useLocation } from "@admin/lib/router";
 import { BoxCubeIcon, GridIcon, HorizontaLDots, ListIcon, TableIcon } from "../icons";
 import { cn } from "../utils";
+import * as orders from "@/routes/admin/orders";
 
 type NavItem = {
   name: string;
   icon: React.ReactNode;
   path: string;
+  badge?: number;
 };
 
 const navItems: NavItem[] = [
   { name: "Dashboard", icon: <GridIcon fontSize={24} />, path: "/admin/dashboard" },
+  { name: "Orders", icon: <ListIcon fontSize={24} />, path: orders.index().url },
   { name: "Products", icon: <BoxCubeIcon fontSize={24} />, path: "/admin/products" },
   { name: "Sliders", icon: <TableIcon fontSize={24} />, path: "/admin/sliders" },
   { name: "Categories", icon: <ListIcon fontSize={24} />, path: "/admin/categories" },
@@ -22,7 +25,11 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered, setIsMobileOpen } =
     useSidebar();
   const location = useLocation();
-  const { name: appName } = usePage<{ name: string }>().props;
+  const { name: appName, admin } = usePage<{
+    name: string;
+    admin: { pendingOrders: number } | null;
+  }>().props;
+  const pendingOrders = admin?.pendingOrders ?? 0;
 
   useEffect(() => {
     if (isMobileOpen) {
@@ -60,6 +67,11 @@ const AppSidebar: React.FC = () => {
               {nav.icon}
             </span>
             {showText && <span className="menu-item-text">{nav.name}</span>}
+            {showText && nav.badge ? (
+              <span className="ms-auto rounded-full bg-error-500 px-2 py-0.5 text-xs font-medium text-white">
+                {nav.badge}
+              </span>
+            ) : null}
           </Link>
         </li>
       ))}
@@ -111,7 +123,13 @@ const AppSidebar: React.FC = () => {
           <div className="flex flex-col gap-4">
             <div>
               {groupTitle("Menu")}
-              {renderItems(navItems)}
+              {renderItems(
+                navItems.map((nav) =>
+                  nav.path === orders.index().url
+                    ? { ...nav, badge: pendingOrders }
+                    : nav,
+                ),
+              )}
             </div>
           </div>
         </nav>

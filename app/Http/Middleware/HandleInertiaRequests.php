@@ -3,12 +3,16 @@
 namespace App\Http\Middleware;
 
 use App\Services\Category\CategoryService;
+use App\Services\Order\PendingOrderCount;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(private readonly CategoryService $categories) {}
+    public function __construct(
+        private readonly CategoryService $categories,
+        private readonly PendingOrderCount $pendingOrders,
+    ) {}
 
     /**
      * Pick the root template per route group: admin panel vs storefront.
@@ -47,6 +51,10 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],
+            // Sidebar badge of the admin panel; only evaluated for logged-in admin requests.
+            'admin' => fn () => $request->user() && $request->is('admin', 'admin/*')
+                ? ['pendingOrders' => $this->pendingOrders->get()]
+                : null,
             // Active categories for the storefront (navbar, home, search, footer).
             'categories' => fn () => $request->is('admin', 'admin/*')
                 ? []

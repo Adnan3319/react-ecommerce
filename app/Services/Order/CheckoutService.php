@@ -33,6 +33,7 @@ class CheckoutService
         private readonly DeliveryZones $zones,
         private readonly OrderNumberGenerator $numbers,
         private readonly StockService $stock,
+        private readonly PendingOrderCount $pendingOrders,
     ) {}
 
     /**
@@ -61,6 +62,7 @@ class CheckoutService
         }
 
         if ($created) {
+            $this->pendingOrders->forget();
             NotifyAdminOfNewOrder::dispatch($order->id);
         }
 

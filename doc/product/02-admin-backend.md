@@ -1,6 +1,8 @@
 # Step 02 — Product admin backend
 
-Read `CLAUDE.md`, `testcase.md` and `docs/product/README.md` first. Step 01 must be DONE.
+> **Variant model changed (step 01):** options are normalized into `variant_heads` / `variant_values` / `variant_selections` (README §2). Wherever this step says `option1_name`, `option2_name`, `option1_value` or `option2_value`, use head names and value texts/ids instead. Re-plan the payload in this step's plan-mode session.
+
+Read `CLAUDE.md`, `testcase.md` and `doc/product/README.md` first. Step 01 must be DONE.
 
 **Scope:** services, controller, requests, resources, routes, cache. No UI (step 03).
 

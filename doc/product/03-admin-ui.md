@@ -1,6 +1,8 @@
 # Step 03 — Product admin UI
 
-Read `CLAUDE.md` and `docs/product/README.md` first, and open every image in `docs/product/mockups/`. Step 02 must be DONE.
+> **Variant model changed (step 01):** options are normalized into `variant_heads` / `variant_values` / `variant_selections` (README §2). Wherever this step says `option1_name`, `option2_name`, `option1_value` or `option2_value`, use head names and value texts/ids instead. Re-plan the payload in this step's plan-mode session.
+
+Read `CLAUDE.md` and `doc/product/README.md` first, and open every image in `doc/product/mockups/`. Step 02 must be DONE.
 
 **Scope:** admin pages for products. Match the mockups.
 

@@ -36,5 +36,18 @@ return [
             'variants' => ['sm' => 'slider_sm'],
         ],
         'slider_sm' => ['width' => 960, 'height' => 400, 'fit' => 'cover', 'format' => 'webp', 'quality' => 70],
+        'product' => [
+            'width' => 1200, 'height' => 1200, 'fit' => 'contain', 'format' => 'webp', 'quality' => 78,
+            'variants' => ['thumb' => 'product_thumb'],
+        ],
+        'product_thumb' => ['width' => 400, 'height' => 400, 'fit' => 'contain', 'format' => 'webp', 'quality' => 75],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product Gallery
+    |--------------------------------------------------------------------------
+    | Extra images allowed per product besides the main image.
+    */
+    'product_gallery_max' => (int) env('MEDIA_PRODUCT_GALLERY_MAX', 3),
 ];

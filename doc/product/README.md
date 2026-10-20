@@ -12,8 +12,8 @@
 
 | Topic | Decision |
 |---|---|
-| Variants | Every product has ≥ 1 variant. A simple product = one default variant with null option values. Price and stock live only on variants. |
-| Options | Max 2 options per product. Names are free text set by the admin (`Size`, `Color`, `Capacity`, `Material`…). |
+| Variants | Every product has ≥ 1 variant. A simple product = one default variant with no selected values. Price and stock live only on variants. |
+| Options | Normalized: option **names** are `variant_heads` rows (free text: `Size`, `Color`, `Capacity`…), option **values** are `variant_values` rows, and `variant_selections` links a variant to the value it picked per head. Max 2 heads per product is a rule (`config('shop.max_variant_heads')`), not a schema limit. |
 | Discount | `sale_price` per variant, nullable, must be `< price`. No sale start/end dates yet. |
 | Money | Integer minor units (paisa) in DB. Admin forms use taka; conversion happens in the FormRequest. |
 | Images | 1 main (required) + gallery up to `config('media.product_gallery_max')` (default 3). |
@@ -31,13 +31,14 @@
 ```
 categories (existing, 2 levels)
    │ 1
-   │
    │ n
-products ───────────1:n──────── product_images
-   │ 1                              ▲ 0..1
-   │ n                              │
-product_variants ──────────────────┘  (product_image_id, same product only)
-   │ 1
+products ───1:n─── product_images
+   │ 1                  ▲ 0..1
+   ├──1:n─ variant_heads ─1:n─ variant_values
+   │                                  │ m
+   │ n                                │
+product_variants ─────── variant_selections (pivot)
+   │ 1                n
    │ n
 stock_movements
 ```
@@ -51,8 +52,6 @@ stock_movements
 | slug | string, unique | unique incl. soft-deleted rows |
 | short_description | string(300), null | product cards |
 | description | text, null | plain text |
-| option1_name | string(30), null | e.g. Size |
-| option2_name | string(30), null | e.g. Color |
 | status | ActiveStatus | indexed |
 | is_featured | bool | indexed, home page |
 | meta_title | string(60), null | falls back to name |
@@ -68,20 +67,48 @@ stock_movements
 | is_main | bool | exactly one per product |
 | sort_order | smallint | gallery order |
 
+### variant_heads (option names)
+| Column | Type | Notes |
+|---|---|---|
+| product_id | FK | cascade |
+| name | string(30) | e.g. Size |
+| position | tinyint | display order |
+| unique | (product_id, name), (product_id, position) | |
+
+### variant_values (option values)
+| Column | Type | Notes |
+|---|---|---|
+| variant_head_id | FK | cascade |
+| value | string(50) | e.g. M, Pink |
+| position | smallint | display order |
+| unique | (variant_head_id, value) | |
+
 ### product_variants
 | Column | Type | Notes |
 |---|---|---|
 | product_id | FK | indexed |
-| option1_value / option2_value | string(50), null | null on the default variant |
-| sku | string(64), unique | auto when empty |
+| sku | string(64), unique | auto when empty; unique incl. soft-deleted |
 | price | unsigned int | minor units |
 | sale_price | unsigned int, null | `< price` |
 | stock | unsigned int | never negative |
 | product_image_id | FK, null | must belong to same product |
 | status | ActiveStatus | |
 | sort_order | smallint | |
+| combination_key | string(64) | sorted value ids joined with `-` (`12-47`); `default` for a simple product |
+| live_key | string, null, generated | `combination_key` while live, NULL once soft-deleted |
 | deleted_at | | soft delete |
-| unique | (product_id, option1_value, option2_value) | |
+| unique | (product_id, live_key) | one live variant per combination; a deleted combination can be added again |
+
+`ProductVariant::syncVariantValues()` is the only place that writes the selections and `combination_key` together.
+
+### variant_selections (pivot)
+| Column | Type | Notes |
+|---|---|---|
+| product_variant_id | FK | cascade |
+| variant_value_id | FK | restrict: a value in use cannot be deleted |
+| primary key | (product_variant_id, variant_value_id) | |
+
+Rule (service, step 02): a variant selects exactly one value per head of its product; a simple product selects none.
 
 ### stock_movements
 | Column | Type | Notes |
@@ -124,7 +151,7 @@ All uploads go through `FileUploadService`; old files are deleted only after the
 ```
 app/
 ├── Enums/StockMovementReason.php
-├── Models/{Product, ProductImage, ProductVariant, StockMovement}.php
+├── Models/{Product, ProductImage, VariantHead, VariantValue, ProductVariant, StockMovement}.php
 ├── Services/Product/
 │   ├── ProductService.php        # create/update/delete, variant sync, images, cache
 │   ├── StockService.php          # the only place stock changes

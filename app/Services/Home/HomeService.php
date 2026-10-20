@@ -3,6 +3,7 @@
 namespace App\Services\Home;
 
 use App\Services\Category\CategoryService;
+use App\Services\Product\ProductService;
 use App\Services\Slider\SliderService;
 
 /**
@@ -14,16 +15,18 @@ class HomeService
     public function __construct(
         private readonly SliderService $sliders,
         private readonly CategoryService $categories,
+        private readonly ProductService $products,
     ) {}
 
     /**
-     * @return array{sliders: array<int, array<string, mixed>>, categories: array<int, array<string, ?string>>}
+     * @return array{sliders: array<int, array<string, mixed>>, categories: array<int, array<string, ?string>>, featuredProducts: array<int, array<string, mixed>>}
      */
     public function data(): array
     {
         return [
             'sliders' => $this->sliders->activeForStorefront(),
             'categories' => $this->categories->activeForStorefront(),
+            'featuredProducts' => $this->products->featuredForStorefront(),
         ];
     }
 }

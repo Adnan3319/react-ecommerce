@@ -105,6 +105,27 @@ class CategoryService
     }
 
     /**
+     * Active top-level categories with their active sub-categories, for pickers (product form, filters).
+     *
+     * @return array<int, array{id: int, name: string, children: array<int, array{id: int, name: string}>}>
+     */
+    public function treeForSelect(): array
+    {
+        return Category::query()
+            ->active()
+            ->roots()
+            ->ordered()
+            ->with(['children' => fn ($query) => $query->active()])
+            ->get()
+            ->map(fn (Category $root) => [
+                'id' => $root->id,
+                'name' => $root->name,
+                'children' => $root->children->map(fn (Category $child) => ['id' => $child->id, 'name' => $child->name])->all(),
+            ])
+            ->all();
+    }
+
+    /**
      * @throws ValidationException when the category still has sub-categories
      */
     public function delete(Category $category): void

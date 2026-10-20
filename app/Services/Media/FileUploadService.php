@@ -114,6 +114,23 @@ final class FileUploadService
     }
 
     /**
+     * URL of a size variant written by upload() (e.g. the "thumb" of a product image).
+     * Static (/images/...) and external paths are returned as-is.
+     */
+    public function variantUrl(?string $path, string $variant): ?string
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        if (! $this->isManagedPath($path)) {
+            return $path;
+        }
+
+        return $this->url($this->withSuffix($path, "-{$variant}"));
+    }
+
+    /**
      * `srcset` value ("<url> 960w, <url> 1920w") for a file uploaded with a preset that has
      * variants. Null when the path is static/external or fewer than two sizes exist.
      */

@@ -17,4 +17,13 @@ return [
     | not a schema limit: the variant_heads table already supports any number.
     */
     'max_variant_heads' => 2,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Variants Per Product
+    |--------------------------------------------------------------------------
+    | Upper bound on the variant rows of one product, so a cartesian explosion
+    | (3 heads x 20 values) cannot be submitted.
+    */
+    'max_variants_per_product' => 100,
 ];

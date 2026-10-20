@@ -98,3 +98,14 @@ it('serves uploads straight from public/uploads', function () {
         ->and(config('filesystems.disks.uploads.url'))->toBe('/uploads')
         ->and(config('media.disk'))->toBe('uploads');
 });
+
+describe('variantUrl', function () {
+    it('returns the url of a named size variant and leaves static and external paths alone', function () {
+        $service = app(FileUploadService::class);
+
+        expect($service->variantUrl('products/abc.webp', 'thumb'))->toEndWith('products/abc-thumb.webp')
+            ->and($service->variantUrl('/images/a.jpg', 'thumb'))->toBe('/images/a.jpg')
+            ->and($service->variantUrl('https://cdn.test/a.jpg', 'thumb'))->toBe('https://cdn.test/a.jpg')
+            ->and($service->variantUrl(null, 'thumb'))->toBeNull();
+    });
+});

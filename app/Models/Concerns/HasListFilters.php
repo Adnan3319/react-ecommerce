@@ -3,6 +3,7 @@
 namespace App\Models\Concerns;
 
 use App\Enums\ActiveStatus;
+use App\Support\Like;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -11,8 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait HasListFilters
 {
-    private const LIKE_ESCAPE = '!';
-
     /**
      * @param  Builder<static>  $query
      */
@@ -35,9 +34,6 @@ trait HasListFilters
             return;
         }
 
-        $escape = self::LIKE_ESCAPE;
-        $escaped = str_replace([$escape, '%', '_'], [$escape.$escape, $escape.'%', $escape.'_'], $term);
-
-        $query->whereRaw(static::SEARCH_COLUMN." LIKE ? ESCAPE '{$escape}'", ["%{$escaped}%"]);
+        $query->whereRaw(static::SEARCH_COLUMN." LIKE ? ESCAPE '".Like::ESCAPE."'", ['%'.Like::escape($term).'%']);
     }
 }

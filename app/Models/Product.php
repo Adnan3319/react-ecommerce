@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\ActiveStatus;
 use App\Models\Concerns\HasAuditFields;
+use App\Models\Concerns\HasListFilters;
+use App\Support\Like;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,7 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasAuditFields, HasFactory, SoftDeletes;
+    use HasAuditFields, HasFactory, HasListFilters, SoftDeletes;
+
+    public const SEARCH_COLUMN = 'name';
 
     protected $fillable = [
         'category_id',
@@ -124,6 +128,45 @@ class Product extends Model
     protected function inStock(Builder $query): void
     {
         $query->whereHas('variants', fn (Builder $variants) => $variants->active()->where('stock', '>', 0));
+    }
+
+    /**
+     * Name or SKU of a live variant contains the term (LIKE wildcards in the term match literally).
+     *
+     * @param  Builder<Product>  $query
+     */
+    #[Scope]
+    protected function searchNameOrSku(Builder $query, ?string $term): void
+    {
+        if (blank($term)) {
+            return;
+        }
+
+        $pattern = '%'.Like::escape($term).'%';
+        $escape = Like::ESCAPE;
+
+        $query->where(fn (Builder $match) => $match
+            ->whereRaw("products.name LIKE ? ESCAPE '{$escape}'", [$pattern])
+            ->orWhereHas('variants', fn (Builder $variants) => $variants->whereRaw("sku LIKE ? ESCAPE '{$escape}'", [$pattern])));
+    }
+
+    /**
+     * Stock state by total stock of the active variants: out (0), low (1 to the threshold), in (above it).
+     *
+     * @param  Builder<Product>  $query
+     */
+    #[Scope]
+    protected function stockState(Builder $query, string $state): void
+    {
+        $total = '(SELECT COALESCE(SUM(v.stock), 0) FROM product_variants v WHERE v.product_id = products.id AND v.status = ? AND v.deleted_at IS NULL)';
+        $active = ActiveStatus::Active->value;
+        $threshold = (int) config('shop.low_stock_threshold');
+
+        match ($state) {
+            'in' => $query->whereRaw("{$total} > ?", [$active, $threshold]),
+            'low' => $query->whereRaw("{$total} BETWEEN 1 AND ?", [$active, $threshold]),
+            default => $query->whereRaw("{$total} = 0", [$active]),
+        };
     }
 
     /**

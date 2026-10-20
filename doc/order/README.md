@@ -15,7 +15,7 @@
 | Payment | Cash on Delivery only. `PaymentMethod` enum has `cod`; gateways later without changing the order flow. |
 | Account | Guest only: name, phone, address. Customer is identified by phone. |
 | Flows | **Buy now** (form on the product page, one variant) and **Cart** (session cart, form on the cart page). Both use the same `OrderForm` component and the same `CheckoutService`. |
-| Delivery area | From `config('shop.delivery_zones')` (key → label + charge). No admin UI yet. |
+| Delivery area | From `config('shop.delivery_zones')` (key → label + charge in minor units; passed to the frontend in minor units too). No admin UI yet. |
 | Free delivery | Not now. |
 | Max quantity | `config('shop.max_qty_per_item')` per order line. |
 | Stock | Decreases when the order is placed (status `pending`). Restored on `cancelled` and `returned`. |

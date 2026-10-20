@@ -9,7 +9,7 @@ Read `CLAUDE.md`, `doc/order/README.md` and open `mockups/01-product-page.png`, 
 
 1. Routes: `GET /products/{slug}` (`products.show`), `POST /orders` (`orders.store`, throttle 5/min per IP), `GET /orders/{token}/thank-you` (`orders.success`).
 2. Old slugs: if a slug was changed, 301 to the current one (keep a `product_slug_redirects` table or document as TODO if not built yet — state which in the plan).
-3. `Storefront\ProductController@show`: active product only (404 otherwise). Props: product (name, descriptions, images with srcset, heads + values, variants with id, value ids, effective price, sale price, discount, stock state, image id), breadcrumb, delivery zones (key, label, charge in taka), `maxQty`, `seo` (title, description, canonical, og image, Product + BreadcrumbList JSON-LD with price and availability).
+3. `Storefront\ProductController@show`: active product only (404 otherwise). Props: product (name, descriptions, images with srcset, heads + values, variants with id, value ids, effective price, sale price, discount, stock state, image id), breadcrumb, delivery zones (key, label, charge in minor units, same as config), `maxQty`, `seo` (title, description, canonical, og image, Product + BreadcrumbList JSON-LD with price and availability).
 4. Product page data cached per product (plain array, cleared on product write).
 5. `PlaceOrderRequest`: name (2–80), phone (BD), address (10–500), delivery_zone (config keys), note (≤500), items (1 for buy now), honeypot `website` empty, idempotency_key (uuid), utm/fbclid optional. Builds `CheckoutData`; source `buy_now`.
 6. `Storefront\OrderController@store` → `CheckoutService::place` → redirect to `orders.success`.

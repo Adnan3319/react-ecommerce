@@ -175,6 +175,7 @@ resources/js/
 
 ## Testing
 - Read testcase.md before writing any test and follow it.
+- Any change to checkout, stock or order numbering must also pass: `php artisan test -c phpunit-mysql.xml --group=mysql`
 
 ## Build Order (current scope)
 1. Admin auth (DONE)

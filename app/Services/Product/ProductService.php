@@ -5,6 +5,7 @@ namespace App\Services\Product;
 use App\Enums\ActiveStatus;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductSlugRedirect;
 use App\Models\ProductVariant;
 use App\Models\VariantHead;
 use App\Models\VariantValue;
@@ -84,7 +85,7 @@ class ProductService
             $product->delete();
         });
 
-        $this->cache->flush();
+        $this->cache->flush($product->id);
     }
 
     /**
@@ -124,9 +125,23 @@ class ProductService
         }
 
         $this->deleteFiles($obsolete);
-        $this->cache->flush();
+        $this->cache->flush($saved->id);
 
         return $saved;
+    }
+
+    /**
+     * Keeps the old URL alive: a changed slug is remembered so the storefront can 301 from it. The new
+     * slug's own redirect row (the product moved back to an earlier slug) is dropped to avoid a loop.
+     */
+    private function recordSlugChange(Product $product, ?string $oldSlug): void
+    {
+        if ($oldSlug === null || $oldSlug === $product->slug) {
+            return;
+        }
+
+        ProductSlugRedirect::query()->where('old_slug', $product->slug)->delete();
+        ProductSlugRedirect::query()->updateOrCreate(['old_slug' => $oldSlug], ['product_id' => $product->id]);
     }
 
     /**
@@ -135,7 +150,11 @@ class ProductService
      */
     private function persist(Product $product, ProductPayload $payload, array $uploaded): array
     {
+        $oldSlug = $product->exists ? $product->slug : null;
+
         $product->fill($payload->attributes)->save();
+
+        $this->recordSlugChange($product, $oldSlug);
 
         if (! $payload->fullSave) {
             return [$product, []];

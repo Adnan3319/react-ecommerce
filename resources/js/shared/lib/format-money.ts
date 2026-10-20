@@ -5,6 +5,7 @@ const MINOR_UNITS_PER_MAJOR = 100;
 const formatter = new Intl.NumberFormat(LOCALE, {
     style: 'currency',
     currency: CURRENCY,
+    currencyDisplay: 'narrowSymbol',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
 });

@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { DEFAULT_DELIVERY_CHARGE } from '@/storefront/config/site';
 import { CartLineList, EmptyCart, useCart } from '@/storefront/features/cart';
-import { OrderForm } from '@/storefront/features/order';
+import OrderForm from '@/storefront/features/order/components/OrderForm/OrderForm';
 
 export default function Cart() {
     const { lines, subtotal, itemCount, setQuantity, remove } = useCart();

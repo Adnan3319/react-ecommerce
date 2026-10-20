@@ -78,7 +78,7 @@ class StockService
             $variant->syncOriginalAttribute('stock');
         });
 
-        $this->cache->flush();
+        $this->cache->flush($variant->product_id);
     }
 
     private function moveTo(ProductVariant $variant, int $newQuantity, StockMovementReason $reason, ?string $note = null): void
@@ -106,6 +106,6 @@ class StockService
             $variant->syncOriginalAttribute('stock');
         });
 
-        $this->cache->flush();
+        $this->cache->flush($variant->product_id);
     }
 }

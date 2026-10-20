@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\CaptureAttribution;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Responses\ApiError;
 use App\Http\Responses\ApiResponse;
@@ -35,6 +36,8 @@ return Application::configure(basePath: dirname(__DIR__))
             : route('home'));
 
         $middleware->web(append: [
+            CaptureAttribution::class,
+            CaptureAttribution::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);

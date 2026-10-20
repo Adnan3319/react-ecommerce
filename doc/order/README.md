@@ -100,6 +100,14 @@ Indexes: status + created_at, customer_id, shipping_phone, created_at.
 | changed_by | user id, null = customer/system |
 | created_at | |
 
+### order_number_sequences
+| Column | Notes |
+|---|---|
+| day | primary key, `YYMMDD` |
+| last_number | last sequence handed out that day |
+
+One row per day. It is the only source of order numbers (see §5).
+
 ---
 
 ## 4. Status rules (`OrderStatus` enum owns them)
@@ -135,9 +143,11 @@ One `DB::transaction`:
 4. Load variants with `lockForUpdate()`; each must be active, its product active, quantity 1..`max_qty_per_item`, stock ≥ quantity. Otherwise a validation error naming the item.
 5. Price from DB (`effective_price`); delivery charge from config zone; totals computed in minor units.
 6. Upsert customer by phone.
-7. Create order (number, token) + items (snapshot) + `placed` history row.
+7. Create order (number, token) + items (snapshot) + `placed` history row. The number comes from `OrderNumberGenerator::next()` (below).
 8. Stock −qty per line via `StockService` (`order_placed`, reference = order).
 9. After commit: clear cart (cart flow), dispatch `NotifyAdminOfNewOrder` job.
+
+**Order numbers (`OrderNumberGenerator`).** `CK-YYMMDD-NNNN` comes from the day's row in `order_number_sequences`, taken inside the order transaction: on MySQL one atomic `INSERT ... ON DUPLICATE KEY UPDATE last_number = LAST_INSERT_ID(last_number + 1)` creates or increments the row and keeps its lock until commit. Concurrent orders therefore get different numbers, and a rolled-back order gives its number back (no gaps). The first number of a day starts after the highest existing `orders.number` of that day. Do not compute a number from `MAX(number)`: under MySQL's transaction snapshot parallel requests cannot see each other's orders and would all pick the same one. `createWithNumber()` still retries on a unique violation of `orders.number` (only possible for orders created outside the generator). Verified by `tests/Mysql/CheckoutConcurrencyTest.php`.
 
 Rate limits (route level): order POST 5/min per IP.
 Honeypot field `website` must be empty.

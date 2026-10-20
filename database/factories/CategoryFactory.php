@@ -27,6 +27,11 @@ class CategoryFactory extends Factory
         ];
     }
 
+    public function childOf(Category $parent): static
+    {
+        return $this->state(fn () => ['parent_id' => $parent->id]);
+    }
+
     public function inactive(): static
     {
         return $this->state(fn () => ['status' => ActiveStatus::Inactive]);

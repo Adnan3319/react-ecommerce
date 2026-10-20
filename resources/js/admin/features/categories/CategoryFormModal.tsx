@@ -12,16 +12,18 @@ import { Modal } from '@admin/components/ui/modal';
 import { store, update } from '@/routes/admin/categories';
 import { STATUS_ACTIVE } from '@/shared/constants/status';
 import type { ActiveStatus, StatusOption } from '@/shared/types';
-import type { Category } from './types';
+import type { Category, ParentOption } from './types';
 
 type CategoryFormModalProps = {
     category: Category | null;
     statuses: StatusOption[];
+    parents: ParentOption[];
     defaultSortOrder: number;
     onClose: () => void;
 };
 
 type CategoryFormData = {
+    parent_id: string;
     name: string;
     slug: string;
     headline: string;
@@ -34,18 +36,30 @@ type CategoryFormData = {
 
 const noop = () => undefined;
 
+/** Select value for "top level"; sent to the backend as an empty parent. */
+const NO_PARENT = 'none';
+
 /**
  * Mounted only while open, so every open starts from fresh form state.
  */
 export default function CategoryFormModal({
     category,
     statuses,
+    parents,
     defaultSortOrder,
     onClose,
 }: CategoryFormModalProps) {
     const isEdit = category !== null;
+    const hasChildren = (category?.children_count ?? 0) > 0;
+    const parentOptions = [
+        { value: NO_PARENT, label: 'None (top level)' },
+        ...parents
+            .filter((parent) => parent.id !== category?.id)
+            .map((parent) => ({ value: String(parent.id), label: parent.name })),
+    ];
 
     const form = useForm<CategoryFormData>({
+        parent_id: category?.parent_id ? String(category.parent_id) : NO_PARENT,
         name: category?.name ?? '',
         slug: category?.slug ?? '',
         headline: category?.headline ?? '',
@@ -81,15 +95,14 @@ export default function CategoryFormModal({
 
         const options = { forceFormData: true, preserveScroll: true, onSuccess: onClose };
 
-        if (isEdit) {
+        form.transform((data) => ({
+            ...data,
+            parent_id: data.parent_id === NO_PARENT ? '' : data.parent_id,
             // Multipart bodies need POST; Laravel reads the spoofed method.
-            form.transform((data) => ({ ...data, _method: 'put' }));
-            form.post(update(category.id).url, options);
+            ...(isEdit ? { _method: 'put' } : {}),
+        }));
 
-            return;
-        }
-
-        form.post(store().url, options);
+        form.post(isEdit ? update(category.id).url : store().url, options);
     };
 
     return (
@@ -102,6 +115,25 @@ export default function CategoryFormModal({
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
                     {isEdit ? 'Edit category' : 'Add category'}
                 </h2>
+
+                <div>
+                    <Label>Parent category</Label>
+                    {hasChildren ? (
+                        <p className="text-sm text-gray-500">
+                            This category has sub-categories, so it stays top-level.
+                        </p>
+                    ) : (
+                        <Select
+                            options={parentOptions}
+                            defaultValue={form.data.parent_id}
+                            placeholder="Select parent"
+                            onChange={(value) => form.setData('parent_id', value)}
+                        />
+                    )}
+                    {form.errors.parent_id && (
+                        <p className="mt-1.5 text-xs text-error-500">{form.errors.parent_id}</p>
+                    )}
+                </div>
 
                 <div>
                     <Label>Image (optional)</Label>

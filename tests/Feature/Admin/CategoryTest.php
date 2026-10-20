@@ -380,6 +380,7 @@ describe('storefront cache', function () {
                 'headline' => $categories[0]['headline'],
                 'description' => $categories[0]['description'],
                 'image' => Storage::disk('uploads')->url('categories/a.webp'),
+                'children' => [],
             ]);
     });
 

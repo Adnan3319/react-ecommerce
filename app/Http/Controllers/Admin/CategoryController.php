@@ -32,6 +32,7 @@ class CategoryController extends Controller
                 fn (ActiveStatus $status) => ['value' => $status->value, 'label' => $status->label()],
                 ActiveStatus::cases(),
             ),
+            'parents' => $this->categories->parentOptions(),
         ]);
     }
 

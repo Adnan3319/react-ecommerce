@@ -1,13 +1,20 @@
 import { usePage } from '@inertiajs/react';
-import type { Category } from '@/storefront/config/site';
+import type { Category, CategoryNode } from '@/storefront/config/site';
 
-/** Active categories shared by the backend on every storefront page. */
-export function useCategories(): Category[] {
-    return usePage<{ categories: Category[] }>().props.categories;
+/** Active top-level categories, each with its active sub-categories under `children`. */
+export function useCategories(): CategoryNode[] {
+    return usePage<{ categories: CategoryNode[] }>().props.categories;
 }
 
+/** Finds a top-level category or a sub-category by slug. */
 export function useCategory(slug: string | null | undefined): Category | undefined {
     const categories = useCategories();
 
-    return slug ? categories.find((category) => category.slug === slug) : undefined;
+    if (!slug) {
+        return undefined;
+    }
+
+    return categories
+        .flatMap((category) => [category, ...category.children])
+        .find((category) => category.slug === slug);
 }

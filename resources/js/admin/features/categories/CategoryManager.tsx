@@ -13,11 +13,12 @@ import type { Category, CategoryIndexProps } from './types';
 
 type FormTarget = { category: Category | null };
 
-export default function CategoryManager({ categories, filters, statuses }: CategoryIndexProps) {
+export default function CategoryManager({ categories, filters, statuses, parents }: CategoryIndexProps) {
     const [formTarget, setFormTarget] = useState<FormTarget | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
     const [deleting, setDeleting] = useState(false);
     const [togglingId, setTogglingId] = useState<number | null>(null);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     const { search, setSearch, status, setStatus, perPage, setPerPage, goToPage, processing } =
         useListFilters(index().url, filters);
@@ -43,7 +44,11 @@ export default function CategoryManager({ categories, filters, statuses }: Categ
 
         router.delete(destroy(deleteTarget.id).url, {
             preserveScroll: true,
-            onStart: () => setDeleting(true),
+            onStart: () => {
+                setDeleteError(null);
+                setDeleting(true);
+            },
+            onError: (errors) => setDeleteError(errors.category ?? 'Could not delete the category.'),
             onFinish: () => {
                 setDeleting(false);
                 setDeleteTarget(null);
@@ -59,6 +64,15 @@ export default function CategoryManager({ categories, filters, statuses }: Categ
                     Add category
                 </Button>
             </div>
+
+            {deleteError && (
+                <p
+                    role="alert"
+                    className="mb-4 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-700 dark:bg-error-500/15 dark:text-error-500"
+                >
+                    {deleteError}
+                </p>
+            )}
 
             <CategoryTable
                 categories={categories.data}
@@ -89,6 +103,7 @@ export default function CategoryManager({ categories, filters, statuses }: Categ
                 <CategoryFormModal
                     category={formTarget.category}
                     statuses={statuses}
+                    parents={parents}
                     defaultSortOrder={meta.total + 1}
                     onClose={() => setFormTarget(null)}
                 />

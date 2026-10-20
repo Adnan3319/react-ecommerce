@@ -9,6 +9,9 @@ export type Category = {
     image: string | null;
 };
 
+/** A top-level category with its active sub-categories (shape of the shared `categories` prop). */
+export type CategoryNode = Category & { children: Category[] };
+
 export const LOGO = {
     src: '/images/logo/checkit-logo.png',
     lightSrc: '/images/logo/checkit-logo-light.png',

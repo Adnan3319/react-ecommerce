@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            // Two levels at most (enforced in SaveCategoryRequest); a parent with children cannot be deleted.
+            $table->foreignId('parent_id')->nullable()->index()->constrained('categories')->restrictOnDelete();
             $table->string('name');
             // Unique across soft-deleted rows too, so old URLs are never reused.
             $table->string('slug')->unique();

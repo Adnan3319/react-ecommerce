@@ -4,6 +4,9 @@ export type Category = {
     id: number;
     name: string;
     slug: string;
+    parent_id: number | null;
+    parent_name?: string | null;
+    children_count?: number;
     headline: string | null;
     description: string | null;
     image_url: string | null;
@@ -11,6 +14,11 @@ export type Category = {
     status: ActiveStatus;
     created_at: string | null;
     updated_at: string | null;
+};
+
+export type ParentOption = {
+    id: number;
+    name: string;
 };
 
 export type CategoryFilters = {
@@ -23,4 +31,5 @@ export type CategoryIndexProps = {
     categories: Paginated<Category>;
     filters: CategoryFilters;
     statuses: StatusOption[];
+    parents: ParentOption[];
 };

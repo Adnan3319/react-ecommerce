@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Category;
 
 use App\Enums\ActiveStatus;
 use App\Models\Category;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -40,6 +41,8 @@ class SaveCategoryRequest extends FormRequest
         $required = $this->category() ? 'sometimes' : 'required';
 
         return [
+            // Hierarchy rules (max two levels) are checked in after().
+            'parent_id' => ['nullable', 'integer'],
             'name' => [
                 $required, 'string', 'max:255',
                 Rule::unique('categories', 'name')->ignore($this->category())->whereNull('deleted_at'),
@@ -63,11 +66,53 @@ class SaveCategoryRequest extends FormRequest
     }
 
     /**
+     * @return array<int, callable>
+     */
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            $message = $this->parentError();
+
+            if ($message !== null) {
+                $validator->errors()->add('parent_id', $message);
+            }
+        }];
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function categoryData(): array
     {
         return $this->safe()->except(['image', 'remove_image']);
+    }
+
+    /**
+     * Why the submitted parent is not allowed, or null when it is fine (or not submitted).
+     */
+    private function parentError(): ?string
+    {
+        $parentId = $this->integer('parent_id');
+
+        if (! $this->filled('parent_id')) {
+            return null;
+        }
+
+        $category = $this->category();
+
+        if ($category !== null && $parentId === $category->id) {
+            return 'A category cannot be its own parent.';
+        }
+
+        if (! Category::query()->active()->roots()->whereKey($parentId)->exists()) {
+            return 'The parent must be an active top-level category.';
+        }
+
+        if ($category !== null && $category->children()->exists()) {
+            return 'A category with sub-categories cannot become a sub-category.';
+        }
+
+        return null;
     }
 
     private function category(): ?Category

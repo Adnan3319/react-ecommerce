@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class CategoryService
@@ -30,7 +31,9 @@ class CategoryService
         return Category::query()
             ->search($filters['search'] ?? null)
             ->withStatus($filters['status'] ?? null)
-            ->ordered()
+            ->treeOrdered()
+            ->with('parent:id,name')
+            ->withCount('children')
             ->paginate($filters['per_page'])
             ->withQueryString();
     }
@@ -85,8 +88,33 @@ class CategoryService
         return $category;
     }
 
+    /**
+     * Active top-level categories a category can be filed under.
+     *
+     * @return array<int, array{id: int, name: string}>
+     */
+    public function parentOptions(): array
+    {
+        return Category::query()
+            ->active()
+            ->roots()
+            ->ordered()
+            ->get(['id', 'name'])
+            ->map(fn (Category $category) => ['id' => $category->id, 'name' => $category->name])
+            ->all();
+    }
+
+    /**
+     * @throws ValidationException when the category still has sub-categories
+     */
     public function delete(Category $category): void
     {
+        if ($category->children()->exists()) {
+            throw ValidationException::withMessages([
+                'category' => 'Delete or move its sub-categories first.',
+            ]);
+        }
+
         $path = $category->image;
 
         DB::transaction(fn () => $category->delete());
@@ -96,24 +124,38 @@ class CategoryService
     }
 
     /**
-     * Active categories for the storefront as plain arrays (cached forever, flushed on every write).
+     * Active top-level categories with their active sub-categories nested under `children`,
+     * as plain arrays (cached forever, flushed on every write).
      *
-     * @return array<int, array<string, ?string>>
+     * @return array<int, array<string, mixed>>
      */
     public function activeForStorefront(): array
     {
         return Cache::rememberForever(self::ACTIVE_CACHE_KEY, fn () => Category::query()
             ->active()
+            ->roots()
             ->ordered()
-            ->get(['name', 'slug', 'headline', 'description', 'image'])
-            ->map(fn (Category $category) => [
-                'slug' => $category->slug,
-                'label' => $category->name,
-                'headline' => $category->headline,
-                'description' => $category->description,
-                'image' => $this->uploads->url($category->image),
+            ->with(['children' => fn ($query) => $query->active()])
+            ->get()
+            ->map(fn (Category $root) => [
+                ...$this->storefrontNode($root),
+                'children' => $root->children->map(fn (Category $child) => $this->storefrontNode($child))->all(),
             ])
             ->all());
+    }
+
+    /**
+     * @return array<string, ?string>
+     */
+    private function storefrontNode(Category $category): array
+    {
+        return [
+            'slug' => $category->slug,
+            'label' => $category->name,
+            'headline' => $category->headline,
+            'description' => $category->description,
+            'image' => $this->uploads->url($category->image),
+        ];
     }
 
     private function flushCache(): void

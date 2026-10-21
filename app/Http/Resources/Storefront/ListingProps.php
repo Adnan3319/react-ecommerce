@@ -18,6 +18,8 @@ final class ListingProps
         ProductFilter::SORT_PRICE_DESC => 'Price: high to low',
     ];
 
+    private const BEST_MATCH_LABEL = 'Best match';
+
     /**
      * @param  array{products: LengthAwarePaginator<int, Product>, filters: array<string, mixed>}  $page
      * @param  array<string, mixed>  $seo
@@ -37,12 +39,26 @@ final class ListingProps
             ],
             'products' => ProductCardResource::collection($page['products']),
             'filters' => $page['filters'],
-            'sortOptions' => array_map(
-                fn (string $value, string $label) => ['value' => $value, 'label' => $label],
-                array_keys(self::SORT_LABELS),
-                self::SORT_LABELS,
-            ),
+            'sortOptions' => self::sortOptions($page['filters']['active']['q'] !== null && ! $page['filters']['active']['q_too_short']),
             'seo' => $seo,
         ];
+    }
+
+    /**
+     * Best match is offered only while a search term drives the listing; it comes first as the default.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    private static function sortOptions(bool $withBestMatch): array
+    {
+        $labels = $withBestMatch
+            ? [ProductFilter::SORT_BEST_MATCH => self::BEST_MATCH_LABEL, ...self::SORT_LABELS]
+            : self::SORT_LABELS;
+
+        return array_map(
+            fn (string $value, string $label) => ['value' => $value, 'label' => $label],
+            array_keys($labels),
+            $labels,
+        );
     }
 }

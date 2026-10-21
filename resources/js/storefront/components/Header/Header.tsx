@@ -7,7 +7,7 @@ import { Icon, Image } from '@/storefront/components/ui';
 import { LOGO } from '@/storefront/config/site';
 import { CartLink } from '../CartLink';
 import { MAIN_NAV_ID, MainNav } from '../MainNav';
-import { SearchBar } from '../SearchBar';
+import HeaderSearch, { HEADER_SEARCH_INPUT_ID } from '../HeaderSearch';
 
 /** Scroll distance (px) after which the home header turns solid. */
 const SCROLL_SOLID_OFFSET = 24;
@@ -19,6 +19,8 @@ export default function Header() {
     // On the home page the glass header floats over the hero (desktop).
     const isHome = url.split('?')[0] === home().url;
     const [isScrolled, setIsScrolled] = useState(false);
+    // On mobile the search field is hidden until the search icon opens it.
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     useEffect(() => {
         function syncScroll(): void {
@@ -30,6 +32,18 @@ export default function Header() {
 
         return () => window.removeEventListener('scroll', syncScroll);
     }, []);
+
+    function toggleSearch(): void {
+        const next = !isSearchOpen;
+
+        setIsSearchOpen(next);
+
+        if (next) {
+            requestAnimationFrame(() =>
+                document.getElementById(HEADER_SEARCH_INPUT_ID)?.focus(),
+            );
+        }
+    }
 
     return (
         <header
@@ -60,11 +74,30 @@ export default function Header() {
                     onNavigate={() => setIsMenuOpen(false)}
                 />
 
-                <div className="order-3 col-span-2 md:order-none md:col-span-1">
-                    <SearchBar />
+                <div
+                    className={cn(
+                        'order-3 col-span-2 md:order-none md:col-span-1',
+                        !isSearchOpen && 'hidden md:block',
+                    )}
+                >
+                    <HeaderSearch onNavigate={() => setIsSearchOpen(false)} />
                 </div>
 
                 <div className="order-2 flex items-center gap-2 md:order-none">
+                    <button
+                        type="button"
+                        aria-label={
+                            isSearchOpen ? 'Close search' : 'Open search'
+                        }
+                        aria-expanded={isSearchOpen}
+                        onClick={toggleSearch}
+                        className="flex h-11 w-11 items-center justify-center rounded-control text-white transition-colors hover:bg-white/10 md:hidden"
+                    >
+                        <Icon
+                            name={isSearchOpen ? 'close' : 'search'}
+                            size={24}
+                        />
+                    </button>
                     <CartLink />
                     <button
                         type="button"

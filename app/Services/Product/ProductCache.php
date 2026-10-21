@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Services\Dashboard\DashboardCache;
+use App\Services\Storefront\CatalogFilterCache;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -16,7 +17,10 @@ class ProductCache
 
     private const PAGE_KEY_PREFIX = 'products.page.';
 
-    public function __construct(private readonly DashboardCache $dashboard) {}
+    public function __construct(
+        private readonly DashboardCache $dashboard,
+        private readonly CatalogFilterCache $catalogFilters,
+    ) {}
 
     public static function pageKey(int $productId): string
     {
@@ -32,6 +36,8 @@ class ProductCache
         Cache::forget(self::NEW_ARRIVALS_KEY);
         // The dashboard lists low-stock variants.
         $this->dashboard->forget();
+        // Listing price bounds and option counts depend on products and stock.
+        $this->catalogFilters->flush();
 
         if ($productId !== null) {
             Cache::forget(self::pageKey($productId));

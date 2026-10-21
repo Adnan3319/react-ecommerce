@@ -10,7 +10,6 @@ use App\Support\Money;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,9 +19,10 @@ class CatalogService
 {
     public const PER_PAGE = 12;
 
-    private const FILTERS_TTL_SECONDS = 600;
-
-    private const FILTERS_CACHE_PREFIX = 'catalog.filters.';
+    public function __construct(
+        private readonly SearchMatcher $matcher,
+        private readonly CatalogFilterCache $filterCache,
+    ) {}
 
     /**
      * The active category with this slug whose parent (if any) is active too.
@@ -51,15 +51,17 @@ class CatalogService
         $categoryIds = $category === null ? null : $this->categoryIds($category);
         $available = $this->availableFilters($category, $categoryIds);
         $filter = $filter->restrictedTo($this->knownHeads($available));
+        $term = $filter->searchTerm();
 
         $products = Product::query()
             ->active()
             ->inCategories($categoryIds)
+            ->when($term !== null, fn (Builder $query) => $this->matcher->apply($query, $term))
             ->when($filter->hasVariantConditions(), fn (Builder $query) => $query->whereHas(
                 'variants',
                 fn (Builder $variants) => $this->matchSingleVariant($variants, $filter),
             ))
-            ->tap(fn (Builder $query) => $this->applySort($query, $filter->sort))
+            ->tap(fn (Builder $query) => $this->applySort($query, $filter->sort, $term))
             ->with(['mainImage', 'activeVariants', 'variantHeads.values'])
             ->paginate(self::PER_PAGE)
             ->withQueryString();
@@ -104,9 +106,11 @@ class CatalogService
     /**
      * @param  Builder<Product>  $query
      */
-    private function applySort(Builder $query, string $sort): void
+    private function applySort(Builder $query, string $sort, ?string $term): void
     {
-        if ($sort !== ProductFilter::SORT_NEWEST) {
+        if ($sort === ProductFilter::SORT_BEST_MATCH && $term !== null) {
+            $this->matcher->orderByRelevance($query, $term);
+        } elseif (in_array($sort, [ProductFilter::SORT_PRICE_ASC, ProductFilter::SORT_PRICE_DESC], true)) {
             $direction = $sort === ProductFilter::SORT_PRICE_ASC ? 'ASC' : 'DESC';
 
             $query->orderByRaw(
@@ -123,7 +127,7 @@ class CatalogService
      *
      * @return array<int, int>
      */
-    private function categoryIds(Category $category): array
+    public function categoryIds(Category $category): array
     {
         return Category::query()
             ->active()
@@ -141,9 +145,8 @@ class CatalogService
      */
     private function availableFilters(?Category $category, ?array $categoryIds): array
     {
-        return Cache::remember(
-            self::FILTERS_CACHE_PREFIX.($category?->id ?? 'all'),
-            self::FILTERS_TTL_SECONDS,
+        return $this->filterCache->remember(
+            $category?->id,
             fn () => ['price' => $this->priceBounds($categoryIds), 'heads' => $this->heads($categoryIds)],
         );
     }

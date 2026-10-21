@@ -2,7 +2,7 @@ import { router } from '@inertiajs/react';
 import type { RequestPayload } from '@inertiajs/core';
 import { search } from '@/routes';
 import { show } from '@/routes/categories';
-import { DEFAULT_SORT, LISTING_PROPS } from './constants';
+import { LISTING_PROPS, defaultSort } from './constants';
 import type { ListingFilters, ListingMode, SortValue } from './types';
 
 type Active = ListingFilters['active'];
@@ -33,7 +33,7 @@ function toQuery(active: Active, mode: ListingMode): RequestPayload {
         query.in_stock = 1;
     }
 
-    if (active.sort !== DEFAULT_SORT) {
+    if (active.sort !== defaultSort(active)) {
         query.sort = active.sort;
     }
 
@@ -98,7 +98,7 @@ export function useCatalogFilters(
                 min: null,
                 max: null,
                 in_stock: false,
-                sort: DEFAULT_SORT,
+                sort: defaultSort(active),
                 f: {},
             }),
     };

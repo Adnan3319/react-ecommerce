@@ -15,6 +15,7 @@ use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductOptionsController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Storefront\SearchController;
+use App\Http\Controllers\Storefront\SearchSuggestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,6 +25,7 @@ Route::get('/products/{slug}/options', [ProductOptionsController::class, 'show']
 Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:orders')->name('orders.store');
 Route::get('/orders/{token}/thank-you', [OrderController::class, 'show'])->name('orders.success');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search/suggest', SearchSuggestController::class)->middleware('throttle:search-suggest')->name('search.suggest');
 Route::get('/categories/{slug}', [StorefrontCategoryController::class, 'show'])->name('categories.show');
 Route::get('/cart', [CartController::class, 'show'])->name('cart');
 Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->group(function () {

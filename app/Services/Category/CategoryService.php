@@ -5,6 +5,7 @@ namespace App\Services\Category;
 use App\Enums\ActiveStatus;
 use App\Models\Category;
 use App\Services\Media\FileUploadService;
+use App\Services\Storefront\CatalogFilterCache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +21,10 @@ class CategoryService
 
     private const IMAGE_PRESET = 'category';
 
-    public function __construct(private readonly FileUploadService $uploads) {}
+    public function __construct(
+        private readonly FileUploadService $uploads,
+        private readonly CatalogFilterCache $catalogFilters,
+    ) {}
 
     /**
      * @param  array{search?: ?string, status?: ?ActiveStatus, per_page: int}  $filters
@@ -182,5 +186,7 @@ class CategoryService
     private function flushCache(): void
     {
         Cache::forget(self::ACTIVE_CACHE_KEY);
+        // A category's visibility or tree position changes which products the listing filters cover.
+        $this->catalogFilters->flush();
     }
 }

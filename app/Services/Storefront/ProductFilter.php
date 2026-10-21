@@ -18,7 +18,11 @@ final readonly class ProductFilter
 
     public const SORT_PRICE_DESC = 'price_desc';
 
-    public const SORTS = [self::SORT_NEWEST, self::SORT_PRICE_ASC, self::SORT_PRICE_DESC];
+    public const SORT_BEST_MATCH = 'best_match';
+
+    public const SORTS = [self::SORT_NEWEST, self::SORT_PRICE_ASC, self::SORT_PRICE_DESC, self::SORT_BEST_MATCH];
+
+    public const MIN_TERM_LENGTH = 2;
 
     private const MAX_TERM_LENGTH = 100;
 
@@ -55,15 +59,15 @@ final readonly class ProductFilter
             [$min, $max] = [$max, $min];
         }
 
-        $sort = $query['sort'] ?? null;
+        $q = self::term($query['q'] ?? null);
 
         return new self(
-            q: self::term($query['q'] ?? null),
+            q: $q,
             category: self::key($query['category'] ?? null),
             minPrice: $min,
             maxPrice: $max,
             inStock: filter_var($query['in_stock'] ?? false, FILTER_VALIDATE_BOOLEAN),
-            sort: is_string($sort) && in_array($sort, self::SORTS, true) ? $sort : self::SORT_NEWEST,
+            sort: self::sort($query['sort'] ?? null, $q),
             heads: self::heads($query['f'] ?? null),
         );
     }
@@ -73,7 +77,23 @@ final readonly class ProductFilter
      */
     public function forCategoryPage(): self
     {
-        return new self(null, null, $this->minPrice, $this->maxPrice, $this->inStock, $this->sort, $this->heads);
+        return new self(null, null, $this->minPrice, $this->maxPrice, $this->inStock, self::sort($this->sort, null), $this->heads);
+    }
+
+    /**
+     * The term the products are matched against; null when there is none or it is too short.
+     */
+    public function searchTerm(): ?string
+    {
+        return $this->q !== null && mb_strlen($this->q) >= self::MIN_TERM_LENGTH ? $this->q : null;
+    }
+
+    /**
+     * True when a term was typed but is too short to search with.
+     */
+    public function hasShortTerm(): bool
+    {
+        return $this->q !== null && $this->searchTerm() === null;
     }
 
     /**
@@ -109,16 +129,17 @@ final readonly class ProductFilter
      */
     public function isNarrowed(): bool
     {
-        return $this->hasVariantConditions() || $this->sort !== self::SORT_NEWEST;
+        return $this->hasVariantConditions() || $this->sort !== self::sort(null, $this->q);
     }
 
     /**
-     * @return array{q: ?string, category: ?string, min: ?string, max: ?string, in_stock: bool, sort: string, f: array<string, list<string>>}
+     * @return array{q: ?string, q_too_short: bool, category: ?string, min: ?string, max: ?string, in_stock: bool, sort: string, f: array<string, list<string>>}
      */
     public function toArray(): array
     {
         return [
             'q' => $this->q,
+            'q_too_short' => $this->hasShortTerm(),
             'category' => $this->category,
             'min' => $this->minPrice === null ? null : Money::toTaka($this->minPrice),
             'max' => $this->maxPrice === null ? null : Money::toTaka($this->maxPrice),
@@ -126,6 +147,20 @@ final readonly class ProductFilter
             'sort' => $this->sort,
             'f' => $this->heads,
         ];
+    }
+
+    /**
+     * Best match is the default while a usable term is set, otherwise Newest; it means nothing without one.
+     */
+    private static function sort(mixed $requested, ?string $q): string
+    {
+        $default = $q !== null && mb_strlen($q) >= self::MIN_TERM_LENGTH ? self::SORT_BEST_MATCH : self::SORT_NEWEST;
+
+        if (! is_string($requested) || ! in_array($requested, self::SORTS, true)) {
+            return $default;
+        }
+
+        return $requested === self::SORT_BEST_MATCH ? $default : $requested;
     }
 
     private static function term(mixed $value): ?string

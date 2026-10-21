@@ -40,7 +40,7 @@ export type ListingCategory = {
     parent: { name: string; slug: string } | null;
 };
 
-export type SortValue = 'newest' | 'price_asc' | 'price_desc';
+export type SortValue = 'best_match' | 'newest' | 'price_asc' | 'price_desc';
 
 export type SortOption = { value: SortValue; label: string };
 
@@ -60,6 +60,8 @@ export type ListingFilters = {
     };
     active: {
         q: string | null;
+        /** A term was typed but it is too short to search with. */
+        q_too_short: boolean;
         category: string | null;
         min: string | null;
         max: string | null;

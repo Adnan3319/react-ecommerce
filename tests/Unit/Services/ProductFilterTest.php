@@ -112,3 +112,54 @@ it('exposes taka strings for the active price range', function () {
     expect($array['min'])->toBe('1650.50')
         ->and($array['max'])->toBeNull();
 });
+
+describe('search term', function () {
+    it('uses a term of two or more characters', function () {
+        $filter = ProductFilter::fromQuery(['q' => 'dr']);
+
+        expect($filter->searchTerm())->toBe('dr')
+            ->and($filter->hasShortTerm())->toBeFalse();
+    });
+
+    it('treats a one-character term as too short', function () {
+        $filter = ProductFilter::fromQuery(['q' => ' m ']);
+
+        expect($filter->searchTerm())->toBeNull()
+            ->and($filter->hasShortTerm())->toBeTrue()
+            ->and($filter->toArray()['q_too_short'])->toBeTrue();
+    });
+
+    it('has no term and no short-term flag without q', function () {
+        $filter = ProductFilter::fromQuery([]);
+
+        expect($filter->searchTerm())->toBeNull()
+            ->and($filter->hasShortTerm())->toBeFalse();
+    });
+});
+
+describe('best match sort', function () {
+    it('is the default while a usable term is set', function () {
+        expect(ProductFilter::fromQuery(['q' => 'dress'])->sort)->toBe('best_match');
+    });
+
+    it('is newest without a usable term', function (array $query) {
+        expect(ProductFilter::fromQuery($query)->sort)->toBe('newest');
+    })->with([
+        'no term' => [[]],
+        'short term' => [['q' => 'd']],
+        'best match requested without a term' => [['sort' => 'best_match']],
+    ]);
+
+    it('yields to an explicit sort', function () {
+        expect(ProductFilter::fromQuery(['q' => 'dress', 'sort' => 'price_asc'])->sort)->toBe('price_asc');
+    });
+
+    it('does not narrow the listing by itself but a price sort does', function () {
+        expect(ProductFilter::fromQuery(['q' => 'dress'])->isNarrowed())->toBeFalse()
+            ->and(ProductFilter::fromQuery(['q' => 'dress', 'sort' => 'price_asc'])->isNarrowed())->toBeTrue();
+    });
+
+    it('becomes newest on a category page', function () {
+        expect(ProductFilter::fromQuery(['q' => 'dress'])->forCategoryPage()->sort)->toBe('newest');
+    });
+});

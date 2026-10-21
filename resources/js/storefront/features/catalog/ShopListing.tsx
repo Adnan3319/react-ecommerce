@@ -1,12 +1,14 @@
 import { home } from '@/routes';
 import { show } from '@/routes/categories';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
+import SearchBox from '@/storefront/components/SearchBox';
+import { MIN_SEARCH_LENGTH } from '@/storefront/config/search';
 import type { BreadcrumbItem } from '@/storefront/components/Breadcrumbs/Breadcrumbs';
 import ActiveFilters, { countActiveFilters } from './ActiveFilters';
+import { defaultSort } from './constants';
 import EmptyResults from './EmptyResults';
 import FilterSheet from './FilterSheet';
 import FilterSidebar from './FilterSidebar';
-import ListingSearchBox from './ListingSearchBox';
 import Pagination from './Pagination';
 import ProductGrid from './ProductGrid';
 import SortSelect from './SortSelect';
@@ -66,7 +68,7 @@ export default function ShopListing({
     const actions = useCatalogFilters(mode, category?.slug ?? null, active);
     const total = products.meta.total;
     const narrowed =
-        countActiveFilters(filters) > 0 || active.sort !== 'newest';
+        countActiveFilters(filters) > 0 || active.sort !== defaultSort(active);
 
     return (
         <div className="mx-auto max-w-7xl px-4 pt-6 pb-12 sm:px-6">
@@ -80,10 +82,14 @@ export default function ShopListing({
                             {total} {total === 1 ? 'product' : 'products'}
                         </span>
                     </h1>
-                    <ListingSearchBox
-                        q={active.q}
-                        category={category?.slug ?? null}
-                    />
+                    <div className="w-full max-w-xl">
+                        <SearchBox
+                            key={active.q ?? ''}
+                            defaultQuery={active.q ?? ''}
+                            category={category?.slug ?? null}
+                            tone="light"
+                        />
+                    </div>
                 </div>
 
                 <SubCategoryTabs mode={mode} category={category} q={active.q} />
@@ -112,9 +118,16 @@ export default function ShopListing({
                         <ActiveFilters filters={filters} actions={actions} />
                     </div>
 
-                    {products.data.length > 0 ? (
+                    {active.q_too_short && (
+                        <p className="rounded-card bg-white px-6 py-14 text-center text-sm text-neutral-600 shadow-card ring-1 ring-neutral-200">
+                            Type at least {MIN_SEARCH_LENGTH} characters to
+                            search.
+                        </p>
+                    )}
+                    {!active.q_too_short && products.data.length > 0 && (
                         <ProductGrid products={products.data} />
-                    ) : (
+                    )}
+                    {!active.q_too_short && products.data.length === 0 && (
                         <EmptyResults
                             q={active.q}
                             narrowed={narrowed}

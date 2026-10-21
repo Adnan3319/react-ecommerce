@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { cn } from '@/shared/lib';
 import { COLOR_SWATCHES, PRICE_DEBOUNCE_MS, SIZE_ORDER } from './constants';
 import type { AvailableHead, AvailableValue, ListingFilters } from './types';
-import { useDebouncedCallback } from './useDebouncedCallback';
+import { useDebouncedCallback } from '@/shared/hooks/useDebouncedCallback';
 
 type FilterFieldsProps = {
     filters: ListingFilters;

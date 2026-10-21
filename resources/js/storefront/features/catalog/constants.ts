@@ -10,7 +10,13 @@ export const LISTING_PROPS: string[] = [
 
 export const PRICE_DEBOUNCE_MS = 500;
 
-export const DEFAULT_SORT: SortValue = 'newest';
+/** Best match while a usable search term is set, otherwise Newest. */
+export function defaultSort(active: {
+    q: string | null;
+    q_too_short: boolean;
+}): SortValue {
+    return active.q && !active.q_too_short ? 'best_match' : 'newest';
+}
 
 /** Option values that show as a colour swatch (lower-case name -> CSS colour). */
 export const COLOR_SWATCHES: Record<string, string> = {

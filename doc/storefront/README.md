@@ -32,7 +32,6 @@
 | `sliders`                       | add `position` (`hero` / `promo`), index. Max 5 active per position.                                                                                                 |
 | `testimonials` (new)            | `customer_name` (80), `text` (500), `rating` (1–5), `source` (`facebook`, `messenger`, `whatsapp`, `other`), `status` ActiveStatus, `sort_order`, audit, softDeletes |
 | `products`                      | FULLTEXT index on (`name`, `short_description`) — MySQL only migration branch                                                                                        |
-| `category_slug_redirects` (new) | like `product_slug_redirects`, for renamed categories                                                                                                                |
 
 ---
 
@@ -110,6 +109,6 @@ Testimonial text and names in the mockup are placeholders.
 | `03-landing.md`         | real Home page                               | `feat: landing page`               |
 | `04-category-page.md`   | category page + filters                      | `feat: category page with filters` |
 | `05-search.md`          | search page + suggestions                    | `feat: product search`             |
-| `06-seo.md`             | sitemap, robots, JSON-LD, category redirects | `feat: storefront seo`             |
+| `06-seo.md`             | sitemap, robots, JSON-LD                    | `feat: storefront seo`             |
 
 After all six: update `CLAUDE.md` Build Order and Current Codebase State.

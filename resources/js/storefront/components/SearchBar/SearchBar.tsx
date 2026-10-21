@@ -10,7 +10,9 @@ function readQuery(url: string): string {
 }
 
 export default function SearchBar() {
-    const { url } = usePage();
+    const { url, props } = usePage<{ category?: { slug?: string } | null }>();
+    // Searching from a category page stays inside that category.
+    const category = props.category?.slug ?? null;
     const currentQuery = readQuery(url);
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -19,7 +21,10 @@ export default function SearchBar() {
         const value = new FormData(event.currentTarget).get('q');
         const q = typeof value === 'string' ? value.trim() : '';
 
-        router.get(search().url, q ? { q } : {});
+        router.get(search().url, {
+            ...(q ? { q } : {}),
+            ...(category ? { category } : {}),
+        });
     }
 
     return (
@@ -31,6 +36,9 @@ export default function SearchBar() {
             onSubmit={handleSubmit}
             className="flex w-full overflow-hidden rounded-full border border-white/20 bg-white/10 text-white backdrop-blur focus-within:border-white/50"
         >
+            {category && (
+                <input type="hidden" name="category" value={category} />
+            )}
             <input
                 type="search"
                 name="q"

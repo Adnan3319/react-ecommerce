@@ -120,6 +120,18 @@ class Product extends Model
     }
 
     /**
+     * Products of the given categories; without ids, of every active category.
+     *
+     * @param  Builder<Product>  $query
+     * @param  array<int, int>|null  $categoryIds
+     */
+    #[Scope]
+    protected function inCategories(Builder $query, ?array $categoryIds): void
+    {
+        $query->whereIn('category_id', $categoryIds ?? Category::query()->active()->select('id'));
+    }
+
+    /**
      * Products with at least one active variant that has stock.
      *
      * @param  Builder<Product>  $query

@@ -3,29 +3,30 @@
 Read `CLAUDE.md`, `doc/storefront/README.md`, and open `mockups/04-search.png`. Step 04 must be DONE.
 **Start in plan mode**, wait for approval.
 
+Step 04 already built the shared listing page (`ShopListing`), `GET /search`, `ProductFilter` and `CatalogService::listing()`. This step only adds **matching** and the **suggestion dropdown** on top. No new page, no second query path.
+
 ## Backend
 
 1. Migration: FULLTEXT index on `products(name, short_description)` — MySQL only (skip on SQLite inside the migration).
-2. `SearchService::search(term, filters)`:
-    - Normalize term (trim, collapse spaces, max 100 chars, min 2).
+2. Matching, inside `CatalogService::listing()` through a `SearchMatcher` collaborator (so filters, category, sort and pagination stay shared):
+    - `ProductFilter` already normalizes `q` (trim, collapse spaces, max 100 chars); here add min 2 characters — shorter or empty means no matching condition (the page shows the "type to search" prompt only when `q` was given but too short).
     - Exact SKU match first (variant SKU → its product).
-    - MySQL: `MATCH ... AGAINST` in boolean mode with prefix `*` per word; relevance ordering for "Best match".
+    - MySQL: `MATCH ... AGAINST` in boolean mode with prefix `*` per word; relevance ordering for the new "Best match" sort (default when `q` is set; otherwise Newest).
     - SQLite/tests: escaped LIKE fallback on name + short_description.
-    - Active products only; category filter (incl. children); sort (best match default, newest, price asc/desc); paginate 12.
-3. `SearchService::suggest(term)`: ≤ 6 cards (name, thumb, price, url), cached 5 min per normalized term.
-4. Routes: `GET /search` (Inertia page, `seo` noindex, canonical `/search`), `GET /search/suggest` (JSON via `ApiResponse`, throttle 60/min per IP).
-5. Empty term → page with prompt, no query.
+    - Active products only; the category filter and all other filters keep working with `q`.
+3. `SearchService::suggest(term)`: ≤ 6 cards (name, category, thumb, price, url), cached 5 min per normalized term; uses the same matcher.
+4. Route `GET /search/suggest` (JSON via `ApiResponse`, throttle 60/min per IP). `GET /search` stays as built in step 04.
 
 ## Frontend
 
-- `features/search/SearchBox` in the header (desktop field; mobile icon opens a full-width field): debounced 250 ms fetch to the suggest endpoint (AbortController cancels stale requests), dropdown with highlighted match, keyboard ↑/↓/Enter/Esc, "See all N results" → `/search?q=`.
-- `pages/Search.tsx` thin: title "Results for “q”", count, category filter, sort, `ProductGrid` (reuse), `EmptyResults` with links to root categories.
+- Upgrade `features/catalog/ListingSearchBox` (the box on the listing page) and add the **header** search box: debounced 250 ms fetch to the suggest endpoint (AbortController cancels stale requests), dropdown with highlighted match, keyboard ↑/↓/Enter/Esc, "See all N results" → `/search?q=` (and the current `category` when on a category page). The mobile header icon opens a full-width field.
+- `pages/Search.tsx` stays the thin wrapper; the title becomes "Results for “q”" with the count; `EmptyResults` shows "Nothing found for “q”" with root-category links (already built in step 04).
 
 ## Tests
 
-- Feature: SKU exact hit; name match; inactive excluded; category filter; sort; pagination; suggest JSON shape and limit; throttle; empty and too-short terms.
+- Feature: SKU exact hit; name match; inactive excluded; `q` combined with category, price, in-stock and head filters; Best match vs other sorts; pagination keeps `q`; suggest JSON shape and limit; throttle; empty and too-short terms.
 - MySQL group: FULLTEXT relevance (a name hit ranks above a description-only hit).
-- Headless Chrome: type "dre" → suggestions appear → Enter → results page; Esc closes dropdown.
+- Headless Chrome: type "dre" → suggestions appear → Enter → results page; Esc closes dropdown; searching from a category page keeps the category.
 
 ## Done when
 

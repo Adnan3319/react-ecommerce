@@ -10,9 +10,11 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
+use App\Http\Controllers\Storefront\CategoryController as StorefrontCategoryController;
 use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\ProductOptionsController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
+use App\Http\Controllers\Storefront\SearchController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,7 +23,8 @@ Route::get('/products/{slug}', [StorefrontProductController::class, 'show'])->na
 Route::get('/products/{slug}/options', [ProductOptionsController::class, 'show'])->middleware('throttle:product-options')->name('products.options');
 Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:orders')->name('orders.store');
 Route::get('/orders/{token}/thank-you', [OrderController::class, 'show'])->name('orders.success');
-Route::inertia('/search', 'Search')->name('search');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/categories/{slug}', [StorefrontCategoryController::class, 'show'])->name('categories.show');
 Route::get('/cart', [CartController::class, 'show'])->name('cart');
 Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->group(function () {
     Route::post('/', [CartController::class, 'store'])->name('store');

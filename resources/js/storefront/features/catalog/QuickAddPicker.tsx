@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { options as optionsRoute, show } from '@/routes/products';
 import { formatMoney } from '@/shared/lib';
+import Sheet from '@/storefront/components/Sheet';
 import VariantPicker from '@/storefront/components/VariantPicker';
 import { useVariantSelection } from '@/storefront/components/useVariantSelection';
 import { Button, Icon, Image } from '@/storefront/components/ui';
@@ -31,25 +32,10 @@ export default function QuickAddPicker({
     onClose,
     onAdded,
 }: QuickAddPickerProps) {
-    const dialogRef = useRef<HTMLDialogElement>(null);
     const [state, setState] = useState<LoadState>({ status: 'idle' });
     const [attempt, setAttempt] = useState(0);
     const startedAttempt = useRef(-1);
     const mounted = useRef(false);
-
-    useEffect(() => {
-        const dialog = dialogRef.current;
-
-        if (!dialog) {
-            return;
-        }
-
-        if (open && !dialog.open) {
-            dialog.showModal();
-        } else if (!open && dialog.open) {
-            dialog.close();
-        }
-    }, [open]);
 
     useEffect(() => {
         mounted.current = true;
@@ -96,17 +82,7 @@ export default function QuickAddPicker({
         setAttempt((current) => current + 1);
     }
     return (
-        <dialog
-            ref={dialogRef}
-            aria-label="Choose options"
-            onClose={onClose}
-            onClick={(event) => {
-                if (event.target === event.currentTarget) {
-                    onClose();
-                }
-            }}
-            className="m-0 mt-auto w-full max-w-none rounded-t-card bg-white p-0 backdrop:bg-black/50 sm:m-auto sm:max-w-md sm:rounded-card"
-        >
+        <Sheet open={open} onClose={onClose} label="Choose options">
             <div className="flex flex-col gap-5 p-5">
                 {state.status === 'ready' && (
                     <PickerContent
@@ -134,7 +110,7 @@ export default function QuickAddPicker({
                     </p>
                 )}
             </div>
-        </dialog>
+        </Sheet>
     );
 }
 

@@ -1,6 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
 import { cn } from '@/shared/lib';
-import { parseSearchParams } from '@/storefront/features/search';
 import { useCategories } from '@/storefront/lib/useCategories';
 import { isActivePath, mainNavItems, type MainNavItem } from '../navigation';
 
@@ -16,6 +15,11 @@ function isItemActive(
     return isActivePath(url, item.href);
 }
 
+/** `category` of the listing pages; other pages send something else or nothing. */
+type ListingCategoryProps = {
+    category?: { slug?: string; parent?: { slug: string } | null } | null;
+};
+
 export const MAIN_NAV_ID = 'primary-navigation';
 
 type MainNavProps = {
@@ -28,8 +32,10 @@ const LINK_BASE =
     'relative flex items-center px-5 py-3.5 text-sm font-medium whitespace-nowrap transition-colors md:h-11 md:px-3 md:py-0';
 
 export default function MainNav({ isOpen, onNavigate }: MainNavProps) {
-    const { url } = usePage();
-    const { category } = parseSearchParams(url);
+    const { url, props } = usePage<ListingCategoryProps>();
+    // A sub-category keeps its top-level category highlighted.
+    const category =
+        props.category?.parent?.slug ?? props.category?.slug ?? null;
     const items = mainNavItems(useCategories());
 
     return (

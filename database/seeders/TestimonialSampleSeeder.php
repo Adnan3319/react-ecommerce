@@ -7,7 +7,7 @@ use App\Models\Testimonial;
 use Illuminate\Database\Seeder;
 
 /**
- * Three clearly fake testimonials so the storefront section can be designed locally. DatabaseSeeder only
+ * Three invented testimonials so the storefront section can be designed locally. DatabaseSeeder only
  * calls this in the local environment: invented feedback must never reach a live store.
  */
 class TestimonialSampleSeeder extends Seeder
@@ -35,9 +35,9 @@ class TestimonialSampleSeeder extends Seeder
     private function samples(): array
     {
         return [
-            ['name' => 'Customer One', 'text' => 'Sample feedback for layout testing only.', 'rating' => 5, 'source' => TestimonialSource::Facebook],
-            ['name' => 'Customer Two', 'text' => 'Sample feedback for layout testing only.', 'rating' => 4, 'source' => TestimonialSource::Messenger],
-            ['name' => 'Customer Three', 'text' => 'Sample feedback for layout testing only.', 'rating' => 5, 'source' => TestimonialSource::Whatsapp],
+            ['name' => 'Rahim Uddin', 'text' => 'Ordered a pressure cooker on Friday and it reached Dhaka in two days. Packaging was neat and I paid cash on delivery.', 'rating' => 5, 'source' => TestimonialSource::Facebook],
+            ['name' => 'Nusrat Jahan', 'text' => 'The cotton kurti fits perfectly and the colour is exactly like the photo. They confirmed my order on Messenger within minutes.', 'rating' => 5, 'source' => TestimonialSource::Messenger],
+            ['name' => 'Tanvir Ahmed', 'text' => 'Good quality glass storage set for the price. Delivery to Chattogram took three days, a little slow but well packed.', 'rating' => 4, 'source' => TestimonialSource::Whatsapp],
         ];
     }
 }

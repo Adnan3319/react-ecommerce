@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
         ]);
 
-        // Fake feedback only on a developer machine, never on a live store.
+        // Fake feedback, sample sliders and sample products only on a developer machine, never on a live store.
         if (app()->environment('local')) {
-            $this->call(TestimonialSampleSeeder::class);
+            $this->call([TestimonialSampleSeeder::class, SliderSampleSeeder::class, ProductSampleSeeder::class]);
         }
     }
 }

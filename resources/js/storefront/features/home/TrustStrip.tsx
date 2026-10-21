@@ -27,7 +27,7 @@ function deliveryDescription(zones: DeliveryZone[]): string {
         : 'To your door';
 }
 
-/** Four reasons to buy, overlapping the bottom of the hero. */
+/** Glass feature strip; sits on top of the hero image. */
 export default function TrustStrip({ deliveryZones }: TrustStripProps) {
     const items: TrustItem[] = [
         {
@@ -53,30 +53,26 @@ export default function TrustStrip({ deliveryZones }: TrustStripProps) {
     ];
 
     return (
-        <section
+        <ul
             aria-label="Why shop with us"
-            className="relative z-10 mx-auto -mt-10 max-w-7xl px-4 sm:px-6"
+            className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-5 border-t border-white/10 px-4 pt-6 pb-14 sm:px-6 lg:grid-cols-4"
         >
-            <ul className="grid grid-cols-2 gap-2 rounded-card bg-white p-2 shadow-xl ring-1 ring-neutral-200 lg:grid-cols-4">
-                {items.map((item) => (
-                    <li
-                        key={item.title}
-                        className="flex items-center gap-3 rounded-control bg-neutral-50 p-3"
-                    >
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-control bg-accent-50 text-accent-700">
-                            <Icon name={item.icon} size={20} />
-                        </span>
-                        <div className="min-w-0">
-                            <p className="text-sm font-semibold text-neutral-900">
-                                {item.title}
-                            </p>
-                            <p className="text-xs text-neutral-600">
-                                {item.description}
-                            </p>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </section>
+            {items.map((item) => (
+                <li
+                    key={item.title}
+                    className="flex items-center gap-3 lg:justify-center"
+                >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur">
+                        <Icon name={item.icon} size={20} />
+                    </span>
+                    <div>
+                        <p className="text-sm font-semibold">{item.title}</p>
+                        <p className="text-xs text-white/60">
+                            {item.description}
+                        </p>
+                    </div>
+                </li>
+            ))}
+        </ul>
     );
 }

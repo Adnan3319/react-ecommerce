@@ -5,6 +5,7 @@ import {
     useEffect,
     useMemo,
     useState,
+    type ReactNode,
 } from 'react';
 import type { Swiper as SwiperInstance } from 'swiper/types';
 import { cn } from '@/shared/lib';
@@ -24,6 +25,8 @@ const PAGER_BUTTON_CLASS =
 type HeroSliderProps = {
     /** Active sliders from the backend. Sample slides show when this is empty. */
     sliders?: ApiSlider[];
+    /** Rendered at the bottom of the hero (the trust strip). */
+    children?: ReactNode;
 };
 
 function addIndex(
@@ -33,7 +36,10 @@ function addIndex(
     return current.has(index) ? current : new Set(current).add(index);
 }
 
-export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
+export default function HeroSlider({
+    sliders = [],
+    children,
+}: HeroSliderProps) {
     const slides = useMemo(
         () => (sliders.length > 0 ? sliders.map(toHeroSlide) : HERO_SLIDES),
         [sliders],
@@ -156,7 +162,7 @@ export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
                 className="absolute inset-0 bg-ink/60 md:hidden"
             />
 
-            <div className="relative pb-16 md:pt-[4.5rem]">
+            <div className="relative md:pt-[4.5rem]">
                 {swiperRequested ? (
                     <Suspense
                         fallback={
@@ -230,6 +236,8 @@ export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
                             ))}
                     </div>
                 )}
+
+                {children}
             </div>
 
             <svg

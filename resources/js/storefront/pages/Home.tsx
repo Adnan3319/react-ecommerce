@@ -43,8 +43,9 @@ export default function Home({
     return (
         <div className="bg-neutral-50">
             <Seo seo={seo} />
-            <HeroSlider sliders={heroSlides} />
-            <TrustStrip deliveryZones={deliveryZones} />
+            <HeroSlider sliders={heroSlides}>
+                <TrustStrip deliveryZones={deliveryZones} />
+            </HeroSlider>
             <CategoryShowcase categories={categories} />
             <ProductRail
                 title="Featured Products"

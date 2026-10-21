@@ -26,7 +26,7 @@ class ProductService
 
     private const IMAGE_PRESET = 'product';
 
-    private const HOME_RAIL_LIMIT = 8;
+    private const HOME_RAIL_LIMIT = 10;
 
     /** Existing heads wait here while names/positions are reassigned, so swaps do not hit the unique indexes. */
     private const PARKED_HEAD_POSITION = 100;
@@ -111,6 +111,37 @@ class ProductService
         return Cache::rememberForever(ProductCache::NEW_ARRIVALS_KEY, fn () => $this->cards(
             Product::query()->latest('id'),
         ));
+    }
+
+    /**
+     * One rail per active top-level category: its newest in-stock products (sub-categories included),
+     * as plain arrays cached like the other Home lists. Categories without in-stock products are skipped.
+     *
+     * @return list<array{category: array{name: string, slug: string}, products: array<int, array<string, mixed>>}>
+     */
+    public function categoryRailsForStorefront(): array
+    {
+        return Cache::rememberForever(ProductCache::CATEGORY_RAILS_KEY, function (): array {
+            $rails = [];
+
+            $roots = Category::query()
+                ->active()
+                ->roots()
+                ->ordered()
+                ->with(['children' => fn ($children) => $children->active()])
+                ->get();
+
+            foreach ($roots as $root) {
+                $ids = $root->children->pluck('id')->prepend($root->id)->all();
+                $products = $this->cards(Product::query()->inCategories($ids)->latest('id'));
+
+                if ($products !== []) {
+                    $rails[] = ['category' => ['name' => $root->name, 'slug' => $root->slug], 'products' => $products];
+                }
+            }
+
+            return $rails;
+        });
     }
 
     /**

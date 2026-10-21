@@ -15,6 +15,8 @@ class ProductCache
 
     public const NEW_ARRIVALS_KEY = 'products.new_arrivals';
 
+    public const CATEGORY_RAILS_KEY = 'products.category_rails';
+
     private const PAGE_KEY_PREFIX = 'products.page.';
 
     public function __construct(
@@ -28,12 +30,13 @@ class ProductCache
     }
 
     /**
-     * Clears the Home product lists and, when the product is known, its product page.
+     * Clears the Home product lists (featured, new arrivals, category rails) and, when the product is known, its product page.
      */
     public function flush(?int $productId = null): void
     {
         Cache::forget(self::FEATURED_KEY);
         Cache::forget(self::NEW_ARRIVALS_KEY);
+        Cache::forget(self::CATEGORY_RAILS_KEY);
         // The dashboard lists low-stock variants.
         $this->dashboard->forget();
         // Listing price bounds and option counts depend on products and stock.

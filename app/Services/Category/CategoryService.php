@@ -5,6 +5,7 @@ namespace App\Services\Category;
 use App\Enums\ActiveStatus;
 use App\Models\Category;
 use App\Services\Media\FileUploadService;
+use App\Services\Product\ProductCache;
 use App\Services\Storefront\CatalogFilterCache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -186,6 +187,8 @@ class CategoryService
     private function flushCache(): void
     {
         Cache::forget(self::ACTIVE_CACHE_KEY);
+        // The Home rails list products per active category.
+        Cache::forget(ProductCache::CATEGORY_RAILS_KEY);
         // A category's visibility or tree position changes which products the listing filters cover.
         $this->catalogFilters->flush();
     }

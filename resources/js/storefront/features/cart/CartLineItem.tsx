@@ -17,7 +17,7 @@ type CartLineItemProps = {
     line: CartLine;
 };
 
-function notice(line: CartLine): string | null {
+export function notice(line: CartLine): string | null {
     if (line.unavailable) {
         return line.stock > 0 && line.quantity > line.stock
             ? `Only ${line.stock} left. Lower the quantity to include it in your order.`

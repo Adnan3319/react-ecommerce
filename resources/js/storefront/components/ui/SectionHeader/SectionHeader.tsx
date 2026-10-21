@@ -10,7 +10,7 @@ type SectionHeaderProps = {
         label: string;
         href: RouteDefinition<'get'>;
     };
-    /** Extra control on the right, such as filter tabs. */
+    /** Extra control on the right after "View all", such as filter tabs or carousel arrows. */
     action?: ReactNode;
     /** Small accent bar before the title. */
     accent?: boolean;
@@ -39,15 +39,19 @@ export default function SectionHeader({
                     <p className="mt-1 text-sm text-neutral-600">{subtitle}</p>
                 )}
             </div>
-            {action}
-            {viewAll && (
-                <Link
-                    href={viewAll.href}
-                    className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent-600 hover:text-accent-700"
-                >
-                    {viewAll.label}
-                    <Icon name="arrowRight" size={16} />
-                </Link>
+            {(viewAll || action) && (
+                <div className="flex items-center gap-3">
+                    {viewAll && (
+                        <Link
+                            href={viewAll.href}
+                            className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-accent-600 hover:text-accent-700"
+                        >
+                            {viewAll.label}
+                            <Icon name="arrowRight" size={16} />
+                        </Link>
+                    )}
+                    {action}
+                </div>
             )}
         </div>
     );

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { home } from '@/routes';
 import { Badge, QuantityStepper } from '@/storefront/components/ui';
-import AddedToast from '@/storefront/components/AddedToast';
 import AddToCartButton from '@/storefront/features/cart/AddToCartButton';
 import { useAddToCart } from '@/storefront/hooks/useAddToCart';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
@@ -152,7 +151,6 @@ export default function ProductView({
                 onAddToCart={cart.add}
                 addingToCart={cart.processing}
             />
-            {cart.added && <AddedToast onDismiss={cart.dismiss} />}
         </>
     );
 }

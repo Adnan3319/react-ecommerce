@@ -113,7 +113,7 @@ export default function HeroSlider({
         <section
             aria-roledescription="carousel"
             aria-label="Featured collections"
-            className="relative overflow-hidden bg-shaded text-white"
+            className="relative h-[450px] overflow-hidden bg-shaded text-white"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onFocus={() => setIsPaused(true)}
@@ -162,22 +162,28 @@ export default function HeroSlider({
                 className="absolute inset-0 bg-ink/60 md:hidden"
             />
 
-            <div className="relative md:pt-[4.5rem]">
-                {swiperRequested ? (
-                    <Suspense
-                        fallback={
-                            <StaticSlide slide={slides[0]} count={slideCount} />
-                        }
-                    >
-                        <HeroSwiper
-                            slides={slides}
-                            onSwiper={setSwiper}
-                            onActiveChange={setActiveIndex}
-                        />
-                    </Suspense>
-                ) : (
-                    <StaticSlide slide={slides[0]} count={slideCount} />
-                )}
+            <div className="relative flex h-full flex-col md:pt-[4.5rem]">
+                {/* One slide layer at a time: the static first slide is swapped for Swiper inside the same fixed-height box. */}
+                <div className="min-h-0 flex-1">
+                    {swiperRequested ? (
+                        <Suspense
+                            fallback={
+                                <StaticSlide
+                                    slide={slides[0]}
+                                    count={slideCount}
+                                />
+                            }
+                        >
+                            <HeroSwiper
+                                slides={slides}
+                                onSwiper={setSwiper}
+                                onActiveChange={setActiveIndex}
+                            />
+                        </Suspense>
+                    ) : (
+                        <StaticSlide slide={slides[0]} count={slideCount} />
+                    )}
+                </div>
 
                 {swiper && (
                     <div className="absolute top-1/3 right-4 hidden flex-col items-center gap-1 rounded-full bg-ink/80 px-1 py-2 text-xs text-white shadow-lg ring-1 ring-white/30 backdrop-blur-md lg:flex">
@@ -267,6 +273,7 @@ function StaticSlide({ slide, count }: StaticSlideProps) {
             role="group"
             aria-roledescription="slide"
             aria-label={`1 of ${count}. ${slide.imageAlt}`}
+            className="h-full"
         >
             <HeroSlide slide={slide} />
         </div>

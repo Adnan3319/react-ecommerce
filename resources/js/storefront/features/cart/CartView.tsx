@@ -2,6 +2,7 @@ import { usePage } from '@inertiajs/react';
 import OrderForm from '@/storefront/features/order/OrderForm';
 import type { DeliveryZone } from '@/storefront/features/product/types';
 import CartLineItem from './CartLineItem';
+import { CART_FORM_ANCHOR } from './constants';
 import EmptyCart from './EmptyCart';
 import type { CartLine } from './types';
 
@@ -59,7 +60,10 @@ export default function CartView({
                             ))}
                         </ul>
                     </div>
-                    <div className="lg:sticky lg:top-24">
+                    <div
+                        id={CART_FORM_ANCHOR}
+                        className="scroll-mt-24 lg:sticky lg:top-24"
+                    >
                         <OrderForm
                             zones={deliveryZones}
                             mode={{ source: 'cart', subtotal, itemCount }}

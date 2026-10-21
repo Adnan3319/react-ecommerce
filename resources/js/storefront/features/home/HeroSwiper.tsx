@@ -27,6 +27,7 @@ export default function HeroSwiper({
 }: HeroSwiperProps) {
     return (
         <Swiper
+            className="h-full"
             modules={[A11y, Autoplay, EffectFade]}
             effect="fade"
             fadeEffect={{ crossFade: true }}

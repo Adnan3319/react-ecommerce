@@ -13,19 +13,18 @@ use Illuminate\Support\Str;
 
 /**
  * 20 realistic products each for Kitchenware and Fashion so the storefront can be reviewed locally.
- * Images are generated placeholders (name on a tinted background): replace them from the admin.
+ * Images are the photos already shipped under public/images (kitchen photos for Kitchenware, the category
+ * photo for Fashion): replace them from the admin.
  * DatabaseSeeder only calls this in the local environment. Safe to run repeatedly (matched by slug).
  */
 class ProductSampleSeeder extends Seeder
 {
-    private const IMAGE_SIZE = 1200;
-
     private const SIZES_CLOTHING = ['S', 'M', 'L', 'XL'];
 
-    private const FONT_CANDIDATES = [
-        'C:/Windows/Fonts/arialbd.ttf',
-        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-        '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
+    /** Photos under public/images used as product images, per root category slug. */
+    private const PHOTOS = [
+        'kitchenware' => ['sliders/1.jpg', 'sliders/2.jpg', 'sliders/3.jpg', 'categories/kitchenware.jpg'],
+        'fashion' => ['categories/fashion.jpg'],
     ];
 
     public function __construct(private readonly ProductService $products) {}
@@ -67,7 +66,7 @@ class ProductSampleSeeder extends Seeder
                 'status' => 'active',
                 'is_featured' => $item['featured'] ?? false,
             ],
-            mainImage: $this->placeholder($item['name'], $position),
+            mainImage: $this->photo($category->slug, $position),
             hasVariants: $heads !== [],
             simple: ['sku' => null, 'price' => $price, 'sale_price' => $sale, 'stock' => $stock],
             heads: array_map(
@@ -117,60 +116,14 @@ class ProductSampleSeeder extends Seeder
     }
 
     /**
-     * A square tinted image with the product name, as an upload the normal media pipeline accepts.
+     * A shipped photo as an upload, so it goes through the normal media pipeline (preset, thumb, webp).
      */
-    private function placeholder(string $name, int $position): UploadedFile
+    private function photo(string $categorySlug, int $position): UploadedFile
     {
-        $size = self::IMAGE_SIZE;
-        $image = imagecreatetruecolor($size, $size);
-        $hue = ($position * 47 + crc32($name)) % 360;
-        [$r, $g, $b] = $this->hsl($hue, 0.45, 0.88);
-        [$dr, $dg, $db] = $this->hsl($hue, 0.4, 0.78);
+        $photos = self::PHOTOS[$categorySlug];
+        $file = $photos[$position % count($photos)];
 
-        imagefill($image, 0, 0, (int) imagecolorallocate($image, $r, $g, $b));
-        imagefilledellipse($image, (int) ($size / 2), (int) ($size / 2), 820, 820, (int) imagecolorallocate($image, $dr, $dg, $db));
-        $ink = (int) imagecolorallocate($image, 38, 38, 46);
-
-        $font = collect(self::FONT_CANDIDATES)->first(fn (string $path) => is_file($path));
-        $lines = explode("\n", wordwrap($name, 16, "\n", true));
-
-        foreach ($lines as $index => $line) {
-            $y = (int) ($size / 2 - (count($lines) - 1) * 45 + $index * 90);
-
-            if ($font === null) {
-                imagestring($image, 5, 400, $y, $line, $ink);
-
-                continue;
-            }
-
-            $box = imagettfbbox(54, 0, $font, $line);
-            imagettftext($image, 54, 0, (int) (($size - ($box[2] - $box[0])) / 2), $y + 20, $ink, $font, $line);
-        }
-
-        $path = tempnam(sys_get_temp_dir(), 'sample-product-').'.png';
-        imagepng($image, $path);
-
-        return new UploadedFile($path, Str::slug($name).'.png', 'image/png', null, true);
-    }
-
-    /**
-     * @return array{0: int, 1: int, 2: int}
-     */
-    private function hsl(int $hue, float $saturation, float $lightness): array
-    {
-        $c = (1 - abs(2 * $lightness - 1)) * $saturation;
-        $x = $c * (1 - abs(fmod($hue / 60, 2) - 1));
-        $m = $lightness - $c / 2;
-        [$r, $g, $b] = match (intdiv($hue, 60)) {
-            0 => [$c, $x, 0],
-            1 => [$x, $c, 0],
-            2 => [0, $c, $x],
-            3 => [0, $x, $c],
-            4 => [$x, 0, $c],
-            default => [$c, 0, $x],
-        };
-
-        return [(int) round(($r + $m) * 255), (int) round(($g + $m) * 255), (int) round(($b + $m) * 255)];
+        return new UploadedFile(public_path('images/'.$file), basename($file), null, null, true);
     }
 
     /**

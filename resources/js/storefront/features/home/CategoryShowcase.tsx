@@ -1,4 +1,3 @@
-import { SectionHeader } from '@/storefront/components/ui';
 import { categoryHref } from '@/storefront/lib/category-href';
 import CategoryCard from './CategoryCard';
 import type { HomeCategory } from './types';
@@ -16,19 +15,16 @@ export default function CategoryShowcase({
     }
 
     return (
-        <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6">
-            <SectionHeader
-                title="Shop by Category"
-                subtitle="Pick a category and find what you need."
-                accent
-            />
+        <section
+            aria-label="Shop by category"
+            className="mx-auto max-w-7xl px-4 pt-6 sm:px-6"
+        >
             <ul className="grid gap-4 sm:grid-cols-2 sm:gap-6">
                 {categories.map((category) => (
                     <li key={category.slug}>
                         <CategoryCard
                             slug={category.slug}
                             label={category.label}
-                            headline={category.headline}
                             description={category.description}
                             image={category.image}
                             href={categoryHref(category.slug)}

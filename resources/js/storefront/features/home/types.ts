@@ -1,3 +1,4 @@
+import type { ProductCardData } from '@/storefront/features/catalog/types';
 import type { Category } from '@/storefront/config/site';
 
 /** One entry of `Services\Testimonial\TestimonialService::activeForStorefront()`. */
@@ -17,4 +18,10 @@ export type DeliveryZone = {
     key: string;
     label: string;
     charge: number;
+};
+
+/** One entry of `categoryRails`: a root category and its newest in-stock products. */
+export type CategoryRail = {
+    category: { name: string; slug: string };
+    products: ProductCardData[];
 };

@@ -34,7 +34,7 @@ export default function ProductGallery({
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[28px] bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
+            <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[28px] bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
                 {active?.url ? (
                     <Image
                         src={active.url}
@@ -44,7 +44,7 @@ export default function ProductGallery({
                         width={MAIN_SIZE}
                         height={MAIN_SIZE}
                         priority={active.id === images[0]?.id}
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-cover"
                     />
                 ) : (
                     <ImagePlaceholder className="h-full w-full" />
@@ -74,7 +74,7 @@ export default function ProductGallery({
                                         alt=""
                                         width={THUMB_SIZE}
                                         height={THUMB_SIZE}
-                                        className="h-full w-full object-contain"
+                                        className="h-full w-full object-cover"
                                     />
                                 )}
                             </button>

@@ -7,7 +7,6 @@ import CategoryIcon from './CategoryIcon';
 type CategoryCardProps = {
     slug: string;
     label: string;
-    headline: string | null;
     description: string | null;
     /** Photo from the backend; null shows the category illustration. */
     image: string | null;
@@ -28,7 +27,6 @@ const ICON_SIZE = 160;
 export default function CategoryCard({
     slug,
     label,
-    headline,
     description,
     image,
     href,
@@ -37,7 +35,7 @@ export default function CategoryCard({
         <Link
             href={href}
             className={cn(
-                'group relative flex min-h-48 items-center overflow-hidden rounded-card bg-linear-to-br p-6 shadow-card transition-all duration-300 sm:min-h-56 sm:p-8',
+                'group relative flex min-h-28 items-center overflow-hidden rounded-card bg-linear-to-br p-4 shadow-card transition-all duration-300 sm:min-h-32 sm:p-5',
                 'hover:-translate-y-1 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600',
                 SURFACES[slug] ?? DEFAULT_SURFACE,
             )}
@@ -55,26 +53,23 @@ export default function CategoryCard({
                     <CategoryIcon
                         slug={slug}
                         size={ICON_SIZE}
-                        className="h-auto w-32 drop-shadow-lg transition-transform duration-500 group-hover:scale-110 sm:w-44"
+                        className="h-auto w-20 drop-shadow-lg transition-transform duration-500 group-hover:scale-110 sm:w-28"
                     />
                 )}
             </div>
 
             <div className="relative ml-auto flex w-[46%] flex-col items-start gap-2">
-                {headline && (
-                    <span className="text-[0.7rem] font-semibold tracking-[0.2em] text-neutral-600 uppercase">
-                        {label}
-                    </span>
-                )}
                 <h3 className="text-2xl leading-tight font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
-                    {headline ?? label}
+                    {label}
                 </h3>
                 {description && (
-                    <p className="text-sm text-neutral-700">{description}</p>
+                    <p className="line-clamp-2 text-sm text-neutral-700">
+                        {description}
+                    </p>
                 )}
                 <span
                     aria-hidden="true"
-                    className="mt-3 flex size-9 items-center justify-center rounded-full btn-accent group-hover:translate-x-1"
+                    className="mt-1 flex size-9 items-center justify-center rounded-full btn-accent group-hover:translate-x-1"
                 >
                     <Icon name="arrowRight" size={16} />
                 </span>

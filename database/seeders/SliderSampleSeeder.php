@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 /**
  * Five hero slides so the Home hero can be reviewed locally. The banners are generated placeholders
- * (gradient with the headline): replace them from the admin. DatabaseSeeder only calls this in the
+ * (a plain gradient without text, the storefront renders the slide text): replace them from the admin. DatabaseSeeder only calls this in the
  * local environment. Safe to run repeatedly (matched by title).
  */
 class SliderSampleSeeder extends Seeder
@@ -20,12 +20,6 @@ class SliderSampleSeeder extends Seeder
     private const WIDTH = 1920;
 
     private const HEIGHT = 800;
-
-    private const FONT_CANDIDATES = [
-        'C:/Windows/Fonts/arialbd.ttf',
-        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-        '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
-    ];
 
     public function __construct(private readonly SliderService $sliders) {}
 
@@ -52,7 +46,7 @@ class SliderSampleSeeder extends Seeder
      * @param  array{0: int, 1: int, 2: int}  $from
      * @param  array{0: int, 1: int, 2: int}  $to
      */
-    private function banner(string $title, array $from, array $to): UploadedFile
+    private function banner(string $name, array $from, array $to): UploadedFile
     {
         $image = imagecreatetruecolor(self::WIDTH, self::HEIGHT);
 
@@ -67,21 +61,10 @@ class SliderSampleSeeder extends Seeder
             imageline($image, $x, 0, $x, self::HEIGHT, $color);
         }
 
-        $white = (int) imagecolorallocate($image, 255, 255, 255);
-        $font = collect(self::FONT_CANDIDATES)->first(fn (string $path) => is_file($path));
-
-        if ($font !== null) {
-            foreach (explode("\n", wordwrap($title, 22, "\n", true)) as $index => $line) {
-                imagettftext($image, 72, 0, 140, 330 + $index * 100, $white, $font, $line);
-            }
-        } else {
-            imagestring($image, 5, 140, 330, $title, $white);
-        }
-
         $path = tempnam(sys_get_temp_dir(), 'sample-slider-').'.png';
         imagepng($image, $path);
 
-        return new UploadedFile($path, Str::slug($title).'.png', 'image/png', null, true);
+        return new UploadedFile($path, Str::slug($name).'.png', 'image/png', null, true);
     }
 
     /**

@@ -1,12 +1,13 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { store } from '@/routes/cart/items';
+import { useMiniCart } from '@/storefront/components/MiniCartProvider';
 
-/** Props a cart change reloads: the cart page data and the header count. */
-export const CART_PROPS = ['lines', 'subtotal', 'cart'];
+/** Props a cart change reloads: the cart page data, the mini cart and the header count. */
+export const CART_PROPS = ['lines', 'subtotal', 'cart', 'miniCart'];
 
 /**
- * Adds `quantity` of one variant to the server cart; `added` drives the "Added to cart" toast and
+ * Adds `quantity` of one variant to the server cart and opens the mini cart with the new line;
  * `onAdded` lets a caller react to the success (such as closing a picker).
  */
 export function useAddToCart(
@@ -14,8 +15,8 @@ export function useAddToCart(
     quantity: number,
     onAdded?: () => void,
 ) {
+    const miniCart = useMiniCart();
     const [processing, setProcessing] = useState(false);
-    const [added, setAdded] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     function add(): void {
@@ -35,8 +36,8 @@ export function useAddToCart(
                     setError(null);
                 },
                 onSuccess: () => {
-                    setAdded(true);
                     onAdded?.();
+                    miniCart.open();
                 },
                 onError: (errors) =>
                     setError(
@@ -50,5 +51,5 @@ export function useAddToCart(
         );
     }
 
-    return { add, processing, added, error, dismiss: () => setAdded(false) };
+    return { add, processing, error };
 }

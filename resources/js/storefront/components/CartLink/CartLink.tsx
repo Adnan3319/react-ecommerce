@@ -1,17 +1,20 @@
-import { Link, usePage } from '@inertiajs/react';
-import { cart } from '@/routes';
+import { usePage } from '@inertiajs/react';
 import type { SharedProps } from '@/shared/types';
 import { Icon } from '@/storefront/components/ui';
+import { useMiniCart } from '../MiniCartProvider';
 
-/** Header link to the cart page with the number of items in the visitor's cart. */
+/** Header cart button: opens the mini cart drawer and shows the number of items in the visitor's cart. */
 export default function CartLink() {
     const { count } = usePage<SharedProps>().props.cart;
+    const { open } = useMiniCart();
 
     return (
-        <Link
-            href={cart()}
+        <button
+            type="button"
+            onClick={open}
+            aria-haspopup="dialog"
             aria-label={`Cart, ${count} ${count === 1 ? 'item' : 'items'}`}
-            className="relative flex size-11 items-center justify-center rounded-xl btn-accent"
+            className="relative flex size-11 items-center justify-center rounded-full btn-accent"
         >
             <Icon
                 name="cart"
@@ -23,6 +26,6 @@ export default function CartLink() {
                     {count}
                 </span>
             )}
-        </Link>
+        </button>
     );
 }

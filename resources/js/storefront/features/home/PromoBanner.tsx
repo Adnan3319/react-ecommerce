@@ -18,7 +18,7 @@ export default function PromoBanner({ promo }: PromoBannerProps) {
     return (
         <section
             aria-label={promo.title}
-            className="mx-auto max-w-7xl px-4 pt-12 sm:px-6"
+            className="mx-auto max-w-7xl px-4 pt-6 sm:px-6"
         >
             <div className="grid overflow-hidden rounded-card bg-ink text-white md:grid-cols-2">
                 <div className="flex flex-col items-start justify-center gap-4 p-6 sm:p-10">

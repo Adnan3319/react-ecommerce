@@ -12,7 +12,7 @@ import {
     RefreshCw,
     Search,
     ShieldCheck,
-    ShoppingCart,
+    ShoppingBag,
     Star,
     Trash2,
     Truck,
@@ -23,7 +23,7 @@ import type { LucideProps } from 'lucide-react';
 
 const ICONS = {
     search: Search,
-    cart: ShoppingCart,
+    cart: ShoppingBag,
     home: House,
     close: X,
     menu: Menu,

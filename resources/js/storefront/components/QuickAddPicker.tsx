@@ -2,19 +2,17 @@ import { Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { options as optionsRoute, show } from '@/routes/products';
 import { formatMoney } from '@/shared/lib';
-import Sheet from '@/storefront/components/Sheet';
-import VariantPicker from '@/storefront/components/VariantPicker';
-import { useVariantSelection } from '@/storefront/components/useVariantSelection';
 import { Button, Icon, Image } from '@/storefront/components/ui';
+import type { QuickAddOptions } from '@/storefront/features/catalog/types';
 import { useAddToCart } from '@/storefront/hooks/useAddToCart';
-import type { QuickAddOptions } from './types';
+import Sheet from './Sheet';
+import VariantPicker from './VariantPicker';
+import { useVariantSelection } from './useVariantSelection';
 
 type QuickAddPickerProps = {
     slug: string;
     open: boolean;
     onClose: () => void;
-    /** Called after the item is in the cart (the card shows the toast). */
-    onAdded: () => void;
 };
 
 type LoadState =
@@ -30,7 +28,6 @@ export default function QuickAddPicker({
     slug,
     open,
     onClose,
-    onAdded,
 }: QuickAddPickerProps) {
     const [state, setState] = useState<LoadState>({ status: 'idle' });
     const [attempt, setAttempt] = useState(0);
@@ -85,11 +82,7 @@ export default function QuickAddPicker({
         <Sheet open={open} onClose={onClose} label="Choose options">
             <div className="flex flex-col gap-5 p-5">
                 {state.status === 'ready' && (
-                    <PickerContent
-                        options={state.options}
-                        onClose={onClose}
-                        onAdded={onAdded}
-                    />
+                    <PickerContent options={state.options} onClose={onClose} />
                 )}
                 {state.status === 'error' && (
                     <div className="flex flex-col items-start gap-3">
@@ -117,18 +110,14 @@ export default function QuickAddPicker({
 type PickerContentProps = {
     options: QuickAddOptions;
     onClose: () => void;
-    onAdded: () => void;
 };
 
-function PickerContent({ options, onClose, onAdded }: PickerContentProps) {
+function PickerContent({ options, onClose }: PickerContentProps) {
     const { selected, variant, isAvailable, select } = useVariantSelection(
         options.heads,
         options.variants,
     );
-    const cart = useAddToCart(variant?.id ?? null, 1, () => {
-        onClose();
-        onAdded();
-    });
+    const cart = useAddToCart(variant?.id ?? null, 1, onClose);
     const outOfStock = !variant || variant.stock <= 0;
     const thumb = variant?.thumb ?? options.thumb;
 

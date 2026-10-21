@@ -23,7 +23,7 @@ class HomeService
     ) {}
 
     /**
-     * @return array{heroSlides: array<int, array<string, mixed>>, promo: ?array<string, mixed>, categories: array<int, array<string, mixed>>, featured: array<int, array<string, mixed>>, newArrivals: array<int, array<string, mixed>>, testimonials: array<int, array<string, mixed>>, deliveryZones: list<array{key: string, label: string, charge: int}>, seo: array<string, mixed>}
+     * @return array{heroSlides: array<int, array<string, mixed>>, promo: ?array<string, mixed>, categories: array<int, array<string, mixed>>, featured: array<int, array<string, mixed>>, categoryRails: list<array{category: array{name: string, slug: string}, products: array<int, array<string, mixed>>}>, newArrivals: array<int, array<string, mixed>>, testimonials: array<int, array<string, mixed>>, deliveryZones: list<array{key: string, label: string, charge: int}>, seo: array<string, mixed>}
      */
     public function data(): array
     {
@@ -34,6 +34,7 @@ class HomeService
             'promo' => $sliders['promo'],
             'categories' => $this->categories->activeForStorefront(),
             'featured' => $this->products->featuredForStorefront(),
+            'categoryRails' => $this->products->categoryRailsForStorefront(),
             'newArrivals' => $this->products->newArrivalsForStorefront(),
             'testimonials' => $this->testimonials->activeForStorefront(),
             'deliveryZones' => $this->zones->forStorefront(),

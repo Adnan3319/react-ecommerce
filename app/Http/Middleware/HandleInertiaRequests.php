@@ -6,6 +6,7 @@ use App\Services\Cart\CartService;
 use App\Services\Category\CategoryService;
 use App\Services\Order\PendingOrderCount;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -49,6 +50,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'cart' => ['count' => fn () => $this->cart->count()],
+            // The mini cart drawer: only built when a partial reload asks for it by name.
+            'miniCart' => Inertia::optional(fn () => $this->miniCart()),
             'auth' => [
                 'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],
@@ -60,6 +63,20 @@ class HandleInertiaRequests extends Middleware
             'categories' => fn () => $request->is('admin', 'admin/*')
                 ? []
                 : $this->categories->activeForStorefront(),
+        ];
+    }
+
+    /**
+     * @return array{lines: list<array<string, mixed>>, subtotal: int, maxQty: int}
+     */
+    private function miniCart(): array
+    {
+        $lines = $this->cart->lines();
+
+        return [
+            'lines' => $lines,
+            'subtotal' => $this->cart->subtotal($lines),
+            'maxQty' => (int) config('shop.max_qty_per_item'),
         ];
     }
 }

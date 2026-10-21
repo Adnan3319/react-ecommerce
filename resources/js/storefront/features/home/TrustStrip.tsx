@@ -55,22 +55,22 @@ export default function TrustStrip({ deliveryZones }: TrustStripProps) {
     return (
         <ul
             aria-label="Why shop with us"
-            className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-5 border-t border-white/10 px-4 pt-6 pb-14 sm:px-6 lg:grid-cols-4"
+            className="mx-auto flex w-full max-w-7xl [scrollbar-width:none] gap-6 overflow-x-auto border-t border-white/10 px-4 pt-3 pb-10 sm:px-6 md:pb-12 lg:justify-between [&::-webkit-scrollbar]:hidden"
         >
             {items.map((item) => (
                 <li
                     key={item.title}
-                    className="flex items-center gap-3 lg:justify-center"
+                    className="flex shrink-0 items-center gap-2.5"
                 >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur">
-                        <Icon name={item.icon} size={20} />
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur">
+                        <Icon name={item.icon} size={18} />
                     </span>
-                    <div>
-                        <p className="text-sm font-semibold">{item.title}</p>
-                        <p className="text-xs text-white/60">
+                    <p className="text-sm leading-tight">
+                        <span className="font-semibold">{item.title}</span>
+                        <span className="block text-xs text-white/60">
                             {item.description}
-                        </p>
-                    </div>
+                        </span>
+                    </p>
                 </li>
             ))}
         </ul>

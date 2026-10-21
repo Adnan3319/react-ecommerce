@@ -5,12 +5,13 @@ import type { ProductCardData } from '@/storefront/features/catalog/types';
 import CategoryShowcase from '@/storefront/features/home/CategoryShowcase';
 import HeroSlider from '@/storefront/features/home/HeroSlider';
 import type { ApiSlider } from '@/storefront/features/home/hero-slides';
+import HomeRails from '@/storefront/features/home/HomeRails';
 import ProductRail from '@/storefront/features/home/ProductRail';
-import PromoBanner from '@/storefront/features/home/PromoBanner';
 import Testimonials from '@/storefront/features/home/Testimonials';
 import TrustStrip from '@/storefront/features/home/TrustStrip';
 import type {
     ApiTestimonial,
+    CategoryRail,
     DeliveryZone,
     HomeCategory,
 } from '@/storefront/features/home/types';
@@ -21,12 +22,11 @@ type HomeProps = {
     promo: ApiSlider | null;
     categories: HomeCategory[];
     featured: ProductCardData[];
+    categoryRails: CategoryRail[];
     newArrivals: ProductCardData[];
     testimonials: ApiTestimonial[];
     deliveryZones: DeliveryZone[];
 };
-
-const FIRST_ROW_CARDS = 4;
 
 export default function Home({
     seo,
@@ -34,12 +34,11 @@ export default function Home({
     promo,
     categories,
     featured,
+    categoryRails,
     newArrivals,
     testimonials,
     deliveryZones,
 }: HomeProps) {
-    const viewAll = { label: 'View all', href: search() };
-
     return (
         <div className="bg-neutral-50">
             <Seo seo={seo} />
@@ -47,16 +46,14 @@ export default function Home({
                 <TrustStrip deliveryZones={deliveryZones} />
             </HeroSlider>
             <CategoryShowcase categories={categories} />
-            <ProductRail
-                title="Featured Products"
-                viewAll={viewAll}
-                products={featured}
-                eagerCount={FIRST_ROW_CARDS}
+            <HomeRails
+                featured={featured}
+                categoryRails={categoryRails}
+                promo={promo}
             />
-            <PromoBanner promo={promo} />
             <ProductRail
                 title="New Arrivals"
-                viewAll={viewAll}
+                viewAll={{ label: 'View all', href: search() }}
                 products={newArrivals}
             />
             <Testimonials testimonials={testimonials} />

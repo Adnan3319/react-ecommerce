@@ -22,7 +22,7 @@ it('sends every Home prop with its documented shape', function () {
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('Home', false)
-            ->hasAll(['heroSlides', 'promo', 'categories', 'featured', 'newArrivals', 'testimonials', 'deliveryZones', 'seo'])
+            ->hasAll(['heroSlides', 'promo', 'categories', 'featured', 'categoryRails', 'newArrivals', 'testimonials', 'deliveryZones', 'seo'])
             ->has('featured.0', fn (AssertableInertia $card) => $card
                 ->where('name', 'Dress')
                 ->where('options_summary', '3 sizes · 2 colors')
@@ -75,12 +75,12 @@ it('lists only active in-stock products in both rails', function () {
         ->where('newArrivals.1.name', 'Shown'));
 });
 
-it('limits each rail to eight products', function () {
-    Product::factory()->count(9)->simple()->featured()->create();
+it('limits each rail to ten products', function () {
+    Product::factory()->count(11)->simple()->featured()->create();
 
     $this->get(route('home'))->assertInertia(fn (AssertableInertia $page) => $page
-        ->has('featured', 8)
-        ->has('newArrivals', 8));
+        ->has('featured', 10)
+        ->has('newArrivals', 10));
 });
 
 it('marks products older than two weeks as not new', function () {

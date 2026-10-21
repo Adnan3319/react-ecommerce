@@ -54,6 +54,38 @@ class ProductPageService
     }
 
     /**
+     * What the quick-add picker needs, taken from the cached page: option heads and one entry per
+     * variant with the thumbnail of its own image (or the main one).
+     *
+     * @return array<string, mixed>
+     */
+    public function options(int $productId): array
+    {
+        $product = $this->page($productId)['product'];
+        $thumbs = array_column($product['images'], 'thumb_url', 'id');
+        $mainThumb = $product['images'][0]['thumb_url'] ?? null;
+
+        return [
+            'id' => $product['id'],
+            'name' => $product['name'],
+            'slug' => $product['slug'],
+            'thumb' => $mainThumb,
+            'heads' => $product['heads'],
+            'variants' => array_map(fn (array $variant) => [
+                'id' => $variant['id'],
+                'value_ids' => $variant['value_ids'],
+                'price' => $variant['price'],
+                'sale_price' => $variant['sale_price'],
+                'effective_price' => $variant['effective_price'],
+                'discount_percent' => $variant['discount_percent'],
+                'stock' => $variant['stock'],
+                'stock_state' => $variant['stock_state'],
+                'thumb' => $thumbs[$variant['image_id']] ?? $mainThumb,
+            ], $product['variants']),
+        ];
+    }
+
+    /**
      * @return array{product: array<string, mixed>, category: array<string, mixed>, seo: array<string, mixed>}
      */
     private function build(int $productId): array

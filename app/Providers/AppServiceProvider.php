@@ -53,11 +53,12 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Order placement: 5 requests per minute per IP. Cart changes: 30.
+     * Order placement: 5 requests per minute per IP. Cart changes: 30. Quick-add options: 60.
      */
     protected function configureRateLimiting(): void
     {
         RateLimiter::for('orders', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
         RateLimiter::for('cart', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
+        RateLimiter::for('product-options', fn (Request $request) => Limit::perMinute(60)->by($request->ip()));
     }
 }

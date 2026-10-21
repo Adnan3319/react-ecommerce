@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { cart } from '@/routes';
-import { ADDED_TOAST_MS } from './constants';
+const ADDED_TOAST_MS = 4000;
 
 type AddedToastProps = {
     onDismiss: () => void;

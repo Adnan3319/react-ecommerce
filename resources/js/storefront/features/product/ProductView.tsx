@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { home } from '@/routes';
 import { Badge, QuantityStepper } from '@/storefront/components/ui';
-import AddedToast from '@/storefront/features/cart/AddedToast';
+import AddedToast from '@/storefront/components/AddedToast';
 import AddToCartButton from '@/storefront/features/cart/AddToCartButton';
-import { useAddToCart } from '@/storefront/features/cart/useAddToCart';
+import { useAddToCart } from '@/storefront/hooks/useAddToCart';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
 import MobileOrderBar from '@/storefront/features/order/MobileOrderBar';
 import OrderForm from '@/storefront/features/order/OrderForm';
@@ -12,8 +12,8 @@ import PriceTag from './PriceTag';
 import ProductGallery from './ProductGallery';
 import StockNotice from './StockNotice';
 import type { ProductPageProps } from './types';
-import { useVariantSelection } from './useVariantSelection';
-import VariantPicker from './VariantPicker';
+import { useVariantSelection } from '@/storefront/components/useVariantSelection';
+import VariantPicker from '@/storefront/components/VariantPicker';
 
 type ProductViewProps = Omit<ProductPageProps, 'seo'>;
 

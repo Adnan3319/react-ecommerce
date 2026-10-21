@@ -52,7 +52,7 @@ describe('home', function () {
         Product::factory()->simple(stock: 0)->featured()->create(['name' => 'Sold out']);
         Cache::forget(ProductCache::FEATURED_KEY);
 
-        $cards = app(HomeService::class)->data()['featuredProducts'];
+        $cards = app(HomeService::class)->data()['featured'];
 
         expect($cards)->toHaveCount(1)
             ->and($cards[0])->toMatchArray(['name' => 'Polo', 'slug' => $featured->slug, 'price' => 300000, 'sale_price' => 240000, 'discount_percent' => 20])

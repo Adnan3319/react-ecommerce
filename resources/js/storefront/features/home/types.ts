@@ -1,3 +1,5 @@
+import type { Category } from '@/storefront/config/site';
+
 /** One entry of `Services\Testimonial\TestimonialService::activeForStorefront()`. */
 export type ApiTestimonial = {
     id: number;
@@ -6,4 +8,13 @@ export type ApiTestimonial = {
     rating: number;
     source: string;
     source_label: string;
+};
+
+/** A top-level category with its sub-categories, as the shared `categories` prop sends it. */
+export type HomeCategory = Category & { children: Category[] };
+
+export type DeliveryZone = {
+    key: string;
+    label: string;
+    charge: number;
 };

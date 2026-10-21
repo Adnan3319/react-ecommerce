@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib';
-import type { PageHead } from './types';
+import type { PageHead } from '@/storefront/types/variants';
 
 type VariantPickerProps = {
     heads: PageHead[];

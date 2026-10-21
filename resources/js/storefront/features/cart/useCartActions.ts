@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { destroy, update } from '@/routes/cart/items';
-import { CART_PROPS } from './constants';
+import { CART_PROPS } from '@/storefront/hooks/useAddToCart';
 
 const visitOptions = {
     preserveScroll: true,

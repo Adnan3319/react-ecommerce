@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib';
-import type { StockState } from './types';
+import type { StockState } from '@/storefront/types/variants';
 
 type StockNoticeProps = {
     state: StockState;

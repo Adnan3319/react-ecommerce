@@ -9,7 +9,6 @@ import {
 import type { Swiper as SwiperInstance } from 'swiper/types';
 import { cn } from '@/shared/lib';
 import { Icon, Image } from '@/storefront/components/ui';
-import { ValueProps } from './components/ValueProps';
 import HeroSlide from './HeroSlide';
 import { HERO_SLIDES, toHeroSlide } from './hero-slides';
 import type { ApiSlider } from './hero-slides';
@@ -157,7 +156,7 @@ export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
                 className="absolute inset-0 bg-ink/60 md:hidden"
             />
 
-            <div className="relative md:pt-[4.5rem]">
+            <div className="relative pb-16 md:pt-[4.5rem]">
                 {swiperRequested ? (
                     <Suspense
                         fallback={
@@ -231,8 +230,6 @@ export default function HeroSlider({ sliders = [] }: HeroSliderProps) {
                             ))}
                     </div>
                 )}
-
-                <ValueProps />
             </div>
 
             <svg

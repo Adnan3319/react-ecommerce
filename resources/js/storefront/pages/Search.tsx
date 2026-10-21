@@ -1,11 +1,9 @@
 import { Head, usePage } from '@inertiajs/react';
 import { home } from '@/routes';
 import { Breadcrumbs } from '@/storefront/components/Breadcrumbs';
-import { SAMPLE_PRODUCTS } from '@/storefront/features/product';
 import {
     SearchFilters,
     SearchResults,
-    filterProducts,
     parseSearchParams,
 } from '@/storefront/features/search';
 import { useCategory } from '@/storefront/lib/useCategories';
@@ -14,7 +12,6 @@ export default function Search() {
     const { url } = usePage();
     const params = parseSearchParams(url);
     const category = useCategory(params.category);
-    const products = filterProducts(SAMPLE_PRODUCTS, params);
     const isFiltered =
         params.q !== '' ||
         params.category !== null ||
@@ -40,7 +37,7 @@ export default function Search() {
                     <SearchFilters params={params} />
                 </div>
 
-                <SearchResults params={params} products={products} />
+                <SearchResults params={params} />
             </div>
         </>
     );

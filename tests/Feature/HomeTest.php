@@ -21,8 +21,8 @@ it('composes sliders and categories from their own caches', function () {
 
     $data = app(HomeService::class)->data();
 
-    expect($data)->toHaveKeys(['sliders', 'promo', 'categories', 'testimonials'])
-        ->and($data['sliders'])->toBe(Cache::get(SliderService::cacheKey(SliderPosition::Hero)))
+    expect($data)->toHaveKeys(['heroSlides', 'promo', 'categories', 'testimonials'])
+        ->and($data['heroSlides'])->toBe(Cache::get(SliderService::cacheKey(SliderPosition::Hero)))
         ->and($data['categories'])->toBe(Cache::get(CategoryService::ACTIVE_CACHE_KEY));
 });
 
@@ -33,8 +33,8 @@ it('renders the Home page with sliders and categories props', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page
-            ->has('sliders', 1)
-            ->where('sliders.0.title', 'Hero')
+            ->has('heroSlides', 1)
+            ->where('heroSlides.0.title', 'Hero')
             ->has('categories', 1)
             ->where('categories.0.slug', 'kitchenware'));
 });
@@ -87,6 +87,6 @@ describe('cache invalidation per key', function () {
     it('the Home page reflects a write right after it', function () {
         $this->post(route('admin.sliders.update', $this->slider), ['_method' => 'put', 'status' => 'inactive']);
 
-        $this->get(route('home'))->assertInertia(fn (AssertableInertia $page) => $page->has('sliders', 0));
+        $this->get(route('home'))->assertInertia(fn (AssertableInertia $page) => $page->has('heroSlides', 0));
     });
 });

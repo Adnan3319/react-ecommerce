@@ -324,15 +324,15 @@ describe('storefront cache', function () {
             ->and($sliders[1]['id'])->toBe($later->id);
     });
 
-    it('is shared with the Home page as the sliders prop', function () {
+    it('is shared with the Home page as the heroSlides prop', function () {
         Slider::factory()->create(['title' => 'Shown', 'image' => '/images/sliders/1.jpg']);
         Slider::factory()->inactive()->create(['title' => 'Hidden']);
 
         $this->get(route('home'))
             ->assertInertia(fn (AssertableInertia $page) => $page
-                ->has('sliders', 1)
-                ->where('sliders.0.title', 'Shown')
-                ->where('sliders.0.image', '/images/sliders/1.jpg'));
+                ->has('heroSlides', 1)
+                ->where('heroSlides.0.title', 'Shown')
+                ->where('heroSlides.0.image', '/images/sliders/1.jpg'));
     });
 
     it('is cleared when a slider is created', function () {

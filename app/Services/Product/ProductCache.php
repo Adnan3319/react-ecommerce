@@ -12,6 +12,8 @@ class ProductCache
 {
     public const FEATURED_KEY = 'products.featured';
 
+    public const NEW_ARRIVALS_KEY = 'products.new_arrivals';
+
     private const PAGE_KEY_PREFIX = 'products.page.';
 
     public function __construct(private readonly DashboardCache $dashboard) {}
@@ -22,11 +24,12 @@ class ProductCache
     }
 
     /**
-     * Clears the featured list and, when the product is known, its product page.
+     * Clears the Home product lists and, when the product is known, its product page.
      */
     public function flush(?int $productId = null): void
     {
         Cache::forget(self::FEATURED_KEY);
+        Cache::forget(self::NEW_ARRIVALS_KEY);
         // The dashboard lists low-stock variants.
         $this->dashboard->forget();
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PageHead, PageVariant } from './types';
+import type { PageHead, PageVariant } from '@/storefront/types/variants';
 
 type Selection = Record<number, number>;
 
@@ -19,9 +19,9 @@ function initialSelection(
  * Which value is picked per head, the variant that matches the picks, and which values can still be
  * chosen: a value is available when some variant with stock has it together with the other picked values.
  */
-export function useVariantSelection(
+export function useVariantSelection<V extends PageVariant>(
     heads: PageHead[],
-    variants: PageVariant[],
+    variants: V[],
 ) {
     const [selected, setSelected] = useState<Selection>(() =>
         initialSelection(heads, variants),

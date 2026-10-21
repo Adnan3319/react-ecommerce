@@ -249,13 +249,13 @@ describe('storefront', function () {
         expect(app(SliderService::class)->activeForStorefront()['promo'])->toBeNull();
     });
 
-    it('is shared with the Home page: hero list as sliders, promo as promo', function () {
+    it('is shared with the Home page: hero list as heroSlides, promo as promo', function () {
         Slider::factory()->create(['title' => 'Hero', 'image' => '/images/sliders/1.jpg']);
         Slider::factory()->promo()->create(['title' => 'Promo', 'image' => '/images/sliders/2.jpg']);
 
         $this->get(route('home'))->assertInertia(fn (Assert $page) => $page
-            ->has('sliders', 1)
-            ->where('sliders.0.title', 'Hero')
+            ->has('heroSlides', 1)
+            ->where('heroSlides.0.title', 'Hero')
             ->where('promo.title', 'Promo'));
     });
 

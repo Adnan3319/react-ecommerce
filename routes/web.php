@@ -11,12 +11,14 @@ use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\OrderController;
+use App\Http\Controllers\Storefront\ProductOptionsController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/products/{slug}', [StorefrontProductController::class, 'show'])->name('products.show');
+Route::get('/products/{slug}/options', [ProductOptionsController::class, 'show'])->middleware('throttle:product-options')->name('products.options');
 Route::post('/orders', [OrderController::class, 'store'])->middleware('throttle:orders')->name('orders.store');
 Route::get('/orders/{token}/thank-you', [OrderController::class, 'show'])->name('orders.success');
 Route::inertia('/search', 'Search')->name('search');

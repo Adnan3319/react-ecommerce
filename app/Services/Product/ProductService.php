@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Enums\ActiveStatus;
+use App\Http\Resources\Storefront\ProductCardResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductSlugRedirect;
@@ -25,7 +26,7 @@ class ProductService
 
     private const IMAGE_PRESET = 'product';
 
-    private const FEATURED_LIMIT = 8;
+    private const HOME_RAIL_LIMIT = 8;
 
     /** Existing heads wait here while names/positions are reassigned, so swaps do not hit the unique indexes. */
     private const PARKED_HEAD_POSITION = 100;
@@ -89,23 +90,43 @@ class ProductService
     }
 
     /**
-     * Featured products for the Home page as plain arrays (cached forever, flushed on every product or stock write).
-     * The price shown is the cheapest effective price among the in-stock variants.
+     * Featured products for the Home page as plain card arrays (cached forever, flushed on every product or stock write).
      *
      * @return array<int, array<string, mixed>>
      */
     public function featuredForStorefront(): array
     {
-        return Cache::rememberForever(ProductCache::FEATURED_KEY, fn () => Product::query()
+        return Cache::rememberForever(ProductCache::FEATURED_KEY, fn () => $this->cards(
+            Product::query()->featured()->latest('id'),
+        ));
+    }
+
+    /**
+     * The newest active in-stock products for the Home page, cached like the featured list.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function newArrivalsForStorefront(): array
+    {
+        return Cache::rememberForever(ProductCache::NEW_ARRIVALS_KEY, fn () => $this->cards(
+            Product::query()->latest('id'),
+        ));
+    }
+
+    /**
+     * @param  Builder<Product>  $query
+     * @return array<int, array<string, mixed>>
+     */
+    private function cards(Builder $query): array
+    {
+        $products = $query
             ->active()
-            ->featured()
             ->inStock()
-            ->with(['mainImage', 'activeVariants'])
-            ->latest('id')
-            ->limit(self::FEATURED_LIMIT)
-            ->get()
-            ->map(fn (Product $product) => $this->featuredCard($product))
-            ->all());
+            ->with(['mainImage', 'activeVariants', 'variantHeads.values'])
+            ->limit(self::HOME_RAIL_LIMIT)
+            ->get();
+
+        return ProductCardResource::collection($products)->resolve();
     }
 
     /**
@@ -464,29 +485,6 @@ class ProductService
             ->orWhere('parent_id', $categoryId)
             ->pluck('id')
             ->all();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function featuredCard(Product $product): array
-    {
-        $variant = $product->activeVariants
-            ->filter(fn (ProductVariant $candidate) => $candidate->stock > 0)
-            ->sortBy('effective_price')
-            ->first();
-        $path = $product->mainImage?->path;
-
-        return [
-            'id' => $product->id,
-            'name' => $product->name,
-            'slug' => $product->slug,
-            'thumb' => $this->uploads->variantUrl($path, 'thumb'),
-            'srcset' => $this->uploads->srcset($path, self::IMAGE_PRESET),
-            'price' => $variant?->price,
-            'sale_price' => $variant?->sale_price,
-            'discount_percent' => $variant?->discount_percent,
-        ];
     }
 
     /**

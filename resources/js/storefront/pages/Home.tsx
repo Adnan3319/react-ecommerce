@@ -1,32 +1,64 @@
+import { search } from '@/routes';
 import { Seo } from '@/shared/components';
 import type { Seo as SeoData } from '@/shared/types';
-import {
-    CategoryProducts,
-    CategoryShowcase,
-    HeroSlider,
-    PromoBanner,
-    Testimonials,
-} from '@/storefront/features/home';
-import type { ApiSlider, ApiTestimonial } from '@/storefront/features/home';
+import type { ProductCardData } from '@/storefront/features/catalog/types';
+import CategoryShowcase from '@/storefront/features/home/CategoryShowcase';
+import HeroSlider from '@/storefront/features/home/HeroSlider';
+import type { ApiSlider } from '@/storefront/features/home/hero-slides';
+import ProductRail from '@/storefront/features/home/ProductRail';
+import PromoBanner from '@/storefront/features/home/PromoBanner';
+import Testimonials from '@/storefront/features/home/Testimonials';
+import TrustStrip from '@/storefront/features/home/TrustStrip';
+import type {
+    ApiTestimonial,
+    DeliveryZone,
+    HomeCategory,
+} from '@/storefront/features/home/types';
 
 type HomeProps = {
     seo: SeoData;
-    sliders: ApiSlider[];
-    /** First active promo slider; wired into the page by the landing step. */
+    heroSlides: ApiSlider[];
     promo: ApiSlider | null;
-    /** Real testimonials; the landing step renders them. */
+    categories: HomeCategory[];
+    featured: ProductCardData[];
+    newArrivals: ProductCardData[];
     testimonials: ApiTestimonial[];
+    deliveryZones: DeliveryZone[];
 };
 
-export default function Home({ seo, sliders }: HomeProps) {
+const FIRST_ROW_CARDS = 4;
+
+export default function Home({
+    seo,
+    heroSlides,
+    promo,
+    categories,
+    featured,
+    newArrivals,
+    testimonials,
+    deliveryZones,
+}: HomeProps) {
+    const viewAll = { label: 'View all', href: search() };
+
     return (
         <div className="bg-neutral-50">
             <Seo seo={seo} />
-            <HeroSlider sliders={sliders} />
-            <CategoryShowcase />
-            <CategoryProducts />
-            <PromoBanner />
-            <Testimonials />
+            <HeroSlider sliders={heroSlides} />
+            <TrustStrip deliveryZones={deliveryZones} />
+            <CategoryShowcase categories={categories} />
+            <ProductRail
+                title="Featured Products"
+                viewAll={viewAll}
+                products={featured}
+                eagerCount={FIRST_ROW_CARDS}
+            />
+            <PromoBanner promo={promo} />
+            <ProductRail
+                title="New Arrivals"
+                viewAll={viewAll}
+                products={newArrivals}
+            />
+            <Testimonials testimonials={testimonials} />
         </div>
     );
 }

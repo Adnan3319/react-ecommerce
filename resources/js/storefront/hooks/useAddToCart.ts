@@ -1,10 +1,19 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { store } from '@/routes/cart/items';
-import { CART_PROPS } from './constants';
 
-/** Adds `quantity` of one variant to the server cart; `added` drives the "Added to cart" toast. */
-export function useAddToCart(variantId: number | null, quantity: number) {
+/** Props a cart change reloads: the cart page data and the header count. */
+export const CART_PROPS = ['lines', 'subtotal', 'cart'];
+
+/**
+ * Adds `quantity` of one variant to the server cart; `added` drives the "Added to cart" toast and
+ * `onAdded` lets a caller react to the success (such as closing a picker).
+ */
+export function useAddToCart(
+    variantId: number | null,
+    quantity: number,
+    onAdded?: () => void,
+) {
     const [processing, setProcessing] = useState(false);
     const [added, setAdded] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,7 +34,10 @@ export function useAddToCart(variantId: number | null, quantity: number) {
                     setProcessing(true);
                     setError(null);
                 },
-                onSuccess: () => setAdded(true),
+                onSuccess: () => {
+                    setAdded(true);
+                    onAdded?.();
+                },
                 onError: (errors) =>
                     setError(
                         errors.quantity ??

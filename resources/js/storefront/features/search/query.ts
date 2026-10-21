@@ -1,5 +1,4 @@
 import { search } from '@/routes';
-import type { ProductDetail } from '@/storefront/features/product';
 import type { RouteDefinition } from '@/wayfinder';
 
 export const SORT_OPTIONS = [
@@ -51,34 +50,4 @@ export function buildSearchHref(params: SearchParams): RouteDefinition<'get'> {
     }
 
     return search({ query });
-}
-
-export function filterProducts(
-    products: ProductDetail[],
-    { q, category, sort }: SearchParams,
-): ProductDetail[] {
-    const needle = q.toLowerCase();
-
-    const matches = products.filter((product) => {
-        if (category && product.categorySlug !== category) {
-            return false;
-        }
-
-        return (
-            needle === '' ||
-            product.name.toLowerCase().includes(needle) ||
-            product.description.toLowerCase().includes(needle)
-        );
-    });
-
-    switch (sort) {
-        case 'price-asc':
-            return [...matches].sort((a, b) => a.price - b.price);
-        case 'price-desc':
-            return [...matches].sort((a, b) => b.price - a.price);
-        case 'name':
-            return [...matches].sort((a, b) => a.name.localeCompare(b.name));
-        default:
-            return matches;
-    }
 }

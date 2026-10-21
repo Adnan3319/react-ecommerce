@@ -7,7 +7,7 @@
     $image = $seo['image'] ?? null;
     $robots = ($seo['noindex'] ?? false) ? 'noindex,follow' : 'index,follow';
     // First Home hero slide: start downloading its image before the JS bundle runs (LCP).
-    $heroSlide = ($page['component'] ?? null) === 'Home' ? ($page['props']['sliders'][0] ?? null) : null;
+    $heroSlide = ($page['component'] ?? null) === 'Home' ? ($page['props']['heroSlides'][0] ?? null) : null;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

@@ -24,8 +24,9 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
         }));
 
     return (
-        <>
-            <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
+            {/* Left Side: Basic Information (Spans 2 columns) */}
+            <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3 lg:col-span-2">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
                         Basic information
@@ -123,7 +124,8 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
                 </div>
             </section>
 
-            <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
+            {/* Right Side: Category Picker (Spans 1 column on the right) */}
+            <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3 lg:col-span-1">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
                         Category *
@@ -139,6 +141,6 @@ export default function BasicInfoTab({ api, categoryTree }: BasicInfoTabProps) {
                     onChange={(categoryId) => set('category_id', categoryId)}
                 />
             </section>
-        </>
+        </div>
     );
 }

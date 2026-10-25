@@ -1,13 +1,23 @@
 @php
     $seo = $page['props']['seo'] ?? [];
-    $appName = config('app.name');
-    $title = $seo['title'] ?? $appName;
+    $appName = config('app.name', 'Checkit');
+    $pageComponent = $page['component'] ?? null;
+    $rawTitle = $seo['title'] ?? null;
+
+    if ($pageComponent === 'Home') {
+        $title = "Home";
+    } else {
+        $title = $rawTitle ?: $appName;
+    }
+
+    // og:title এর জন্য ক্লিন টাইটেল তৈরি করা যাতে ডাবল Checkit না আসে
+    $cleanOgTitle = str_contains($title, $appName) ? $title : "{$title} - {$appName}";
+
     $description = $seo['description'] ?? null;
     $canonical = $seo['canonical'] ?? null;
     $image = $seo['image'] ?? null;
     $robots = ($seo['noindex'] ?? false) ? 'noindex,follow' : 'index,follow';
-    // First Home hero slide: start downloading its image before the JS bundle runs (LCP).
-    $heroSlide = ($page['component'] ?? null) === 'Home' ? ($page['props']['heroSlides'][0] ?? null) : null;
+    $heroSlide = $pageComponent === 'Home' ? ($page['props']['heroSlides'][0] ?? null) : null;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -15,9 +25,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="icon" href="/checkit-logo-light.png" type="image/png">
+        <link rel="apple-touch-icon" href="/checkit-logo-light.png">
 
         @fonts
 
@@ -38,7 +47,7 @@
             @endif
             <meta property="og:type" content="website" data-inertia="og:type">
             <meta property="og:site_name" content="{{ $appName }}" data-inertia="og:site_name">
-            <meta property="og:title" content="{{ $title }}" data-inertia="og:title">
+            <meta property="og:title" content="{{ $cleanOgTitle }}" data-inertia="og:title">
             @if ($description)
                 <meta property="og:description" content="{{ $description }}" data-inertia="og:description">
             @endif

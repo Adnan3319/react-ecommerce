@@ -27,6 +27,15 @@ export default function SliderTable({
 }: SliderTableProps) {
     const columns = [
         {
+            header: 'SL',
+            accessor: 'sort_order',
+            render: (row: Slider, index?: number) => (
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {row.sort_order ?? (index !== undefined ? index + 1 : '-')}
+                </span>
+            ),
+        },
+        {
             header: 'Image',
             accessor: 'image_url',
             render: (row: Slider) =>
@@ -86,7 +95,6 @@ export default function SliderTable({
                 </Badge>
             ),
         },
-        { header: 'Order', accessor: 'sort_order' },
         {
             header: 'Status',
             accessor: 'status',

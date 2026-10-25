@@ -7,11 +7,14 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController as StorefrontCategoryController;
 use App\Http\Controllers\Storefront\OrderController;
+use App\Http\Controllers\Storefront\ContactController;
 use App\Http\Controllers\Storefront\ProductOptionsController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Storefront\SearchController;
@@ -34,7 +37,10 @@ Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->g
     Route::delete('/{variantId}', [CartController::class, 'destroy'])->whereNumber('variantId')->name('destroy');
 });
 Route::inertia('/about', 'About')->name('about');
-Route::inertia('/contact', 'Contact')->name('contact');
+
+// কন্টাক্ট পেজের জন্য কন্ট্রোলার মেথড রাউট
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::redirect('/', '/admin/dashboard')->name('index');
@@ -51,6 +57,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('products', ProductController::class)->except('show');
 
+        Route::get('/company', [CompanyController::class, 'edit'])->name('company.edit');
+        Route::post('/company', [CompanyController::class, 'update'])->name('company.update');
+
+        Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
+        Route::patch('/contact-messages/{contactMessage}/read', [ContactMessageController::class, 'markAsRead'])->name('contact-messages.read');
+        Route::delete('/contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
+    
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/transition', [AdminOrderController::class, 'transition'])->name('orders.transition');

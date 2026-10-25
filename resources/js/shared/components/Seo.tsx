@@ -5,17 +5,14 @@ type SeoProps = {
     seo: SeoData;
 };
 
-/**
- * Mirrors the tags rendered server-side in `storefront.blade.php`.
- * `head-key`s must stay identical to the blade `data-inertia` keys so client
- * navigation replaces the tags instead of duplicating them.
- */
 export default function Seo({ seo }: SeoProps) {
     const { title, description, canonical, noindex, image, jsonLd } = seo;
 
+    const formattedTitle = title || 'Home';
+
     return (
         <Head>
-            <title head-key="title">{title}</title>
+            <title head-key="title">{formattedTitle}</title>
             <meta
                 head-key="robots"
                 name="robots"
@@ -32,7 +29,7 @@ export default function Seo({ seo }: SeoProps) {
                 <link head-key="canonical" rel="canonical" href={canonical} />
             )}
             <meta head-key="og:type" property="og:type" content="website" />
-            <meta head-key="og:title" property="og:title" content={title} />
+            <meta head-key="og:title" property="og:title" content={formattedTitle} />
             {description && (
                 <meta
                     head-key="og:description"

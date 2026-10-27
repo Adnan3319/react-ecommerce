@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { about, cart, contact, home, search } from '@/routes';
+import { cart, contact, home, search } from '@/routes';
 import type { SharedProps } from '@/shared/types';
 import { Image } from '@/storefront/components/ui';
 import { LOGO } from '@/storefront/config/site';
@@ -10,7 +10,7 @@ const QUICK_LINKS = [
     { label: 'Home', href: home() },
     { label: 'Shop', href: search() },
     { label: 'Cart', href: cart() },
-    { label: 'About Us', href: about() },
+    { label: 'About Us', href: route('pages.show', 'about') },
     { label: 'Contact', href: contact() },
 ];
 

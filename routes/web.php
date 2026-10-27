@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\HomeController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Storefront\ProductOptionsController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Storefront\SearchController;
 use App\Http\Controllers\Storefront\SearchSuggestController;
+use App\Http\Controllers\Storefront\PageController as StorefrontPageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -36,9 +38,9 @@ Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->g
     Route::patch('/{variantId}', [CartController::class, 'update'])->whereNumber('variantId')->name('update');
     Route::delete('/{variantId}', [CartController::class, 'destroy'])->whereNumber('variantId')->name('destroy');
 });
-Route::inertia('/about', 'About')->name('about');
 
-// কন্টাক্ট পেজের জন্য কন্ট্রোলার মেথড রাউট
+Route::get('/pages/{slug}', [StorefrontPageController::class, 'show'])->name('pages.show');
+
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -56,6 +58,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('testimonials', TestimonialController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('products', ProductController::class)->except('show');
+
+        Route::resource('pages', PageController::class)->except('show');
 
         Route::get('/company', [CompanyController::class, 'edit'])->name('company.edit');
         Route::post('/company', [CompanyController::class, 'update'])->name('company.update');

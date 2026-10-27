@@ -1,7 +1,7 @@
 import { useSidebar } from '@admin/context/SidebarContext';
 import { usePage } from '@inertiajs/react';
 import { useCallback, useEffect } from 'react';
-import { Building2, Mail } from 'lucide-react';
+import { Building2, FileText, Mail } from 'lucide-react';
 import { Link, useLocation } from '@admin/lib/router';
 import {
     BoxCubeIcon,
@@ -47,6 +47,11 @@ const navItems: NavItem[] = [
         name: 'Categories',
         icon: <ListIcon fontSize={24} />,
         path: '/admin/categories',
+    },
+    {
+        name: 'Pages',
+        icon: <FileText className="size-6" />,
+        path: '/admin/pages',
     },
     {
         name: 'Testimonials',

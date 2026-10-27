@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             CategorySeeder::class,
+            CompanySeeder::class,
         ]);
 
         // Fake feedback, sample sliders and sample products only on a developer machine, never on a live store.

@@ -12,10 +12,7 @@ class CompanyController extends Controller
 {
     public function edit()
     {
-        $company = Company::firstOrCreate(
-            ['id' => 1],
-            ['name' => 'Company-Website']
-        );
+        $company = Company::first();
 
         return Inertia::render('Admin/Company/Edit', [
             'company' => $company,
@@ -24,7 +21,7 @@ class CompanyController extends Controller
 
     public function update(UpdateCompanyRequest $request)
     {
-        $company = Company::firstOrCreate(['id' => 1]);
+        $company = Company::first();
         $data = $request->validated();
 
         if ($request->hasFile('logo')) {

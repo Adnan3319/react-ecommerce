@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noindex,nofollow">
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="icon" href="/checkit-logo-light.png" type="image/png">
+        <link rel="apple-touch-icon" href="/checkit-logo-light.png">
 
         @viteReactRefresh
         @vite(['resources/css/admin.css', 'resources/js/admin/app.tsx'])

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Company;
 use App\Services\Cart\CartService;
 use App\Services\Category\CategoryService;
 use App\Services\Order\PendingOrderCount;
@@ -17,58 +18,36 @@ class HandleInertiaRequests extends Middleware
         private readonly CartService $cart,
     ) {}
 
-    /**
-     * Pick the root template per route group: admin panel vs storefront.
-     *
-     * @see https://inertiajs.com/server-side-setup#root-template
-     */
     public function rootView(Request $request): string
     {
         return $request->is('admin', 'admin/*') ? 'admin' : 'storefront';
     }
 
-    /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @see https://inertiajs.com/shared-data
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'cart' => ['count' => fn () => $this->cart->count()],
-            // The mini cart drawer: only built when a partial reload asks for it by name.
             'miniCart' => Inertia::optional(fn () => $this->miniCart()),
             'auth' => [
                 'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],
-            // Sidebar badge of the admin panel; only evaluated for logged-in admin requests.
             'admin' => fn () => $request->user() && $request->is('admin', 'admin/*')
                 ? ['pendingOrders' => $this->pendingOrders->get()]
                 : null,
-            // Active categories for the storefront (navbar, home, search, footer).
             'categories' => fn () => $request->is('admin', 'admin/*')
                 ? []
                 : $this->categories->activeForStorefront(),
+            'company' => fn () => Company::first(),
         ];
     }
 
-    /**
-     * @return array{lines: list<array<string, mixed>>, subtotal: int, maxQty: int}
-     */
     private function miniCart(): array
     {
         $lines = $this->cart->lines();

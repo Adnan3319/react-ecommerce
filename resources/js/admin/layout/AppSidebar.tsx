@@ -1,6 +1,7 @@
 import { useSidebar } from '@admin/context/SidebarContext';
 import { usePage } from '@inertiajs/react';
 import { useCallback, useEffect } from 'react';
+import { Building2, FileText, Mail } from 'lucide-react';
 import { Link, useLocation } from '@admin/lib/router';
 import {
     BoxCubeIcon,
@@ -48,9 +49,24 @@ const navItems: NavItem[] = [
         path: '/admin/categories',
     },
     {
+        name: 'Pages',
+        icon: <FileText className="size-6" />,
+        path: '/admin/pages',
+    },
+    {
         name: 'Testimonials',
         icon: <ChatIcon fontSize={24} />,
         path: testimonials.index().url,
+    },
+    {
+        name: 'Contact Messages',
+        icon: <Mail className="size-6" />,
+        path: '/admin/contact-messages',
+    },
+    {
+        name: 'Company',
+        icon: <Building2 fontSize={24} />,
+        path: '/admin/company',
     },
 ];
 
@@ -63,9 +79,9 @@ const AppSidebar: React.FC = () => {
         setIsMobileOpen,
     } = useSidebar();
     const location = useLocation();
-    const { name: appName, admin } = usePage<{
-        name: string;
+    const { admin, company } = usePage<{
         admin: { pendingOrders: number } | null;
+        company?: { logo_url?: string; name?: string };
     }>().props;
     const pendingOrders = admin?.pendingOrders ?? 0;
 
@@ -132,6 +148,9 @@ const AppSidebar: React.FC = () => {
         </h2>
     );
 
+    // Dynamic uploaded logo, otherwise fallback to public/images/logo/checkit-logo.png
+    const logoSrc = company?.logo_url || '/images/logo/checkit-logo.png';
+
     return (
         <aside
             className={cn(
@@ -150,19 +169,21 @@ const AppSidebar: React.FC = () => {
         >
             <div
                 className={cn(
-                    'flex py-8',
+                    'flex py-8 items-center',
                     !isExpanded && !isHovered
                         ? 'xl:justify-center'
                         : 'justify-start',
                 )}
             >
                 <Link to="/admin/dashboard" className="flex items-center gap-3">
-                    <span className="bg-brand-500 flex size-9 shrink-0 items-center justify-center rounded-lg text-lg font-bold text-white">
-                        {appName?.charAt(0)}
-                    </span>
+                    <img
+                        src={logoSrc}
+                        alt="Checkit Logo"
+                        className="size-9 shrink-0 object-contain rounded-lg"
+                    />
                     {showText && (
-                        <span className="truncate text-lg font-semibold text-gray-800 dark:text-white/90">
-                            {appName}
+                        <span className="truncate text-lg font-bold text-gray-800 dark:text-white/90">
+                            Checkit
                         </span>
                     )}
                 </Link>

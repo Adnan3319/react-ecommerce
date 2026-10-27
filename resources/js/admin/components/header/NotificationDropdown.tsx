@@ -1,5 +1,6 @@
 import { cn } from '@admin/utils';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useClickOutside } from '@admin/hooks/useClickOutside';
 import { Link } from '@admin/lib/router';
 import { Dropdown } from '../ui/dropdown/Dropdown';
 import { DropdownItem } from '../ui/dropdown/DropdownItem';
@@ -7,6 +8,11 @@ import { DropdownItem } from '../ui/dropdown/DropdownItem';
 export default function NotificationDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifying, setNotifying] = useState(true);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useClickOutside(dropdownRef, () => {
+        setIsOpen(false);
+    });
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -22,7 +28,7 @@ export default function NotificationDropdown() {
     };
 
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             <button
                 className="dropdown-toggle relative flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
                 onClick={handleClick}
@@ -82,7 +88,6 @@ export default function NotificationDropdown() {
                 </div>
 
                 <ul className="custom-scrollbar flex h-auto flex-col overflow-y-auto">
-                    {/* Example notification items */}
                     <li>
                         <DropdownItem
                             onItemClick={closeDropdown}
@@ -227,152 +232,8 @@ export default function NotificationDropdown() {
                             </span>
                         </DropdownItem>
                     </li>
-
-                    <li>
-                        <DropdownItem
-                            className="flex gap-3 border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-                            onItemClick={closeDropdown}
-                        >
-                            <span className="relative z-1 block h-10 w-full max-w-10 rounded-full">
-                                <img
-                                    width={40}
-                                    height={40}
-                                    src="/images/user/user-02.jpg"
-                                    alt="User"
-                                    className="w-full overflow-hidden rounded-full"
-                                />
-                                <span className="bg-success-500 absolute inset-e-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                            </span>
-
-                            <span className="block">
-                                <span className="text-theme-sm mb-1.5 block space-x-1 text-gray-500 dark:text-gray-400">
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Terry Franci
-                                    </span>
-                                    <span> requests permission to change</span>
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Project - Nganter App
-                                    </span>
-                                </span>
-
-                                <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                    <span>Project</span>
-                                    <span className="h-1 w-1 rounded-full bg-gray-400"></span>
-                                    <span>5 min ago</span>
-                                </span>
-                            </span>
-                        </DropdownItem>
-                    </li>
-
-                    <li>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            className="flex gap-3 border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-                        >
-                            <span className="relative z-1 block h-10 w-full max-w-10 rounded-full">
-                                <img
-                                    width={40}
-                                    height={40}
-                                    src="/images/user/user-03.jpg"
-                                    alt="User"
-                                    className="w-full overflow-hidden rounded-full"
-                                />
-                                <span className="bg-success-500 absolute inset-e-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                            </span>
-
-                            <span className="block">
-                                <span className="text-theme-sm mb-1.5 block space-x-1 text-gray-500 dark:text-gray-400">
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Alena Franci
-                                    </span>
-                                    <span> requests permission to change</span>
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Project - Nganter App
-                                    </span>
-                                </span>
-
-                                <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                    <span>Project</span>
-                                    <span className="h-1 w-1 rounded-full bg-gray-400"></span>
-                                    <span>8 min ago</span>
-                                </span>
-                            </span>
-                        </DropdownItem>
-                    </li>
-
-                    <li>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            className="flex gap-3 border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-                        >
-                            <span className="relative z-1 block h-10 w-full max-w-10 rounded-full">
-                                <img
-                                    width={40}
-                                    height={40}
-                                    src="/images/user/user-04.jpg"
-                                    alt="User"
-                                    className="w-full overflow-hidden rounded-full"
-                                />
-                                <span className="bg-success-500 absolute inset-e-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                            </span>
-
-                            <span className="block">
-                                <span className="text-theme-sm mb-1.5 block space-x-1 text-gray-500 dark:text-gray-400">
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Jocelyn Kenter
-                                    </span>
-                                    <span> requests permission to change</span>
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Project - Nganter App
-                                    </span>
-                                </span>
-
-                                <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                    <span>Project</span>
-                                    <span className="h-1 w-1 rounded-full bg-gray-400"></span>
-                                    <span>15 min ago</span>
-                                </span>
-                            </span>
-                        </DropdownItem>
-                    </li>
-
-                    <li>
-                        <DropdownItem
-                            onItemClick={closeDropdown}
-                            className="flex gap-3 border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-                        >
-                            <span className="relative z-1 block h-10 w-full max-w-10 rounded-full">
-                                <img
-                                    width={40}
-                                    height={40}
-                                    src="/images/user/user-05.jpg"
-                                    alt="User"
-                                    className="overflow-hidden rounded-full"
-                                />
-                                <span className="bg-error-500 absolute inset-e-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"></span>
-                            </span>
-
-                            <span className="block">
-                                <span className="text-theme-sm mb-1.5 block space-x-1 text-gray-500 dark:text-gray-400">
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Brandon Philips
-                                    </span>
-                                    <span>requests permission to change</span>
-                                    <span className="font-medium text-gray-800 dark:text-white/90">
-                                        Project - Nganter App
-                                    </span>
-                                </span>
-
-                                <span className="text-theme-xs flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                    <span>Project</span>
-                                    <span className="h-1 w-1 rounded-full bg-gray-400"></span>
-                                    <span>1 hr ago</span>
-                                </span>
-                            </span>
-                        </DropdownItem>
-                    </li>
-                    {/* Add more items as needed */}
                 </ul>
+
                 <Link
                     to="/"
                     className="mt-3 block rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"

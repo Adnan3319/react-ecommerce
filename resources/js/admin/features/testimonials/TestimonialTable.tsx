@@ -33,6 +33,15 @@ export default function TestimonialTable({
 }: TestimonialTableProps) {
     const columns = [
         {
+            header: 'SL',
+            accessor: 'sort_order',
+            render: (row: Testimonial, index?: number) => (
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {row.sort_order ?? (index !== undefined ? index + 1 : '-')}
+                </span>
+            ),
+        },
+        {
             header: 'Customer',
             accessor: 'customer_name',
             render: (row: Testimonial) => (
@@ -60,7 +69,6 @@ export default function TestimonialTable({
                 <Badge size="sm">{row.source_label}</Badge>
             ),
         },
-        { header: 'Order', accessor: 'sort_order' },
         {
             header: 'Status',
             accessor: 'status',

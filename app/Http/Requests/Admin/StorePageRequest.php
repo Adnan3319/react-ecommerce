@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Http\Requests\Admin;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StorePageRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'sub_title' => ['nullable', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:pages,slug'],
+            'content' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'is_active' => ['boolean'],
+        ];
+    }
+}

@@ -1,6 +1,6 @@
+import { usePage } from '@inertiajs/react';
 import { Icon } from '@/storefront/components/ui';
 import type { IconName } from '@/storefront/components/ui';
-import { CONTACT_INFO } from '@/storefront/config/site';
 
 type Detail = {
     icon: IconName;
@@ -8,14 +8,16 @@ type Detail = {
     value: string;
 };
 
-const DETAILS: Detail[] = [
-    { icon: 'phone', label: 'Phone', value: CONTACT_INFO.phone },
-    { icon: 'mail', label: 'Email', value: CONTACT_INFO.email },
-    { icon: 'mapPin', label: 'Address', value: CONTACT_INFO.address },
-    { icon: 'clock', label: 'Working hours', value: CONTACT_INFO.hours },
-];
-
 export default function ContactDetails() {
+    const { company }: any = usePage().props;
+
+    const DETAILS: Detail[] = [
+        { icon: 'phone', label: 'Phone', value: company?.phone || '+880 1XXX-XXXXXX' },
+        { icon: 'mail', label: 'Email', value: company?.email || 'hello@checkit.example' },
+        { icon: 'mapPin', label: 'Address', value: company?.address || 'Dhaka, Bangladesh' },
+        { icon: 'clock', label: 'Working hours', value: company?.working_hours || 'Saturday to Thursday, 10:00 AM to 8:00 PM' },
+    ];
+
     return (
         <ul className="flex flex-col gap-4">
             {DETAILS.map((detail) => (

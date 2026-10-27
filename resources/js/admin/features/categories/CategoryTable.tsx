@@ -25,6 +25,15 @@ export default function CategoryTable({
 }: CategoryTableProps) {
     const columns = [
         {
+            header: 'SL',
+            accessor: 'sort_order',
+            render: (row: Category, index?: number) => (
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {row.sort_order ?? (index !== undefined ? index + 1 : '-')}
+                </span>
+            ),
+        },
+        {
             header: 'Image',
             accessor: 'image_url',
             render: (row: Category) =>
@@ -79,7 +88,6 @@ export default function CategoryTable({
             ),
         },
         { header: 'Slug', accessor: 'slug' },
-        { header: 'Order', accessor: 'sort_order' },
         {
             header: 'Status',
             accessor: 'status',

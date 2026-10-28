@@ -5,14 +5,16 @@ export interface CompanyData {
     email: string;
     phone: string;
     address: string;
+    city: string;
+    latitude?: string | null;
+    longitude?: string | null;
     website: string;
+    working_hours?: string | null;
     facebook_url: string;
     instagram_url: string;
     linkedin_url: string;
     about_text: string;
-    about_heading?: string;
-    about_subheading?: string;
-    about_button_text?: string;
-    about_button_link?: string;
-    about_bg_image?: string | null;
+    /** Taka, as typed in the form (the backend stores minor units). */
+    delivery_charge_inside: string;
+    delivery_charge_outside: string;
 }

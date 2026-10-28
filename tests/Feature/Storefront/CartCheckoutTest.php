@@ -27,7 +27,7 @@ function cartOrderPayload(array $overrides = []): array
         'name' => 'Nusrat Jahan',
         'phone' => '01712 345678',
         'address' => 'House 1, Road 2, Dhanmondi, Dhaka',
-        'delivery_zone' => 'outside_dhaka',
+        'delivery_zone' => 'outside',
         'idempotency_key' => (string) Str::uuid(),
         'website' => '',
         ...$overrides,

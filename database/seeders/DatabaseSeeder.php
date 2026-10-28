@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             CategorySeeder::class,
             CompanySeeder::class,
+            PageSeeder::class,
         ]);
 
         // Fake feedback, sample sliders and sample products only on a developer machine, never on a live store.

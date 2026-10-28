@@ -16,7 +16,7 @@ function attributionPayload(int $variantId): array
         'name' => 'Rahim Uddin',
         'phone' => '01712345678',
         'address' => 'House 1, Road 2, Dhanmondi, Dhaka',
-        'delivery_zone' => 'inside_dhaka',
+        'delivery_zone' => 'inside',
         'items' => [['variant_id' => $variantId, 'quantity' => 1]],
         'idempotency_key' => (string) Str::uuid(),
         'website' => '',
@@ -27,7 +27,7 @@ describe('landing parameters', function () {
     it('end up on the order after browsing other pages', function () {
         $this->get(route('products.show', $this->product->slug).'?utm_source=facebook&utm_medium=cpc&utm_campaign=eid-sale&fbclid=abc123')->assertOk();
         $this->get(route('home'))->assertOk();
-        $this->get(route('about'))->assertOk();
+        $this->get(route('contact'))->assertOk();
 
         $this->post(route('orders.store'), attributionPayload($this->variant->id))->assertRedirect();
 
@@ -57,7 +57,7 @@ describe('landing parameters', function () {
 
     it('are kept when a later page has no parameters', function () {
         $this->get(route('home').'?fbclid=abc123');
-        $this->get(route('about'));
+        $this->get(route('contact'));
 
         $this->post(route('orders.store'), attributionPayload($this->variant->id));
 

@@ -24,7 +24,7 @@ function placeOrderPayload(int $variantId, array $overrides = []): array
         'name' => 'Nusrat Jahan',
         'phone' => '01712 345678',
         'address' => 'House 1, Road 2, Dhanmondi, Dhaka',
-        'delivery_zone' => 'inside_dhaka',
+        'delivery_zone' => 'inside',
         'note' => 'Call before delivery',
         'items' => [['variant_id' => $variantId, 'quantity' => 1]],
         'idempotency_key' => (string) Str::uuid(),
@@ -161,7 +161,7 @@ describe('thank-you page', function () {
                 ->where('order.phone', '01712345678')
                 ->where('order.subtotal', 165000)
                 ->where('order.delivery_charge', 7000)
-                ->where('order.delivery_zone_label', 'Inside Dhaka')
+                ->where('order.delivery_zone_label', 'Inside City')
                 ->where('order.total', 172000)
                 ->where('order.items.0.name', "Women's Summer Dress")
                 ->where('order.items.0.quantity', 1)

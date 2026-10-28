@@ -30,10 +30,15 @@ class CategorySeeder extends Seeder
      */
     private function upsert(array $attributes): Category
     {
-        return Category::updateOrCreate(
-            ['slug' => $attributes['slug']],
-            $attributes + ['status' => ActiveStatus::Active],
-        );
+        // Slugs stay unique after a soft delete, so a deleted sample category is restored, not re-inserted.
+        $category = Category::withTrashed()->firstOrNew(['slug' => $attributes['slug']]);
+        $category->fill($attributes + ['status' => ActiveStatus::Active])->save();
+
+        if ($category->trashed()) {
+            $category->restore();
+        }
+
+        return $category;
     }
 
     /**

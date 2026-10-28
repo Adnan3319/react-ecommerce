@@ -30,6 +30,7 @@ return [
     */
     'presets' => [
         'default' => ['width' => 1600, 'height' => 1600, 'fit' => 'scale_down', 'format' => 'webp', 'quality' => 80],
+        'logo' => ['width' => 512, 'height' => 512, 'fit' => 'scale_down', 'format' => 'png', 'quality' => 80],
         'category' => ['width' => 300, 'height' => 300, 'fit' => 'contain', 'format' => 'webp', 'quality' => 80],
         'slider' => [
             'width' => 1920, 'height' => 800, 'fit' => 'cover', 'format' => 'webp', 'quality' => 72,

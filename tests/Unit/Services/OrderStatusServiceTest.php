@@ -32,7 +32,7 @@ function statusOrder(ProductVariant $variant): Order
         name: 'Rahim',
         phone: '01712345678',
         address: 'Dhaka',
-        deliveryZone: 'inside_dhaka',
+        deliveryZone: 'inside',
         idempotencyKey: (string) Str::uuid(),
         source: OrderSource::BuyNow,
     ));

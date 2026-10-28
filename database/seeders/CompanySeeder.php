@@ -17,8 +17,8 @@ class CompanySeeder extends Seeder
         Company::query()->updateOrCreate(
             ['id' => 1],
             [
-                'name' => 'Checkit',
-                'email' => 'support@checkit.com',
+                'name' => config('app.name'),
+                'email' => 'support@example.com',
                 'phone' => '+8801700000000',
                 'address' => 'Dhaka, Bangladesh',
             ]

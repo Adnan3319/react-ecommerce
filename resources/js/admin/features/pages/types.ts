@@ -1,4 +1,5 @@
-import type { ActiveStatus } from '@/shared/types';
+import type { ListFilters } from '@admin/hooks/useListFilters';
+import type { ActiveStatus, Paginated, StatusOption } from '@/shared/types';
 
 export type Page = {
     id: number;
@@ -8,25 +9,11 @@ export type Page = {
     content: string | null;
     image_url: string | null;
     status: ActiveStatus;
-    created_at?: string;
+    created_at: string | null;
 };
 
 export type PageIndexProps = {
-    pages: {
-        data: Page[];
-        meta: {
-            current_page: number;
-            last_page: number;
-            total: number;
-            per_page: number;
-            from: number;
-            to: number;
-            links: any[];
-        };
-    };
-    filters: {
-        search?: string;
-        status?: string;
-    };
-    statuses: { value: string; label: string }[];
+    pages: Paginated<Page>;
+    filters: ListFilters;
+    statuses: StatusOption[];
 };

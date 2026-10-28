@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
+import type { SharedProps } from '@/shared/types';
 import Input from '@admin/components/form/input/InputField';
 import TextArea from '@admin/components/form/input/TextArea';
 import Label from '@admin/components/form/Label';
@@ -7,23 +8,20 @@ import Button from '@admin/components/ui/button/Button';
 import type { CompanyData } from '../types';
 
 interface CompanyFormProps {
-    company: CompanyData & {
-        about_heading?: string;
-        about_subheading?: string;
-        about_bg_image?: string | null;
-        latitude?: string;
-        longitude?: string;
-    };
+    company: CompanyData;
 }
 
 export default function CompanyForm({ company }: CompanyFormProps) {
-    const [activeTab, setActiveTab] = useState<'general' | 'social' | 'about'>('general');
+    const [activeTab, setActiveTab] = useState<
+        'general' | 'social' | 'delivery'
+    >('general');
 
     const { data, setData, post, processing, errors } = useForm({
         name: company.name || '',
         email: company.email || '',
         phone: company.phone || '',
         address: company.address || '',
+        city: company.city || '',
         working_hours: company.working_hours || '',
         website: company.website || '',
         facebook_url: company.facebook_url || '',
@@ -31,62 +29,69 @@ export default function CompanyForm({ company }: CompanyFormProps) {
         linkedin_url: company.linkedin_url || '',
         about_text: company.about_text || '',
         logo: null as File | null,
+        remove_logo: false,
 
         // Latitude & Longitude Fields
         latitude: company.latitude || '',
         longitude: company.longitude || '',
 
-        // About Us Dynamic Fields (Button fields removed)
-        about_heading: company.about_heading || '',
-        about_subheading: company.about_subheading || '',
-        about_bg_image: null as File | null,
+        // Delivery charge in taka; the city names the two zones ("Inside <city>" / "Outside <city>")
+        delivery_charge_inside: company.delivery_charge_inside,
+        delivery_charge_outside: company.delivery_charge_outside,
     });
 
-    const [logoPreview, setLogoPreview] = useState<string | null>(
-        company.logo ? `/storage/${company.logo}` : null
-    );
-
-    const [bgPreview, setBgPreview] = useState<string | null>(
-        company.about_bg_image ? `/storage/${company.about_bg_image}` : null
-    );
+    const { branding } = usePage<SharedProps>().props;
+    const [newLogoPreview, setNewLogoPreview] = useState<string | null>(null);
+    const logoPreview = data.remove_logo
+        ? null
+        : (newLogoPreview ?? branding.logo_url);
 
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setData('logo', file);
-            setLogoPreview(URL.createObjectURL(file));
+            setData((current) => ({
+                ...current,
+                logo: file,
+                remove_logo: false,
+            }));
+            setNewLogoPreview(URL.createObjectURL(file));
         }
     };
 
-    const handleBgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setData('about_bg_image', file);
-            setBgPreview(URL.createObjectURL(file));
-        }
+    const handleLogoRemove = () => {
+        setData((current) => ({ ...current, logo: null, remove_logo: true }));
+        setNewLogoPreview(null);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         post('/admin/company', {
             forceFormData: true,
             preserveScroll: true,
+            onSuccess: () => {
+                setData((current) => ({
+                    ...current,
+                    logo: null,
+                    remove_logo: false,
+                }));
+                setNewLogoPreview(null);
+            },
         });
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+        <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
             {/* Tab Navigation Buttons & Save Button in a Single Row */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-200 dark:border-gray-800 pb-3">
+            <div className="flex flex-col gap-4 border-b border-gray-200 pb-3 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
                 <div className="flex flex-wrap">
                     <button
                         type="button"
                         onClick={() => setActiveTab('general')}
-                        className={`pb-3 px-4 text-sm font-semibold transition-colors relative -mb-3 border-b-2 ${
+                        className={`relative -mb-3 border-b-2 px-4 pb-3 text-sm font-semibold transition-colors ${
                             activeTab === 'general'
                                 ? 'text-brand-600 border-brand-600 dark:text-brand-400'
-                                : 'text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}
                     >
                         General & Contact Details
@@ -94,24 +99,24 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                     <button
                         type="button"
                         onClick={() => setActiveTab('social')}
-                        className={`pb-3 px-4 text-sm font-semibold transition-colors relative -mb-3 border-b-2 ${
+                        className={`relative -mb-3 border-b-2 px-4 pb-3 text-sm font-semibold transition-colors ${
                             activeTab === 'social'
                                 ? 'text-brand-600 border-brand-600 dark:text-brand-400'
-                                : 'text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}
                     >
                         Social Links
                     </button>
                     <button
                         type="button"
-                        onClick={() => setActiveTab('about')}
-                        className={`pb-3 px-4 text-sm font-semibold transition-colors relative -mb-3 border-b-2 ${
-                            activeTab === 'about'
+                        onClick={() => setActiveTab('delivery')}
+                        className={`relative -mb-3 border-b-2 px-4 pb-3 text-sm font-semibold transition-colors ${
+                            activeTab === 'delivery'
                                 ? 'text-brand-600 border-brand-600 dark:text-brand-400'
-                                : 'text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                         }`}
                     >
-                        About Us
+                        Delivery Charge
                     </button>
                 </div>
 
@@ -147,14 +152,14 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                         className="h-full w-full object-contain p-2"
                                     />
                                 ) : (
-                                    <span className="text-xs font-medium text-gray-400">
-                                        No logo yet
+                                    <span className="px-2 text-center text-xs font-medium text-gray-400">
+                                        Default: store name
                                     </span>
                                 )}
                             </div>
 
                             <div className="space-y-2">
-                                <div>
+                                <div className="flex flex-wrap items-center gap-2">
                                     <label
                                         htmlFor="logo"
                                         className="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
@@ -168,12 +173,25 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                         onChange={handleLogoChange}
                                         className="sr-only"
                                     />
+                                    {logoPreview && (
+                                        <button
+                                            type="button"
+                                            onClick={handleLogoRemove}
+                                            className="inline-flex items-center rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 shadow-sm hover:bg-red-50 dark:border-red-900 dark:bg-gray-800"
+                                        >
+                                            Remove logo
+                                        </button>
+                                    )}
                                 </div>
                                 <p className="text-xs text-gray-400">
-                                    {data.logo ? data.logo.name : 'Square image, PNG, JPG, WEBP, or SVG (Max 2MB)'}
+                                    {data.logo
+                                        ? data.logo.name
+                                        : 'PNG, JPG or WEBP (Max 2MB). Used in the storefront, admin and browser tab. Without a logo the store name is shown.'}
                                 </p>
                                 {errors.logo && (
-                                    <p className="text-xs text-red-500">{errors.logo}</p>
+                                    <p className="text-xs text-red-500">
+                                        {errors.logo}
+                                    </p>
                                 )}
                             </div>
                         </div>
@@ -185,7 +203,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 error={Boolean(errors.name)}
                                 hint={errors.name}
                             />
@@ -196,7 +216,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="email"
                                 type="email"
                                 value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
                                 error={Boolean(errors.email)}
                                 hint={errors.email}
                             />
@@ -209,7 +231,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                             <Input
                                 id="phone"
                                 value={data.phone}
-                                onChange={(e) => setData('phone', e.target.value)}
+                                onChange={(e) =>
+                                    setData('phone', e.target.value)
+                                }
                                 error={Boolean(errors.phone)}
                                 hint={errors.phone}
                             />
@@ -220,7 +244,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="website"
                                 placeholder="https://example.com"
                                 value={data.website}
-                                onChange={(e) => setData('website', e.target.value)}
+                                onChange={(e) =>
+                                    setData('website', e.target.value)
+                                }
                                 error={Boolean(errors.website)}
                                 hint={errors.website}
                             />
@@ -233,9 +259,26 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                             id="working_hours"
                             placeholder="Saturday to Thursday, 10:00 AM to 8:00 PM"
                             value={data.working_hours}
-                            onChange={(e) => setData('working_hours', e.target.value)}
+                            onChange={(e) =>
+                                setData('working_hours', e.target.value)
+                            }
                             error={Boolean(errors.working_hours)}
                             hint={errors.working_hours}
+                        />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="city">City *</Label>
+                        <Input
+                            id="city"
+                            placeholder="Dhaka"
+                            value={data.city}
+                            onChange={(e) => setData('city', e.target.value)}
+                            error={Boolean(errors.city)}
+                            hint={
+                                errors.city ||
+                                'Names the delivery zones: Inside <city> and Outside <city>.'
+                            }
                         />
                     </div>
 
@@ -259,7 +302,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="latitude"
                                 placeholder="23.8103"
                                 value={data.latitude}
-                                onChange={(e) => setData('latitude', e.target.value)}
+                                onChange={(e) =>
+                                    setData('latitude', e.target.value)
+                                }
                                 error={Boolean(errors.latitude)}
                                 hint={errors.latitude}
                             />
@@ -270,7 +315,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="longitude"
                                 placeholder="90.4125"
                                 value={data.longitude}
-                                onChange={(e) => setData('longitude', e.target.value)}
+                                onChange={(e) =>
+                                    setData('longitude', e.target.value)
+                                }
                                 error={Boolean(errors.longitude)}
                                 hint={errors.longitude}
                             />
@@ -281,7 +328,7 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                     {data.latitude && data.longitude && (
                         <div className="space-y-2 pt-2">
                             <Label>Map Preview</Label>
-                            <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 h-64">
+                            <div className="h-64 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                 <iframe
                                     title="Location Map Preview"
                                     width="100%"
@@ -328,7 +375,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="facebook_url"
                                 placeholder="https://facebook.com/..."
                                 value={data.facebook_url}
-                                onChange={(e) => setData('facebook_url', e.target.value)}
+                                onChange={(e) =>
+                                    setData('facebook_url', e.target.value)
+                                }
                                 error={Boolean(errors.facebook_url)}
                                 hint={errors.facebook_url}
                             />
@@ -339,7 +388,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="instagram_url"
                                 placeholder="https://instagram.com/..."
                                 value={data.instagram_url}
-                                onChange={(e) => setData('instagram_url', e.target.value)}
+                                onChange={(e) =>
+                                    setData('instagram_url', e.target.value)
+                                }
                                 error={Boolean(errors.instagram_url)}
                                 hint={errors.instagram_url}
                             />
@@ -350,7 +401,9 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                                 id="linkedin_url"
                                 placeholder="https://linkedin.com/in/..."
                                 value={data.linkedin_url}
-                                onChange={(e) => setData('linkedin_url', e.target.value)}
+                                onChange={(e) =>
+                                    setData('linkedin_url', e.target.value)
+                                }
                                 error={Boolean(errors.linkedin_url)}
                                 hint={errors.linkedin_url}
                             />
@@ -359,84 +412,61 @@ export default function CompanyForm({ company }: CompanyFormProps) {
                 </section>
             )}
 
-            {/* TAB 3: About Us Settings */}
-            {activeTab === 'about' && (
+            {/* TAB 3: Delivery Charge */}
+            {activeTab === 'delivery' && (
                 <section className="space-y-6 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
                     <div>
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white/90">
-                            About Us Page Settings
+                            Delivery Charge
                         </h2>
                         <p className="text-sm text-gray-500">
-                            Manage main heading, subheading, and background image for About Us page.
+                            Charge in taka for orders delivered inside and
+                            outside {data.city || 'your city'}. The storefront
+                            order forms use these values.
                         </p>
                     </div>
 
-                    {/* Background Image Upload Section */}
-                    <div className="space-y-2 border-b border-gray-100 pb-6 dark:border-gray-800">
-                        <Label>About Us Background Image</Label>
-                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                            <div className="relative flex h-28 w-44 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
-                                {bgPreview ? (
-                                    <img
-                                        src={bgPreview}
-                                        alt="About Background"
-                                        className="h-full w-full object-cover"
-                                    />
-                                ) : (
-                                    <span className="text-xs font-medium text-gray-400">
-                                        No background image
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <div>
-                                    <label
-                                        htmlFor="about_bg_image"
-                                        className="inline-flex cursor-pointer items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                    >
-                                        Choose image
-                                    </label>
-                                    <input
-                                        type="file"
-                                        id="about_bg_image"
-                                        accept="image/*"
-                                        onChange={handleBgChange}
-                                        className="sr-only"
-                                    />
-                                </div>
-                                <p className="text-xs text-gray-400">
-                                    {data.about_bg_image ? data.about_bg_image.name : 'PNG, JPG, WEBP (Max 2MB)'}
-                                </p>
-                                {errors.about_bg_image && (
-                                    <p className="text-xs text-red-500">{errors.about_bg_image}</p>
-                                )}
-                            </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div>
+                            <Label htmlFor="delivery_charge_inside">
+                                Inside {data.city || 'city'} (৳)
+                            </Label>
+                            <Input
+                                id="delivery_charge_inside"
+                                type="number"
+                                min={0}
+                                step={0.01}
+                                value={data.delivery_charge_inside}
+                                onChange={(e) =>
+                                    setData(
+                                        'delivery_charge_inside',
+                                        e.target.value,
+                                    )
+                                }
+                                error={Boolean(errors.delivery_charge_inside)}
+                                hint={errors.delivery_charge_inside}
+                            />
                         </div>
-                    </div>
-
-                    <div>
-                        <Label htmlFor="about_heading">Main Heading (Bold Text)</Label>
-                        <Input
-                            id="about_heading"
-                            placeholder="Everyday kitchenware and fashion, made simple"
-                            value={data.about_heading}
-                            onChange={(e) => setData('about_heading', e.target.value)}
-                            error={Boolean(errors.about_heading)}
-                            hint={errors.about_heading}
-                        />
-                    </div>
-
-                    <div>
-                        <Label htmlFor="about_subheading">Subheading / Description (Small Text)</Label>
-                        <TextArea
-                            id="about_subheading"
-                            rows={3}
-                            value={data.about_subheading}
-                            onChange={(value) => setData('about_subheading', value)}
-                            error={Boolean(errors.about_subheading)}
-                            hint={errors.about_subheading}
-                        />
+                        <div>
+                            <Label htmlFor="delivery_charge_outside">
+                                Outside {data.city || 'city'} (৳)
+                            </Label>
+                            <Input
+                                id="delivery_charge_outside"
+                                type="number"
+                                min={0}
+                                step={0.01}
+                                value={data.delivery_charge_outside}
+                                onChange={(e) =>
+                                    setData(
+                                        'delivery_charge_outside',
+                                        e.target.value,
+                                    )
+                                }
+                                error={Boolean(errors.delivery_charge_outside)}
+                                hint={errors.delivery_charge_outside}
+                            />
+                        </div>
                     </div>
                 </section>
             )}

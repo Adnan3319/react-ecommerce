@@ -11,7 +11,7 @@ beforeEach(function () {
         'shipping_phone' => '01712345678',
         'shipping_address' => 'House 12, Road 5, Dhanmondi, Dhaka',
         'customer_note' => 'Call before delivery',
-        'delivery_zone_label' => 'Inside Dhaka',
+        'delivery_zone_label' => 'Inside City',
         'subtotal' => 330000,
         'delivery_charge' => 7000,
         'total' => 337000,
@@ -35,7 +35,7 @@ it('shows the customer, area, lines and totals', function () {
         ->assertSeeInText('CK-261020-0042')
         ->assertSeeInText('Nusrat Jahan')
         ->assertSeeInText('01712345678')
-        ->assertSeeInText('Inside Dhaka')
+        ->assertSeeInText('Inside City')
         ->assertSeeInText("Women's Summer Dress (S / Pink)")
         ->assertSeeInText('৳3,300')
         ->assertSeeInText('৳70')

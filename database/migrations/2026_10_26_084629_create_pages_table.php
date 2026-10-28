@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ActiveStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->longText('content')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->string('status', 20)->default(ActiveStatus::Active->value)->index();
             $table->timestamps();
         });
     }

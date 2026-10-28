@@ -30,8 +30,8 @@
 
 ```php
 'delivery_zones' => [
-    'inside_dhaka'  => ['label' => 'Inside Dhaka',  'charge' => 7000],   // minor units
-    'outside_dhaka' => ['label' => 'Outside Dhaka', 'charge' => 13000],
+    'inside'  => ['label' => 'Inside City',  'charge' => 7000],   // minor units
+    'outside' => ['label' => 'Outside City', 'charge' => 13000],
 ],
 'max_qty_per_item'          => env('SHOP_MAX_QTY_PER_ITEM', 10),
 'max_cart_lines'            => 20,

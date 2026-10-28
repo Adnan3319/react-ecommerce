@@ -78,7 +78,7 @@ describe('props', function () {
                 ->where('product.variants.0.discount_percent', 25)
                 ->where('product.variants.0.stock', 7)
                 ->where('product.variants.0.stock_state', 'in')
-                ->where('deliveryZones.0', ['key' => 'inside_dhaka', 'label' => 'Inside Dhaka', 'charge' => 7000])
+                ->where('deliveryZones.0', ['key' => 'inside', 'label' => 'Inside City', 'charge' => 7000])
                 ->where('deliveryZones.1.charge', 13000)
                 ->where('maxQty', 10));
     });
@@ -266,7 +266,7 @@ describe('cache', function () {
             'name' => 'Rahim Uddin',
             'phone' => '01712345678',
             'address' => 'House 1, Road 2, Dhaka',
-            'delivery_zone' => 'inside_dhaka',
+            'delivery_zone' => 'inside',
             'items' => [['variant_id' => $variant->id, 'quantity' => 2]],
             'idempotency_key' => (string) Str::uuid(),
         ])->assertRedirect();

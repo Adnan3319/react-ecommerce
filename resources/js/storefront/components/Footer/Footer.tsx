@@ -1,8 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
 import { cart, contact, home, search } from '@/routes';
+import { show as showPage } from '@/routes/pages';
 import type { SharedProps } from '@/shared/types';
-import { Image } from '@/storefront/components/ui';
-import { LOGO } from '@/storefront/config/site';
+
+import { ABOUT_PAGE_SLUG } from '@/storefront/config/site';
+import BrandLogo from '../BrandLogo';
 import { useCategories } from '@/storefront/lib/useCategories';
 import { categoryLinks } from '../navigation';
 
@@ -10,7 +12,7 @@ const QUICK_LINKS = [
     { label: 'Home', href: home() },
     { label: 'Shop', href: search() },
     { label: 'Cart', href: cart() },
-    { label: 'About Us', href: route('pages.show', 'about') },
+    { label: 'About Us', href: showPage(ABOUT_PAGE_SLUG) },
     { label: 'Contact', href: contact() },
 ];
 
@@ -29,12 +31,9 @@ export default function Footer() {
                         aria-label={name}
                         className="inline-block"
                     >
-                        <Image
-                            src={LOGO.lightSrc}
-                            alt={name}
-                            width={LOGO.width}
-                            height={LOGO.height}
-                            className="h-14 w-auto"
+                        <BrandLogo
+                            imageClassName="h-14"
+                            textClassName="text-3xl"
                         />
                     </Link>
                     <p className="mt-3 max-w-xs text-sm text-neutral-300">

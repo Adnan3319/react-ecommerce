@@ -5,8 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noindex,nofollow">
 
-        <link rel="icon" href="/checkit-logo-light.png" type="image/png">
-        <link rel="apple-touch-icon" href="/checkit-logo-light.png">
+        @php($branding = app(\App\Services\Company\CompanyBranding::class)->data())
+        <link rel="icon" href="{{ $branding['favicon_url'] }}">
+        @if ($branding['is_custom'])
+            <link rel="apple-touch-icon" href="{{ $branding['favicon_url'] }}">
+        @endif
 
         @viteReactRefresh
         @vite(['resources/css/admin.css', 'resources/js/admin/app.tsx'])

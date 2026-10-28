@@ -1,7 +1,8 @@
 import type { IconName } from '@/storefront/components/ui';
 import { cart, contact, home, search } from '@/routes';
+import { show as showPage } from '@/routes/pages';
 import type { RouteDefinition } from '@/wayfinder';
-import type { Category } from '@/storefront/config/site';
+import { ABOUT_PAGE_SLUG, type Category } from '@/storefront/config/site';
 import { categoryHref } from '@/storefront/lib/category-href';
 
 type Href = RouteDefinition<'get'>;
@@ -21,9 +22,21 @@ export type MainNavItem = {
 export function mainNavItems(_categories: Category[]): MainNavItem[] {
     return [
         { label: 'Home', href: home(), categorySlug: null },
-        { label: 'Kitchenware', href: search(), categorySlug: 'kitchenware' },
-        { label: 'Fashion', href: search(), categorySlug: 'fashion' },
-        { label: 'About Us', href: route('pages.show', 'about') as unknown as Href, categorySlug: null },
+        {
+            label: 'Kitchenware',
+            href: search({ query: { category: 'kitchenware' } }),
+            categorySlug: 'kitchenware',
+        },
+        {
+            label: 'Fashion',
+            href: search({ query: { category: 'fashion' } }),
+            categorySlug: 'fashion',
+        },
+        {
+            label: 'About Us',
+            href: showPage(ABOUT_PAGE_SLUG),
+            categorySlug: null,
+        },
         { label: 'Contact', href: contact(), categorySlug: null },
     ];
 }
@@ -32,19 +45,19 @@ export const MOBILE_NAV_ITEMS: MobileNavItem[] = [
     { label: 'Home', href: home(), icon: 'home' },
     { label: 'Search', href: search(), icon: 'search' },
     { label: 'Cart', href: cart(), icon: 'cart' },
-    { label: 'About', href: route('pages.show', 'about') as unknown as Href, icon: 'user' },
+    { label: 'About', href: showPage(ABOUT_PAGE_SLUG), icon: 'info' },
 ];
 
 export function categoryLinks(categories: Category[]) {
     return categories.map((category) => ({
-        label: category.name,
+        label: category.label,
         slug: category.slug,
-        href: categoryHref(category),
+        href: categoryHref(category.slug),
     }));
 }
 
-export function isActivePath(url: string, href: string): boolean {
+export function isActivePath(url: string, href: Href): boolean {
     const cleanUrl = url.split('?')[0];
-    const cleanHref = href.split('?')[0];
+    const cleanHref = href.url.split('?')[0];
     return cleanUrl === cleanHref;
 }

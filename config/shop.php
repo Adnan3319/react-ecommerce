@@ -31,12 +31,14 @@ return [
     |--------------------------------------------------------------------------
     | Delivery Zones
     |--------------------------------------------------------------------------
-    | key => label + charge (minor units). Orders keep the charge they were placed
-    | with; after changing a charge run `php artisan config:cache` on deploy.
+    | Zone keys plus fallback label and charge (minor units), used only until the
+    | company row exists. The live label ("Inside <city>") and charges are set in the
+    | admin: Company settings -> Delivery Charge. Orders keep the charge they were
+    | placed with.
     */
     'delivery_zones' => [
-        'inside_dhaka' => ['label' => 'Inside Dhaka', 'charge' => 7000],
-        'outside_dhaka' => ['label' => 'Outside Dhaka', 'charge' => 13000],
+        'inside' => ['label' => 'Inside City', 'charge' => 7000],
+        'outside' => ['label' => 'Outside City', 'charge' => 13000],
     ],
 
     /*

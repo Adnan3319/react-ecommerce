@@ -15,18 +15,24 @@ class Company extends Model
         'email',
         'phone',
         'address',
+        'city',
+        'latitude',
+        'longitude',
         'website',
         'working_hours',
         'facebook_url',
         'instagram_url',
         'linkedin_url',
         'about_text',
-        'latitude',
-        'longitude',
-        'about_heading',
-        'about_subheading',
-        'about_button_text',
-        'about_button_link',
-        'about_bg_image',
+        'delivery_charge_inside',
+        'delivery_charge_outside',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'delivery_charge_inside' => 'integer',
+            'delivery_charge_outside' => 'integer',
+        ];
+    }
 }

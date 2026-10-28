@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { home } from '@/routes';
 import { cn } from '@/shared/lib';
 import type { SharedProps } from '@/shared/types';
-import { Icon, Image } from '@/storefront/components/ui';
-import { LOGO } from '@/storefront/config/site';
+import { Icon } from '@/storefront/components/ui';
+import BrandLogo from '../BrandLogo';
 import { CartLink } from '../CartLink';
 import { MAIN_NAV_ID, MainNav } from '../MainNav';
 import HeaderSearch, { HEADER_SEARCH_INPUT_ID } from '../HeaderSearch';
@@ -59,13 +59,10 @@ export default function Header() {
                     aria-label={name}
                     className="order-1 shrink-0 md:order-none"
                 >
-                    <Image
-                        src={LOGO.lightSrc}
-                        alt={name}
-                        width={LOGO.width}
-                        height={LOGO.height}
+                    <BrandLogo
+                        imageClassName="h-11"
+                        textClassName="text-2xl"
                         priority
-                        className="h-11 w-auto"
                     />
                 </Link>
 

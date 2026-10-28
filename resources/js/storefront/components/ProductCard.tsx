@@ -98,10 +98,7 @@ export default function ProductCard({
                         <>
                             <Link
                                 href={href}
-                                className={cn(
-                                    ACTION_BASE,
-                                    'flex-1 btn-accent',
-                                )}
+                                className={cn(ACTION_BASE, 'flex-1 btn-accent')}
                             >
                                 Order Now
                             </Link>

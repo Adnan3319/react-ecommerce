@@ -2,42 +2,46 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ActiveStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePageRequest;
 use App\Http\Requests\Admin\UpdatePageRequest;
+use App\Http\Resources\Admin\Page\PageResource;
 use App\Models\Page;
 use App\Services\Media\FileUploadService;
+use App\Services\Page\PageService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PageController extends Controller
 {
+    private const IMAGE_DIRECTORY = 'pages';
+
     public function __construct(
-        private readonly FileUploadService $fileUploadService
+        private readonly FileUploadService $fileUploadService,
+        private readonly PageService $pages,
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $search = $request->input('search');
         $status = $request->input('status', 'all');
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->integer('per_page', 10);
 
-        $query = Page::query();
-
-        if ($search) {
-            $query->where('title', 'like', "%{$search}%")
-                  ->orWhere('slug', 'like', "%{$search}%");
-        }
-
-        if ($status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        $pages = $query->latest()->paginate($perPage)->withQueryString();
+        $pages = Page::query()
+            ->when($search, fn ($query) => $query->where(
+                fn ($query) => $query->where('title', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%"),
+            ))
+            ->when($status !== 'all', fn ($query) => $query->where('status', $status))
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
 
         return Inertia::render('Admin/Pages/Index', [
             'pages' => [
-                'data' => $pages->items(),
+                'data' => PageResource::collection($pages->items())->resolve(),
                 'meta' => [
                     'current_page' => $pages->currentPage(),
                     'last_page' => $pages->lastPage(),
@@ -53,58 +57,60 @@ class PageController extends Controller
                 'status' => $status,
                 'per_page' => $perPage,
             ],
-            'statuses' => [
-                ['value' => 'active', 'label' => 'Active'],
-                ['value' => 'inactive', 'label' => 'Inactive'],
-            ],
+            'statuses' => collect(ActiveStatus::cases())
+                ->map(fn (ActiveStatus $case): array => ['value' => $case->value, 'label' => $case->label()])
+                ->all(),
         ]);
     }
 
-    public function store(StorePageRequest $request)
+    public function store(StorePageRequest $request): RedirectResponse
     {
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $this->fileUploadService->upload($request->file('image'), 'pages');
+            $data['image'] = $this->fileUploadService->upload($request->file('image'), self::IMAGE_DIRECTORY, 'default');
         }
 
-        Page::create($data);
+        $page = Page::create($data);
+        $this->pages->flush($page->slug);
 
         return redirect()->back()->with('success', 'Page created successfully.');
     }
 
-    public function update(UpdatePageRequest $request, Page $page)
+    public function update(UpdatePageRequest $request, Page $page): RedirectResponse
     {
         $data = $request->validated();
+        unset($data['remove_image']);
 
-        if ($request->boolean('remove_image')) {
-            if ($page->image) {
-                $this->fileUploadService->delete($page->image);
-            }
-            $data['image'] = null;
-        }
+        $oldImage = $page->image;
+        $oldSlug = $page->slug;
 
         if ($request->hasFile('image')) {
-            if ($page->image) {
-                $this->fileUploadService->delete($page->image);
-            }
-            $data['image'] = $this->fileUploadService->upload($request->file('image'), 'pages');
-        } else {
-            unset($data['image']);
+            $data['image'] = $this->fileUploadService->upload($request->file('image'), self::IMAGE_DIRECTORY, 'default');
+        } elseif ($request->boolean('remove_image')) {
+            $data['image'] = null;
         }
 
         $page->update($data);
 
+        if ($oldImage !== null && $page->image !== $oldImage) {
+            $this->fileUploadService->delete($oldImage);
+        }
+
+        $this->pages->flush($oldSlug, $page->slug);
+
         return redirect()->back()->with('success', 'Page updated successfully.');
     }
 
-    public function destroy(Page $page)
+    public function destroy(Page $page): RedirectResponse
     {
-        if ($page->image) {
+        $page->delete();
+
+        if ($page->image !== null) {
             $this->fileUploadService->delete($page->image);
         }
 
-        $page->delete();
+        $this->pages->flush($page->slug);
 
         return redirect()->back()->with('success', 'Page deleted successfully.');
     }

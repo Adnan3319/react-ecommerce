@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Replaces the first, unused contact_messages table (name/email/phone/subject) created on 2026_10_07.
+        Schema::dropIfExists('contact_messages');
+
         Schema::create('contact_messages', function (Blueprint $table) {
             $table->id();
             $table->string('name');

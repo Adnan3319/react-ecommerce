@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\ActiveStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePageRequest extends FormRequest
 {
@@ -11,15 +13,19 @@ class UpdatePageRequest extends FormRequest
         return true;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function rules(): array
     {
         return [
             'title' => ['required', 'string', 'max:255'],
             'sub_title' => ['nullable', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:pages,slug,' . $this->route('page')->id ?? $this->id],
+            'slug' => ['required', 'string', 'max:255', 'alpha_dash:ascii', Rule::unique('pages', 'slug')->ignore($this->route('page'))],
             'content' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'is_active' => ['boolean'],
+            'remove_image' => ['sometimes', 'boolean'],
+            'status' => ['required', Rule::enum(ActiveStatus::class)],
         ];
     }
 }

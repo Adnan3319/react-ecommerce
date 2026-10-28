@@ -33,7 +33,7 @@ try {
         name: 'Concurrent '.$request['phone'],
         phone: $request['phone'],
         address: 'House 1, Road 2, Dhaka',
-        deliveryZone: 'inside_dhaka',
+        deliveryZone: 'inside',
         idempotencyKey: $request['phone'].'-'.$request['start_at'],
         source: OrderSource::Cart,
     ));

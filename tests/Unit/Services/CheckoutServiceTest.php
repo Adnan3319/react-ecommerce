@@ -44,7 +44,7 @@ function checkoutData(array $quantities, array $overrides = []): CheckoutData
         'name' => 'Rahim Uddin',
         'phone' => '01712345678',
         'address' => 'House 1, Road 2, Dhanmondi, Dhaka',
-        'deliveryZone' => 'inside_dhaka',
+        'deliveryZone' => 'inside',
         'idempotencyKey' => (string) Str::uuid(),
         'source' => OrderSource::Cart,
         ...$overrides,
@@ -94,7 +94,7 @@ describe('placing an order', function () {
             ->and($order->number)->toMatch('/^CK-\d{6}-0001$/')
             ->and($order->public_token)->toHaveLength(32)
             ->and($order->shipping_phone)->toBe('01712345678')
-            ->and($order->delivery_zone_label)->toBe('Inside Dhaka')
+            ->and($order->delivery_zone_label)->toBe('Inside City')
             ->and($order->customer_note)->toBe('Call before delivery')
             ->and($order->utm_source)->toBe('facebook')
             ->and($order->fbclid)->toBe('abc123')
@@ -173,11 +173,11 @@ describe('placing an order', function () {
     it('charges the delivery zone chosen', function () {
         $variant = checkoutVariant(100000, 10);
 
-        $order = $this->checkout->place(checkoutData([$variant->id => 1], ['deliveryZone' => 'outside_dhaka']));
+        $order = $this->checkout->place(checkoutData([$variant->id => 1], ['deliveryZone' => 'outside']));
 
         expect($order->delivery_charge)->toBe(13000)
             ->and($order->total)->toBe(113000)
-            ->and($order->delivery_zone_label)->toBe('Outside Dhaka');
+            ->and($order->delivery_zone_label)->toBe('Outside City');
     });
 
     it('uses the sale price and snapshots the variant label and image', function () {

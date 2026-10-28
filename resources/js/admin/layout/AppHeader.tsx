@@ -1,5 +1,6 @@
 'use client';
 
+import BrandMark from '@admin/components/common/BrandMark';
 import { ThemeToggleButton } from '@admin/components/common/ThemeToggleButton';
 import NotificationDropdown from '@admin/components/header/NotificationDropdown';
 import UserDropdown from '@admin/components/header/UserDropdown';
@@ -90,16 +91,7 @@ const AppHeader: React.FC = () => {
                     </button>
 
                     <Link to="/" className="xl:hidden">
-                        <img
-                            className="dark:hidden"
-                            src="/images/logo/logo.svg"
-                            alt="Logo"
-                        />
-                        <img
-                            className="hidden dark:block"
-                            src="/images/logo/logo-dark.svg"
-                            alt="Logo"
-                        />
+                        <BrandMark />
                     </Link>
 
                     <button

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Company;
 use App\Services\Cart\CartService;
 use App\Services\Category\CategoryService;
+use App\Services\Company\CompanyBranding;
 use App\Services\Order\PendingOrderCount;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ class HandleInertiaRequests extends Middleware
         private readonly CategoryService $categories,
         private readonly PendingOrderCount $pendingOrders,
         private readonly CartService $cart,
+        private readonly CompanyBranding $branding,
     ) {}
 
     public function rootView(Request $request): string
@@ -45,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 ? []
                 : $this->categories->activeForStorefront(),
             'company' => fn () => Company::first(),
+            'branding' => fn () => $this->branding->data(),
         ];
     }
 

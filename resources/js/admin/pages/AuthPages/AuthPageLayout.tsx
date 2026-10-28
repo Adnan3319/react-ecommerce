@@ -1,3 +1,4 @@
+import BrandMark from '@admin/components/common/BrandMark';
 import GridShape from '@admin/components/common/GridShape';
 import ThemeTogglerTwo from '@admin/components/common/ThemeTogglerTwo';
 import React from 'react';
@@ -18,17 +19,11 @@ export default function AuthLayout({
 
                         <div className="flex max-w-xs flex-col items-center">
                             <Link to="/" className="mb-4 block">
-                                <img
-                                    width={231}
-                                    height={48}
-                                    src="/images/logo/auth-logo.svg"
-                                    alt="Logo"
-                                />
+                                <BrandMark nameClassName="text-2xl text-white dark:text-white" />
                             </Link>
 
                             <p className="text-center text-gray-400 dark:text-white/60">
-                                Free and Open-Source Tailwind CSS Admin
-                                Dashboard Template
+                                Sign in to manage your store.
                             </p>
                         </div>
                     </div>

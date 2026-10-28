@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\ActiveStatus;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +18,22 @@ class Page extends Model
         'slug',
         'content',
         'image',
-        'is_active',
+        'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => ActiveStatus::class,
+        ];
+    }
+
+    /**
+     * @param  Builder<Page>  $query
+     */
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->where('status', ActiveStatus::Active);
+    }
 }

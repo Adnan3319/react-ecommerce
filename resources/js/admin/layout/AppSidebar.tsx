@@ -1,5 +1,6 @@
 import { useSidebar } from '@admin/context/SidebarContext';
 import { usePage } from '@inertiajs/react';
+import BrandMark from '@admin/components/common/BrandMark';
 import { useCallback, useEffect } from 'react';
 import { Building2, FileText, Mail } from 'lucide-react';
 import { Link, useLocation } from '@admin/lib/router';
@@ -79,9 +80,8 @@ const AppSidebar: React.FC = () => {
         setIsMobileOpen,
     } = useSidebar();
     const location = useLocation();
-    const { admin, company } = usePage<{
+    const { admin } = usePage<{
         admin: { pendingOrders: number } | null;
-        company?: { logo_url?: string; name?: string };
     }>().props;
     const pendingOrders = admin?.pendingOrders ?? 0;
 
@@ -148,9 +148,6 @@ const AppSidebar: React.FC = () => {
         </h2>
     );
 
-    // Dynamic uploaded logo, otherwise fallback to public/images/logo/checkit-logo.png
-    const logoSrc = company?.logo_url || '/images/logo/checkit-logo.png';
-
     return (
         <aside
             className={cn(
@@ -169,23 +166,14 @@ const AppSidebar: React.FC = () => {
         >
             <div
                 className={cn(
-                    'flex py-8 items-center',
+                    'flex items-center py-8',
                     !isExpanded && !isHovered
                         ? 'xl:justify-center'
                         : 'justify-start',
                 )}
             >
-                <Link to="/admin/dashboard" className="flex items-center gap-3">
-                    <img
-                        src={logoSrc}
-                        alt="Checkit Logo"
-                        className="size-9 shrink-0 object-contain rounded-lg"
-                    />
-                    {showText && (
-                        <span className="truncate text-lg font-bold text-gray-800 dark:text-white/90">
-                            Checkit
-                        </span>
-                    )}
+                <Link to="/admin/dashboard" className="flex items-center">
+                    <BrandMark showName={showText} />
                 </Link>
             </div>
 

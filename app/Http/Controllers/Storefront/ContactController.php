@@ -3,28 +3,32 @@
 namespace App\Http\Controllers\Storefront;
 
 use App\Http\Controllers\Controller;
-use App\Models\ContactMessage;
-use Illuminate\Http\Request;
+use App\Http\Requests\Storefront\StoreContactMessageRequest;
+use App\Services\Contact\ContactMessageService;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ContactController extends Controller
 {
-    public function index()
+    private const SENT_MESSAGE = 'Thanks! Your message has been sent. We will get back to you soon.';
+
+    public function __construct(private readonly ContactMessageService $messages) {}
+
+    public function index(): Response
     {
         return Inertia::render('Contact');
     }
 
-    public function store(Request $request)
+    public function store(StoreContactMessageRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'nullable|email|max:255',
-            'mobile'  => 'required|string|max:20',
-            'message' => 'required|string',
-        ]);
+        // A bot gets the same answer as a visitor, so it learns nothing from the response.
+        if (! $request->isSpam()) {
+            $this->messages->create($request->messageData());
+        }
 
-        ContactMessage::create($validated);
+        Inertia::flash('success', self::SENT_MESSAGE);
 
-        return redirect()->back()->with('success', 'Your message has been sent successfully!');
+        return back();
     }
 }

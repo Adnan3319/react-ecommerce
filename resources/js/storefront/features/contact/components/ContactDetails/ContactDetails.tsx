@@ -12,10 +12,28 @@ export default function ContactDetails() {
     const { company }: any = usePage().props;
 
     const DETAILS: Detail[] = [
-        { icon: 'phone', label: 'Phone', value: company?.phone || '+880 1XXX-XXXXXX' },
-        { icon: 'mail', label: 'Email', value: company?.email || 'hello@example.com' },
-        { icon: 'mapPin', label: 'Address', value: company?.address || 'Dhaka, Bangladesh' },
-        { icon: 'clock', label: 'Working hours', value: company?.working_hours || 'Saturday to Thursday, 10:00 AM to 8:00 PM' },
+        {
+            icon: 'phone',
+            label: 'Phone',
+            value: company?.phone || '+880 1XXX-XXXXXX',
+        },
+        {
+            icon: 'mail',
+            label: 'Email',
+            value: company?.email || 'hello@example.com',
+        },
+        {
+            icon: 'mapPin',
+            label: 'Address',
+            value: company?.address || 'Dhaka, Bangladesh',
+        },
+        {
+            icon: 'clock',
+            label: 'Working hours',
+            value:
+                company?.working_hours ||
+                'Saturday to Thursday, 10:00 AM to 8:00 PM',
+        },
     ];
 
     return (

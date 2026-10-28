@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Storefront\CartController;
@@ -42,7 +43,7 @@ Route::middleware('throttle:cart')->prefix('cart/items')->name('cart.items.')->g
 Route::get('/pages/{slug}', [StorefrontPageController::class, 'show'])->name('pages.show');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:contact')->name('contact.store');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::redirect('/', '/admin/dashboard')->name('index');
@@ -64,10 +65,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/company', [CompanyController::class, 'edit'])->name('company.edit');
         Route::post('/company', [CompanyController::class, 'update'])->name('company.update');
 
-        Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact-messages.index');
-        Route::patch('/contact-messages/{contactMessage}/read', [ContactMessageController::class, 'markAsRead'])->name('contact-messages.read');
-        Route::delete('/contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
-    
+        Route::get('/messages', [ContactMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{contactMessage}', [ContactMessageController::class, 'show'])->name('messages.show');
+        Route::delete('/messages/{contactMessage}', [ContactMessageController::class, 'destroy'])->name('messages.destroy');
+
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->whereUuid('id')->name('notifications.read');
+
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/transition', [AdminOrderController::class, 'transition'])->name('orders.transition');

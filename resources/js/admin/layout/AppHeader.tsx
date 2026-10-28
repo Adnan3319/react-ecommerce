@@ -2,7 +2,7 @@
 
 import BrandMark from '@admin/components/common/BrandMark';
 import { ThemeToggleButton } from '@admin/components/common/ThemeToggleButton';
-import NotificationDropdown from '@admin/components/header/NotificationDropdown';
+import NotificationBell from '@admin/features/notifications/NotificationBell';
 import UserDropdown from '@admin/components/header/UserDropdown';
 import { useSidebar } from '@admin/context/SidebarContext';
 import { cn } from '@admin/utils';
@@ -159,7 +159,7 @@ const AppHeader: React.FC = () => {
                         <ThemeToggleButton />
                         {/* <!-- Dark Mode Toggler --> */}
 
-                        <NotificationDropdown />
+                        <NotificationBell />
 
                         {/* <!-- Notification Menu Area --> */}
                     </div>

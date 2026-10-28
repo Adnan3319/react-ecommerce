@@ -13,6 +13,7 @@ import {
     TableIcon,
 } from '../icons';
 import { cn } from '../utils';
+import * as messages from '@/routes/admin/messages';
 import * as orders from '@/routes/admin/orders';
 import * as testimonials from '@/routes/admin/testimonials';
 
@@ -60,9 +61,9 @@ const navItems: NavItem[] = [
         path: testimonials.index().url,
     },
     {
-        name: 'Contact Messages',
+        name: 'Messages',
         icon: <Mail className="size-6" />,
-        path: '/admin/contact-messages',
+        path: messages.index().url,
     },
     {
         name: 'Company',
@@ -81,9 +82,12 @@ const AppSidebar: React.FC = () => {
     } = useSidebar();
     const location = useLocation();
     const { admin } = usePage<{
-        admin: { pendingOrders: number } | null;
+        admin: { pendingOrders: number; unreadMessages: number } | null;
     }>().props;
-    const pendingOrders = admin?.pendingOrders ?? 0;
+    const badges: Record<string, number> = {
+        [orders.index().url]: admin?.pendingOrders ?? 0,
+        [messages.index().url]: admin?.unreadMessages ?? 0,
+    };
 
     useEffect(() => {
         if (isMobileOpen) {
@@ -183,11 +187,10 @@ const AppSidebar: React.FC = () => {
                         <div>
                             {groupTitle('Menu')}
                             {renderItems(
-                                navItems.map((nav) =>
-                                    nav.path === orders.index().url
-                                        ? { ...nav, badge: pendingOrders }
-                                        : nav,
-                                ),
+                                navItems.map((nav) => ({
+                                    ...nav,
+                                    badge: badges[nav.path],
+                                })),
                             )}
                         </div>
                     </div>

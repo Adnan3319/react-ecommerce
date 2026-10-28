@@ -2,10 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\Admin\Notification\NotificationResource;
 use App\Models\Company;
 use App\Services\Cart\CartService;
 use App\Services\Category\CategoryService;
 use App\Services\Company\CompanyBranding;
+use App\Services\Contact\UnreadMessageCount;
+use App\Services\Notification\NotificationService;
 use App\Services\Order\PendingOrderCount;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,6 +21,8 @@ class HandleInertiaRequests extends Middleware
         private readonly PendingOrderCount $pendingOrders,
         private readonly CartService $cart,
         private readonly CompanyBranding $branding,
+        private readonly UnreadMessageCount $unreadMessages,
+        private readonly NotificationService $notifications,
     ) {}
 
     public function rootView(Request $request): string
@@ -40,15 +45,27 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user()?->only(['id', 'name', 'username', 'role']),
             ],
-            'admin' => fn () => $request->user() && $request->is('admin', 'admin/*')
-                ? ['pendingOrders' => $this->pendingOrders->get()]
+            'admin' => fn () => $this->isAdminSession($request)
+                ? ['pendingOrders' => $this->pendingOrders->get(), 'unreadMessages' => $this->unreadMessages->get()]
                 : null,
+            'notifications' => fn () => $this->isAdminSession($request)
+                ? ['unreadCount' => $this->notifications->unreadCount($request->user())]
+                : null,
+            // Loaded only when the bell opens (router.reload with `only`).
+            'notificationItems' => Inertia::optional(fn () => $this->isAdminSession($request)
+                ? NotificationResource::collection($this->notifications->latest($request->user()))->resolve()
+                : []),
             'categories' => fn () => $request->is('admin', 'admin/*')
                 ? []
                 : $this->categories->activeForStorefront(),
             'company' => fn () => Company::first(),
             'branding' => fn () => $this->branding->data(),
         ];
+    }
+
+    private function isAdminSession(Request $request): bool
+    {
+        return $request->user() !== null && $request->is('admin', 'admin/*');
     }
 
     private function miniCart(): array

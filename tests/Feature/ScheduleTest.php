@@ -20,3 +20,7 @@ it('drains the queue every minute so queued mail goes out without a daemon', fun
 it('prunes stale carts daily', function () {
     expect(scheduledCommands())->toContain('cart:prune');
 });
+
+it('prunes read notifications daily', function () {
+    expect(scheduledCommands())->toContain('notifications:prune');
+});

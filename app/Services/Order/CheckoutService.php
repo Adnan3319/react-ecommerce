@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Services\Dashboard\DashboardCache;
+use App\Services\Notification\AdminNotifier;
 use App\Services\Product\StockService;
 use App\Support\Phone;
 use Illuminate\Database\Eloquent\Collection;
@@ -36,6 +37,7 @@ class CheckoutService
         private readonly StockService $stock,
         private readonly PendingOrderCount $pendingOrders,
         private readonly DashboardCache $dashboard,
+        private readonly AdminNotifier $adminNotifier,
     ) {}
 
     /**
@@ -67,6 +69,7 @@ class CheckoutService
             $this->pendingOrders->forget();
             $this->dashboard->forget();
             NotifyAdminOfNewOrder::dispatch($order->id);
+            $this->adminNotifier->newOrder($order);
         }
 
         return $order;
